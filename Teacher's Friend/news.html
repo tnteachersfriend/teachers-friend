@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>செய்திகள் - Mobile Friendly</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script> 
+     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+      <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+
+    <style>
+        /* அடிப்படை அமைப்புகள் */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7f6;
+            color: #333;
+            -webkit-tap-highlight-color: transparent; /* மொபைல் க்ளிக் ஹைலைட் நீக்க */
+        }
+
+        /* Header மற்றும் Navigation */
+        header {
+            background-color: #004d99;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        header h1 {
+            margin: 0;
+            font-size: 20px; /* மொபைலுக்கு உகந்த அளவு */
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Layout (Flexbox) */
+        .container {
+            display: flex;
+            flex-direction: row; /* டெஸ்க்டாப்பில் பக்கவாட்டில் இருக்க */
+            max-width: 1200px;
+            margin: 15px auto;
+            gap: 20px;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+
+        /* பிரதான செய்தி பகுதி */
+        .main-news {
+            flex: 7;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        /* Archive பகுதி */
+        .archive-section {
+            flex: 3;
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            height: fit-content;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .archive-section h2 {
+            margin-top: 0;
+            color: #444;
+            font-size: 18px;
+            border-bottom: 2px solid #004d99;
+            padding-bottom: 8px;
+        }
+
+        /* செய்தி அட்டைகள் */
+        .news-card {
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-sizing: border-box;
+        }
+        .news-title {
+            margin-top: 0;
+            color: #004d99;
+            font-size: 18px;
+            line-height: 1.4;
+        }
+        .news-date {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 10px;
+        }
+        
+        /* 6 வரி கட்டுப்பாடு */
+        .news-content {
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.6;
+            font-size: 14px;
+            white-space: pre-wrap;
+            color: #444;
+        }
+        
+        .news-content.expanded {
+            -webkit-line-clamp: unset;
+        }
+
+        /* மேலும் படிக்க பட்டன் */
+        .read-more-btn {
+            background: none;
+            border: none;
+            color: #004d99;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px 0 0 0;
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        .archive-item {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+        .archive-item h4 {
+            font-size: 14px;
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+
+        /* Back Button */
+        .footer-controls {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 15px;
+            box-sizing: border-box;
+        }
+        .back-btn {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 100%; /* மொபைலில் முழு அகலத்திற்கு வர */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            padding: 30px;
+        }
+
+        /* ==================================================
+           MOBILE RESPONSIVE RESPONSIVE CSS (மீடியா குறிப்புகள்)
+           ================================================== */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+                padding: 20px;
+               padding-top: calc(40px + env(safe-area-inset-top, 0px));
+            }
+            nav {
+                margin-top: 5px;
+            }
+            nav a {
+                margin: 0 10px;
+            }
+            .container {
+                flex-direction: column; /* மொபைலில் ஒன்றின் கீழ் ஒன்றாக மாற்றும் */
+                gap: 15px;
+                padding: 0 10px;
+            }
+            .main-news {
+                flex: none;
+            }
+            .archive-section {
+                flex: none;
+                margin-top: 10px;
+            }
+            .news-title {
+                font-size: 16px; /* மொபைலில் எழுத்து அளவு குறைப்பு */
+            }
+        }
+        
+        /* டெஸ்க்டாப்பில் மட்டும் Back button சிறியதாக இருக்க */
+        @media (min-width: 769px) {
+            .back-btn {
+                width: auto; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>செய்திகள் (News)</h1>
+        <nav>
+            <a href="dashboard.html">டேஷ்போர்டு</a>
+            <a href="#">முக்கிய செய்திகள்</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="main-news" id="latestNewsContainer">
+            <div class="loading">செய்திகள் ஏற்றப்படுகின்றன...</div>
+        </div>
+
+        <div class="archive-section">
+            <h2>Archive (பழையவை)</h2>
+            <div id="archiveNewsContainer">
+                </div>
+        </div>
+    </div>
+
+    <div class="footer-controls">
+        <button class="back-btn" onclick="goBack()">🔙 முகப்புக்குச் செல்</button>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+            messagingSenderId: "294698361211",
+            appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
+        const storage = firebase.storage();
+
+        const newsRef = database.ref('news');
+
+        newsRef.on('value', (snapshot) => {
+            const latestContainer = document.getElementById('latestNewsContainer');
+            const archiveContainer = document.getElementById('archiveNewsContainer');
+            
+            latestContainer.innerHTML = "";
+            archiveContainer.innerHTML = "";
+
+            if (!snapshot.exists()) {
+                latestContainer.innerHTML = "<div class='loading'>செய்திகள் ஏதும் இல்லை!</div>";
+                return;
+            }
+
+            const newsData = snapshot.val();
+            const newsList = [];
+
+            for (let id in newsData) {
+                newsList.push({
+                    id: id,
+                    title: newsData[id].title,
+                    date: newsData[id].date,
+                    content: newsData[id].content
+                });
+            }
+
+            // தேதி அடிப்படையில் புதியவை முதலில் வர வரிசைப்படுத்துதல்
+            newsList.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const today = new Date();
+            let hasLatestNews = false;
+
+            newsList.forEach(news => {
+                const newsDate = new Date(news.date);
+                const diffTime = Math.abs(today - newsDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays > 30) {
+                    const archiveHtml = `
+                        <div class="archive-item">
+                            <h4>${news.title}</h4>
+                            <div class="news-date">${news.date}</div>
+                        </div>
+                    `;
+                    archiveContainer.innerHTML += archiveHtml;
+                } else {
+                    hasLatestNews = true;
+                    const newsHtml = `
+                        <div class="news-card" id="card-${news.id}">
+                            <h2 class="news-title">${news.title}</h2>
+                            <div class="news-date">பதிவேற்றம்: ${news.date}</div>
+                            <div class="news-content" id="content-${news.id}">${news.content}</div>
+                            <button class="read-more-btn" onclick="toggleReadMore('${news.id}', this)">மேலும் படிக்க ⬇️</button>
+                        </div>
+                    `;
+                    latestContainer.innerHTML += newsHtml;
+                }
+            });
+
+            if(!hasLatestNews) {
+                latestContainer.innerHTML = "<div class='loading'>நடப்பு மாதத்தில் புதிய செய்திகள் ஏதும் இல்லை!</div>";
+            }
+            // ... (உங்களுடைய பழைய குறியீடு)
+            if(!hasLatestNews) {
+                latestContainer.innerHTML = "<div class='loading'>நடப்பு மாதத்தில் புதிய செய்திகள் ஏதும் இல்லை!</div>";
+            }
+            
+            // --- புதிய பகுதி ஆரம்பம்: URL ID-க்கு ஸ்க்ரோல் செய்ய ---
+            setTimeout(() => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const targetId = urlParams.get('id'); // URL-ல் உள்ள id-ஐ எடுத்தல்
+
+                if (targetId) {
+                    const targetCard = document.getElementById('card-' + targetId);
+                    
+                    if (targetCard) {
+                        // 1. அந்த செய்திக்கு நேராக மென்மையாக ஸ்க்ரோல் செய்ய
+                        targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // 2. பயனரின் கவனத்தை ஈர்க்க அந்த செய்தியை ஹைலைட் செய்ய
+                        targetCard.style.transition = "all 0.5s ease-in-out";
+                        targetCard.style.border = "2px solid #004d99";
+                        targetCard.style.boxShadow = "0px 4px 15px rgba(0, 77, 153, 0.3)";
+                        
+                        // 3. அந்த குறிப்பிட்ட செய்தியை மட்டும் தானாக விரித்துக் காட்ட (Auto-expand)
+                        const contentDiv = document.getElementById('content-' + targetId);
+                        const btn = targetCard.querySelector('.read-more-btn');
+                        
+                        if (contentDiv && !contentDiv.classList.contains('expanded')) {
+                            contentDiv.classList.add('expanded');
+                            btn.innerHTML = "சுருக்கமாக படிக்க ⬆️";
+                        }
+                    }
+                }
+            }, 300); // டேட்டாபேஸிலிருந்து தரவுகள் திரையில் ரெண்டர் ஆக 300ms தாமதம்
+            // --- புதிய பகுதி முடிவு ---
+
+        }, (error) => {
+            console.error(error);
+// ... (உங்களுடைய பழைய குறியீடு தொடரும்)
+
+        }, (error) => {
+            console.error(error);
+            document.getElementById('latestNewsContainer').innerHTML = "<div class='loading'>தரவுகளை ஏற்றுவதில் பிழை!</div>";
+        });
+
+        function toggleReadMore(id, btn) {
+            const content = document.getElementById(`content-${id}`);
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                btn.innerHTML = "மேலும் படிக்க ⬇️";
+            } else {
+                content.classList.add('expanded');
+                btn.innerHTML = "சுருக்கமாக படிக்க ⬆️";
+            }
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

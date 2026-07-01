@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Friend - About Us</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502" crossorigin="anonymous"></script>
+    
+    <style>
+        /* --- General Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, #fff0f5 0%, #fefbd8 35%, #e6e6fa 70%, #ffe4e1 100%); 
+            color: #333; 
+            line-height: 1.6;
+            background-attachment: fixed;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- Header & Navigation (Dashboard-ல் உள்ளவாறு) --- */
+        header {
+            background: url('header-bg.png') no-repeat center center !important;
+            background-size: 100% 100% !important;
+            padding: 10px 2%; 
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky; 
+            top: 0; 
+            z-index: 6000;
+            width: 100%;
+        }
+
+        .logo-area { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+        }
+        
+        .logo-img { 
+            height: 70px; 
+            width: 70px; 
+            border-radius: 50%; 
+            object-fit: cover; 
+        }
+        
+        .main-title { 
+            font-size: 48px; 
+            font-weight: 700; 
+            color: #1a73e8; 
+            text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 4px rgba(0, 0, 0, 0.15), -1px -1px 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .staff-logo-link {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            margin-left: 8vw; 
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .staff-logo-img {
+            height: 70px; 
+            width: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #1a73e8;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .staff-text-indicator {
+            font-size: 20px; 
+            font-weight: bold;
+            color: #d32f2f;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .staff-logo-img:hover { transform: scale(1.1); }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f1f8e9;
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid #c8e6c9;
+            position: relative;
+        }
+
+        .profile-icon { font-size: 30px; color: #1a73e8; }
+        .user-details { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-name { font-size: 14px; font-weight: 700; color: #333; }
+        .user-email { font-size: 11px; color: #666; font-weight: 400; }
+
+        #noti-box {
+            display: none; position: absolute; top: 40px; right: 0; background: white;
+            width: 300px; max-width: 95vw; max-height: 400px; overflow-y: auto;
+            border: 1px solid #ce93d8; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 2000; padding: 10px;
+        }
+
+        .noti-item { background: #f3e5f5; border-left: 4px solid #7b1fa2; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 12px; }
+        .noti-item .noti-time { font-size: 10px; color: #777; display: block; margin-top: 3px; text-align: right; }
+
+        /* --- News Ticker --- */
+        .news-ticker-bar {
+            background: #1a73e8; color: white; display: flex; align-items: center; padding: 5px 5%; font-size: 14px;
+        }
+        .ticker-label {
+            background: #ffc107; color: #000; padding: 2px 10px; font-weight: bold; border-radius: 4px; margin-right: 15px; white-space: nowrap;
+        }
+
+        /* --- Sub Navigation Bar --- */
+        .sub-nav {
+            background: #ffb6c1; /* About page specific color */
+            padding: 10px 5%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 5000;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center;
+            align-items: center;
+            gap: 10px; 
+            width: 100%;
+        }
+
+        .nav-links a, .dropdown-btn {
+            font-weight: 600; color: #333; font-size: 14px; cursor: pointer; background: none; border: none; padding: 6px 10px; display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none; position: absolute; background-color: #ffffff !important; min-width: 260px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2) !important;
+            z-index: 99999 !important; border-radius: 8px; border: 1px solid #ddd; padding: 6px 0; top: 100%; left: 0;
+        }
+        .dropdown-content.show-dropdown { display: block !important; }
+        .dropdown-content a {
+            color: #333 !important; padding: 10px 18px !important; text-decoration: none !important; display: flex !important; align-items: center; gap: 10px; text-align: left; font-size: 14px !important; border-bottom: 1px solid #f5f5f5; transition: background 0.2s;
+        }
+        .dropdown-content a:last-child { border-bottom: none; }
+        .dropdown-content a:hover { background-color: #f1f1f1 !important; color: #1a73e8 !important; }
+
+        .search-container { width: 100%; display: flex; justify-content: center; }
+        .search-container input { padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; width: 100%; max-width: 300px; }
+
+        /* --- About Us Specific Sections --- */
+        .about-hero {
+            background: linear-gradient(135deg, rgba(26, 115, 232, 0.9), rgba(46, 204, 113, 0.8)), url('image_1.png');
+            background-size: cover; background-position: center;
+            color: white; padding: 60px 10%; text-align: center;
+        }
+        .about-hero h2 { font-size: 32px; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        .about-hero p { font-size: 18px; max-width: 800px; margin: 0 auto; line-height: 1.8; }
+
+        .about-container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+        
+        .content-card {
+            background: rgba(255, 255, 255, 0.9); padding: 30px; border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05); margin-bottom: 30px;
+            border-left: 5px solid #1a73e8; backdrop-filter: blur(5px);
+        }
+        .content-card h3 { color: #1a73e8; margin-bottom: 15px; font-size: 22px; display: flex; align-items: center; gap: 10px; }
+        
+        .mission-box { background-color: rgba(255, 243, 205, 0.9); border-left-color: #ffc107; }
+        .mission-box h3 { color: #d39e00; }
+
+        .feature-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .feature-item { display: flex; align-items: flex-start; gap: 15px; background: rgba(248, 249, 250, 0.9); padding: 20px; border-radius: 10px; transition: transform 0.3s; }
+        .feature-item:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .feature-icon { font-size: 30px; padding: 15px; border-radius: 50%; color: white; display: flex; align-items: center; justify-content: center; width: 60px; height: 60px; flex-shrink: 0; }
+        
+        .icon-blue { background: linear-gradient(135deg, #1a73e8, #6ab04c); }
+        .icon-green { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+        .icon-orange { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .icon-purple { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .icon-red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .icon-teal { background: linear-gradient(135deg, #1abc9c, #16a085); }
+
+        .feature-text h4 { color: #333; margin-bottom: 5px; font-size: 16px; }
+        .feature-text p { font-size: 14px; color: #666; }
+
+        .quote-box {
+            background: rgba(232, 244, 248, 0.9); padding: 30px; border-radius: 15px;
+            text-align: center; font-style: italic; color: #333; margin-top: 40px;
+            border: 2px dashed #1a73e8;
+        }
+        .quote-box h4 { color: #1a73e8; font-style: normal; margin-bottom: 10px; }
+        .highlight-text { font-weight: bold; color: #1a73e8; text-align: center; font-size: 20px; margin-top: 30px; }
+
+        /* --- Footer --- */
+        .main-footer { background: #222; color: white; padding: 40px 5% 20px; margin-top: 50px; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; }
+        .footer-section h4 { border-bottom: 2px solid #1a73e8; display: inline-block; margin-bottom: 15px; padding-bottom: 5px; }
+        .footer-section p, .footer-section a { font-size: 14px; color: #ccc; margin-bottom: 8px; display: block; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a:hover { color: #1a73e8; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 13px; color: #888; }
+
+        /* --- Desktop Specific Styles --- */
+        @media (min-width: 769px) {
+            .sub-nav { flex-direction: row; justify-content: space-between; padding: 5px 5%; }
+            .nav-links { width: auto; gap: 15px; }
+            .search-container { width: auto; }
+            .dropdown:hover .dropdown-content { display: block !important; }
+        }
+
+        /* --- Mobile Responsive Rules for Dashboard Header --- */
+        @media (max-width: 768px) {
+            header {
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                flex-wrap: nowrap !important;
+                padding: 24px 10px 10px 10px !important; 
+                gap: 5px !important; 
+            }
+
+            .logo-area { display: flex !important; align-items: center !important; gap: 4px !important; flex-shrink: 0 !important; }
+            .logo-img { height: 35px !important; width: 35px !important; }
+            .main-title { font-size: 30px !important; white-space: nowrap !important; line-height: 1.1 !important; }
+
+            .header-right { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 14px !important; flex: 1 !important; margin: 0 !important; padding: 0 !important; }
+            
+            .staff-logo-link, .notification-container, .user-profile-wrapper {
+                margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important;
+                display: inline-flex !important; align-items: center !important; justify-content: center !important;
+                min-width: unset !important; width: auto !important; height: auto !important;
+            }
+
+            .staff-logo-img { width: 38px !important; height: 38px !important; border: 1.5px solid #1a73e8 !important; border-radius: 50% !important; object-fit: cover !important; }
+            .staff-text-indicator { display: none; }
+
+            #bell-icon { font-size: 32px !important; width: 32px !important; height: 32px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; color: #ff0000 !important; }
+            .profile-icon { font-size: 32px !important; width: 32px !important; height: 32px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; color: #8e24aa !important; }
+
+            .user-name, .user-email, .logout-text, .search-container-header { display: none !important; }
+
+            #noti-box { width: 260px; right: -20px; top: 38px; font-size: 12px; }
+
+            .nav-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; justify-items: center; }
+            .nav-links a, .dropdown-btn { font-size: 11px; padding: 5px 2px; flex-direction: column; gap: 2px; text-align: center; }
+            .nav-links a i, .dropdown-btn i { font-size: 14px; }
+            .dropdown-content { left: 50% !important; transform: translateX(-50%) !important; position: absolute !important; }
+            .about-hero { padding: 40px 5%; font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="image_0.png" alt="Logo" class="logo-img">
+            <h1 class="main-title">Class Room</h1>
+            <a href="dashboard2.html" class="staff-logo-link" title="Staff Room-க்குச் செல்">
+                <img src="1000015786.png" alt="Staff Logo" class="staff-logo-img" onerror="this.src='staff.png'">
+                <span class="staff-text-indicator">Switch to Staff Room</span>
+            </a>
+        </div>
+
+        <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+            
+            <div class="notification-container" style="position: relative; cursor: pointer;">
+                <i class="bi bi-bell-fill" id="bell-icon" style="font-size: 32px; color: #ff0000;" onclick="toggleNotificationBox()"></i>
+                <span id="noti-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;">0</span>
+
+                <div id="noti-box">
+                    <h4 style="font-size: 14px; color: #4a148c; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                        <span>அறிவிப்புகள் (Notifications)</span>
+                        <span style="font-size: 11px; color: #666; cursor: pointer;" onclick="clearNotifications()">Clear All</span>
+                    </h4>
+                    <div id="noti-list" style="font-size: 13px; color: #333;">
+                        <p style="text-align: center; color: #888; padding: 10px;">புதிய அறிவிப்புகள் ஏதுமில்லை!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)" style="cursor: pointer; position: relative;">
+                <i class="bi bi-person-circle profile-icon" style="font-size: 32px; color: #ffb300;"></i>
+
+                <div class="user-details">
+                    <span class="user-name">ஆசிரியர்</span>
+                    <span class="user-email" id="user-email-top">Loading...</span> 
+                </div>
+
+                <div id="user-dropdown" style="display: none; position: absolute; top: 48px; right: 0; background: #ffffff !important; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important; z-index: 99999999 !important; padding: 12px; text-align: left;">
+                    <p style="margin: 0; font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                        <i class="bi bi-person-fill-check"></i> Log in மின்னஞ்சல்:
+                    </p>
+                    <p id="user-email-dropdown" style="margin: 0; font-size: 13px; color: #1a73e8; font-weight: 600; word-break: break-all; margin-bottom: 10px;">Loading...</p>
+                    <div id="admin-btn-wrapper" style="display: none; margin-bottom: 10px;">
+                        <a href="admin.html" style="color: #1a73e8; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #e8f0fe; padding: 8px 12px; border-radius: 6px;">
+                            <i class="bi bi-shield-lock-fill"></i> Admin Panel (அட்மின்)
+                        </a>
+                    </div>
+                    <div style="height: 1px; background: #eee; margin-bottom: 8px;"></div>
+                    
+                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="news-ticker-bar">
+        <div class="ticker-label">முக்கிய அறிவிப்பு:</div>
+        <marquee behavior="scroll" direction="left" id="web-ticker">செய்திகள் ஏற்றப்படுகிறது...</marquee>
+    </div>
+
+    <nav class="sub-nav">
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="bi bi-house-door-fill"></i><span>Home</span></a>
+            
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleServicesMenu(event)">
+                    <i class="bi bi-grid-fill"></i> <span>Services</span>
+                </button>
+                <div class="dropdown-content" id="servicesDropdown">
+                    <a href="data-input.html"><i class="bi bi-database-fill"></i> Data Input</a>
+                    <a href="applications.html"><i class="bi bi-file-earmark-text"></i> Forms (படிவங்கள்)</a>
+                    <a href="registers.html"><i class="bi bi-journal-check"></i> Registers (பதிவேடுகள்)</a>
+                    <a href="daily.html"><i class="bi bi-chat-left-text"></i> Daily Messages</a>
+                    <a href="tlm.html"><i class="bi bi-book"></i> TLMs (கற்றல் கருவிகள்)</a>
+                    <a href="homework.html"><i class="bi bi-pencil-square"></i> Daily Homework</a>
+                    <a href="exam.html"><i class="bi bi-pen"></i> Exam (தேர்வுகள்)</a>
+                    <a href="gos.html"><i class="bi bi-file-earmark-pdf-fill"></i> GO's (அரசாணைகள்)</a>
+                    <a href="lesson-plan.html"><i class="bi bi-journal-text"></i> Lesson Plan (பாடக்குறிப்பு)</a>
+                    <a href="others.html"><i class="bi bi-briefcase"></i> Other Resources</a>
+                </div>
+            </div>
+
+            <a href="about.html"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a>
+            <a href="contact.html"><i class="bi bi-envelope-fill"></i><span>Contact Us</span></a>
+        </div>
+        <div class="search-container">
+            <div style="position: relative; width: 100%; max-width: 300px;">
+                <input type="text" id="dashboard-search" placeholder="வலைத்தளத்தில் தேடுக..." oninput="globalSearch()" autocomplete="off">
+                <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0px 8px 16px rgba(0,0,0,0.15); z-index: 100000; max-height: 350px; overflow-y: auto; margin-top: 5px; text-align: left;">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="about-hero">
+        <h2>எங்களைப் பற்றி</h2>
+        <p>ஆசிரியர்களுக்கான பிரத்யேக தளம் – உங்கள் பணிகளை எளிமையாக்கும் ஓர் உற்ற தோழன்!</p>
+    </section>
+
+    <main class="about-container">
+        
+        <div class="content-card">
+            <p>பள்ளி ஆசிரியர்களின் அன்றாடப் பணிகளை எளிதாக்க வேண்டும் என்ற உயரிய நோக்கத்துடன் உருவாக்கப்பட்ட எளிமையான மற்றும் பயனுள்ள இணையதளம் இதுவாகும். வகுப்பறையில் மாணவர்களின் எதிர்காலத்தைச் செதுக்கும் ஆசிரியர்களின் பொன்னான நேரத்தை மிச்சப்படுத்தவும், அவர்களுக்குத் தேவையான அனைத்து ஆவணங்களையும் ஒரே இடத்தில் வழங்கவும் இந்த தளம் பிரத்யேகமாக வடிவமைக்கப்பட்டுள்ளது.</p>
+        </div>
+
+        <div class="content-card mission-box">
+            <h3><i class="bi bi-bullseye"></i> எங்கள் நோக்கம்</h3>
+            <p>ஆசிரியர்களின் நிர்வாக மற்றும் அலுவலகப் பணிச்சுமையைக் குறைத்து, கற்பித்தல் பணியில் அவர்கள் முழுமையாகக் கவனம் செலுத்த உறுதுணையாக இருப்பதே எங்களின் முதன்மை நோக்கமாகும்.</p>
+        </div>
+
+        <div>
+            <h3 style="color: #333; margin-top: 40px; margin-bottom: 10px; font-size: 24px; text-align: center;">எங்கள் தளத்தில் நீங்கள் பெறுபவை</h3>
+            <p style="text-align: center; color: #666; margin-bottom: 30px;">ஆசிரியர்களுக்குத் தேவையான கீழ்க்கண்ட அனைத்து அத்தியாவசியத் தகவல்களையும் எங்கள் தளத்தில் நீங்கள் மிக எளிமையாகப் பெற்றுக் கொள்ளலாம்:</p>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon icon-blue"><i class="bi bi-ui-checks"></i></div>
+                    <div class="feature-text">
+                        <h4>விண்ணப்பங்கள் & படிவங்கள்</h4>
+                        <p>விடுப்பு விண்ணப்பங்கள் முதல் துறை சார்ந்த தேர்வுகள் வரை, அனைத்து வகையான விண்ணப்பங்களும் உடனுக்குடன் தரவிறக்கம் செய்யும் வகையில் தொகுக்கப்பட்டுள்ளன.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon icon-red"><i class="bi bi-file-earmark-pdf"></i></div>
+                    <div class="feature-text">
+                        <h4>அரசாணைகள் (G.O)</h4>
+                        <p>பள்ளிக்கல்வித்துறை வெளியிடும் புதிய அறிவிப்புகள் மற்றும் முக்கியமான அரசாணைகளை எளிதில் தேடி எடுக்கும் வகையில் வழங்குகிறோம்.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon icon-green"><i class="bi bi-calculator"></i></div>
+                    <div class="feature-text">
+                        <h4>வருமான வரி கணக்கீடுகள்</h4>
+                        <p>வருமான வரி (Income Tax) கணக்கீடுகளை எளிய முறையில், பிழையின்றி மேற்கொள்ளத் தேவையான வழிகாட்டுதல்கள் மற்றும் மென்பொருட்கள்.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon icon-orange"><i class="bi bi-journal-richtext"></i></div>
+                    <div class="feature-text">
+                        <h4>பாடக் குறிப்புகள் (Lesson Plans)</h4>
+                        <p>வகுப்பறையில் சிறப்பாகப் பாடம் நடத்தவும், கற்பித்தலைத் திட்டமிடவும் உதவும் வகையில், அனைத்து வகுப்புகளுக்குமான தெளிவான பாடக் குறிப்புகள்.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon icon-purple"><i class="bi bi-lightbulb"></i></div>
+                    <div class="feature-text">
+                        <h4>கற்றல் துணைக்கருவிகள் (TLM)</h4>
+                        <p>மாணவர்களுக்காப் பாடங்களை ஆர்வத்துடன் கற்றுக்கொடுக்கத் தேவையான புதுமையான உபகரணங்கள் மற்றும் ஆக்கப்பூர்வமான யோசனைகள்.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon icon-teal"><i class="bi bi-book-half"></i></div>
+                    <div class="feature-text">
+                        <h4>முக்கியமான பதிவேடுகள்</h4>
+                        <p>பள்ளியின் தினசரி நிர்வாகத்திற்கும், தணிக்கைக்கும் (Audit) தேவையான அனைத்து முக்கியமான பள்ளிப் பதிவேடுகளின் மாதிரிகள்.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card" style="margin-top: 40px;">
+            <h3><i class="bi bi-patch-check-fill"></i> ஏன் எங்களைத் தேர்ந்தெடுக்க வேண்டும்?</h3>
+            <ul style="list-style-type: none; padding-left: 10px; margin-top: 15px;">
+                <li style="margin-bottom: 10px;"><i class="bi bi-check-circle-fill" style="color: #2ecc71; margin-right: 10px;"></i> <b>எளிமையான வடிவமைப்பு (User-Friendly):</b> தேவையற்ற குழப்பங்கள் இன்றி, எந்த ஒரு தகவலையும் எளிதாகத் தேடி எடுக்கும் வகையில் தளம் வடிவமைக்கப்பட்டுள்ளது.</li>
+                <li style="margin-bottom: 10px;"><i class="bi bi-check-circle-fill" style="color: #2ecc71; margin-right: 10px;"></i> <b>நேர சேமிப்பு:</b> வெவ்வேறு தளங்களில் தேடி அலைய வேண்டிய தகவல்களை, ஒரே குடையின் கீழ் வழங்குவதால் உங்களின் நேரம் பெரிதும் மிச்சமாகிறது.</li>
+                <li style="margin-bottom: 10px;"><i class="bi bi-check-circle-fill" style="color: #2ecc71; margin-right: 10px;"></i> <b>முழுக்க முழுக்க இலவசம்:</b> ஆசிரியர்களின் நலன் கருதி உருவாக்கப்பட்ட இந்த தளத்தின் சேவைகள் அனைத்தும் முற்றிலும் இலவசமானவை.</li>
+            </ul>
+        </div>
+
+        <div class="quote-box">
+            <h4>ஆசிரியர்களுக்கான எங்கள் செய்தி:</h4>
+            <p>"இந்த தளம் உங்களுக்காக, உங்களின் அன்றாடத் தேவைகளை அறிந்து உருவாக்கப்பட்ட தளம். உங்கள் கல்விப் பயணத்தில் ஒரு சிறிய உதவியாக இருப்பதில் நாங்கள் பெருமை கொள்கிறோம். இந்தத் தளத்தை மேலும் மேம்படுத்த உங்களின் மேலான ஆலோசனைகளையும் எப்போதும் வரவேற்கிறோம்."</p>
+        </div>
+
+        <p class="highlight-text">வாருங்கள்! ஒன்றிணைவோம்! கற்பித்தலை மேலும் சிறப்பாக்குவோம்!</p>
+
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>தொடர்புக்கு</h4>
+                <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
+                <p>தமிழ்நாடு, இந்தியா.</p>
+            </div>
+            <div class="footer-section">
+                <h4>உதவி & மன்றம்</h4>
+                <p><a href="forum.html">Forum / கலந்துரையாடல்</a></p>
+                <p><a href="help-center.html">Help Center / உதவி</a></p>
+                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy & Terms / விதிமுறைகள்</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>பின் தொடர</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/18Z5eobDmT/" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://x.com/TnTeacherFriend" target="_blank" title="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://youtube.com/@tnteachersfriend?si=3cNg_jEno8je7It7" target="_blank" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="https://t.me/+VvYNqgx676RmZDZl" target="_blank" title="Telegram"><i class="bi bi-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script> 
+    
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+            messagingSenderId: "294698361211",
+            appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        // Notification System
+        function toggleNotificationBox() {
+            let box = document.getElementById('noti-box');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        function listenNotifications() {
+            database.ref('global_notifications').on('value', (snapshot) => {
+                let notiList = document.getElementById('noti-list');
+                let badge = document.getElementById('noti-badge');
+                
+                if (snapshot.exists()) {
+                    notiList.innerHTML = ""; 
+                    let count = 0;
+
+                    snapshot.forEach((childSnapshot) => {
+                        let noti = childSnapshot.val();
+                        let date = noti.date ? new Date(noti.date).toLocaleDateString('ta-IN') : "";
+                        
+                        notiList.innerHTML += `
+                            <div class="noti-item">
+                                <strong>${noti.title}</strong>
+                                <p>${noti.message}</p>
+                                <span class="noti-time">${date}</span>
+                            </div>
+                        `;
+                        count++;
+                    });
+
+                    badge.innerText = count;
+                    badge.style.display = 'block';
+                }
+            });
+        }
+
+        function clearNotifications() {
+            document.getElementById('noti-list').innerHTML = "<p style='text-align: center; color: #888; padding: 10px;'>புதிய அறிவிப்புகள் ஏதுமில்லை!</p>";
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        // Dropdown functionality
+        function toggleServicesMenu(event) {
+            event.stopPropagation();
+            let dropdown = document.getElementById('servicesDropdown');
+            if (dropdown) dropdown.classList.toggle('show-dropdown');
+        }
+
+        function toggleUserDropdown(event) {
+            event.stopPropagation(); 
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            if (servicesDropdown) servicesDropdown.classList.remove('show-dropdown');
+            
+            let dropdown = document.getElementById('user-dropdown');
+            if (dropdown) {
+                dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            let dropdownBtn = document.querySelector('.dropdown-btn');
+            if (servicesDropdown && !servicesDropdown.contains(e.target) && e.target !== dropdownBtn) {
+                servicesDropdown.classList.remove('show-dropdown');
+            }
+            
+            let userDropdown = document.getElementById('user-dropdown');
+            let wrapper = document.querySelector('.user-profile-wrapper');
+            if (userDropdown && userDropdown.style.display === 'block') {
+                if (wrapper && !wrapper.contains(e.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            }
+
+            let searchContainer = document.querySelector('.search-container');
+            let suggestionsBox = document.getElementById('search-suggestions');
+            if (searchContainer && !searchContainer.contains(e.target)) {
+                if(suggestionsBox) suggestionsBox.style.display = "none";
+            }
+        });
+
+        // Search Functionality
+        const searchIndex = [
+            { title: "Data Input (தரவு உள்ளீடு)", url: "data-input.html", keywords: "data entry, student details, emis, marks, எமிஸ், மதிப்பெண்" },
+            { title: "Forms (படிவங்கள்)", url: "applications.html", keywords: "leave letter, casual leave, cl, ml, earned leave, loan form, income tax, விண்ணப்பங்கள், விடுப்பு, வருமான வரி" },
+            { title: "Registers (பதிவேடுகள்)", url: "registers.html", keywords: "attendance, admission, movement, stock, வருகை, பதிவேடு" },
+            { title: "Daily Messages (தினசரி தகவல்கள்)", url: "daily.html", keywords: "news, updates, thoughts, thirukkural, திருக்குறள், செய்திகள்" },
+            { title: "TLMs (கற்றல் கருவிகள்)", url: "tlm.html", keywords: "teaching learning materials, charts, models, துணைக்கருவிகள்" },
+            { title: "Daily Homework (வீட்டுப்பாடம்)", url: "homework.html", keywords: "assignment, notes, வீட்டுப்பாடம்" },
+            { title: "Exam (தேர்வுகள்)", url: "exam.html", keywords: "question paper, timetable, results, fa, sa, வினாத்தாள், தேர்வு" },
+            { title: "GO's (அரசாணைகள்)", url: "gos.html", keywords: "government orders, rules, salary, pay, அரசாணை, ஊதியம்" },
+            { title: "Lesson Plan (பாடக்குறிப்பு)", url: "lesson-plan.html", keywords: "notes of lesson, primary, middle, பாடக்குறிப்பு" },
+            { title: "Other Resources (பிற வளங்கள்)", url: "others.html", keywords: "software, tools, links, பயனுள்ள" },
+            { title: "About Us (எங்களை பற்றி)", url: "about.html", keywords: "details, profile" },
+            { title: "Contact Us (தொடர்புக்கு)", url: "contact.html", keywords: "email, phone, முகவரி, தொடர்புக்கு" },
+            { title: "Forum (கலந்துரையாடல்)", url: "forum.html", keywords: "discussion, doubt, சந்தேகம்" },
+            { title: "Help Center (உதவி)", url: "help-center.html", keywords: "support, faq, உதவி" }
+        ];
+
+        function globalSearch() {
+            let input = document.getElementById('dashboard-search').value.toLowerCase().trim();
+            let suggestionsBox = document.getElementById('search-suggestions');
+            
+            suggestionsBox.innerHTML = ""; 
+            
+            if (input.length === 0) {
+                suggestionsBox.style.display = "none";
+                return;
+            }
+
+            let matches = searchIndex.filter(item => 
+                item.title.toLowerCase().includes(input) || 
+                item.keywords.toLowerCase().includes(input)
+            );
+
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    let div = document.createElement('div');
+                    div.innerHTML = `
+                        <a href="${match.url}" style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; font-size: 14px; transition: background 0.2s;">
+                            <i class="bi bi-search" style="color: #1a73e8;"></i> 
+                            <span>${match.title}</span>
+                        </a>`;
+                    
+                    let link = div.querySelector('a');
+                    link.onmouseover = () => link.style.backgroundColor = "#f8f9fa";
+                    link.onmouseout = () => link.style.backgroundColor = "transparent";
+                    
+                    suggestionsBox.appendChild(div);
+                });
+                suggestionsBox.style.display = "block";
+            } else {
+                suggestionsBox.innerHTML = `<div style="padding: 15px; color: #dc3545; font-size: 14px; text-align: center;">
+                    <i class="bi bi-emoji-frown"></i> முடிவுகள் காணப்படவில்லை
+                </div>`;
+                suggestionsBox.style.display = "block";
+            }
+        }
+
+        // On Load Initializations
+        window.addEventListener('DOMContentLoaded', (event) => {
+            listenNotifications();
+
+            // Web Ticker update
+            database.ref('site_updates').on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    if(data.ticker) document.getElementById('web-ticker').innerText = data.ticker;
+                }
+            });
+
+            // Authentication & User UI sync
+            if (typeof firebase !== 'undefined') {
+                firebase.auth().onAuthStateChanged((user) => {
+                    let emailTop = document.getElementById('user-email-top');
+                    let emailDropdown = document.getElementById('user-email-dropdown');
+                    let adminBtnWrapper = document.getElementById('admin-btn-wrapper'); 
+                    
+                    if (user) {
+                        if (emailTop) emailTop.innerText = user.email;
+                        if (emailDropdown) emailDropdown.innerText = user.email;
+
+                        if (user.email === "tnteachersfriend@gmail.com") {
+                            if (adminBtnWrapper) adminBtnWrapper.style.display = "block";
+                        } else {
+                            if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                        }
+                    } else {
+                        if (emailTop) emailTop.innerText = "Not Logged In";
+                        if (emailDropdown) emailDropdown.innerText = "Guest User";
+                        if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                    }
+                });
+            }
+        });
+
+        function handleLogout(event) {
+            event.preventDefault();
+            if (typeof firebase !== 'undefined') {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = "index.html";
+                }).catch((error) => {
+                    console.error("Logout Error: ", error);
+                });
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework Manager - Teacher's Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        /* =========================================================
+           --- பொதுவான வடிவமைப்பு & Dashboard Header/Footer ---
+           ========================================================= */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        
+        body { 
+            background: url('yellow-bg.png') no-repeat center center fixed; 
+            background-size: cover; 
+            color: #333; 
+            display: flex; 
+            flex-direction: column; 
+            min-height: 100vh;
+        }
+        
+        a { text-decoration: none; color: inherit; }
+
+        /* --- Header & Navigation --- */
+        header {
+            background: url('header-bg.png') no-repeat center center !important;
+            background-size: 100% 100% !important;
+            padding: 10px 2%;
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky; 
+            top: 0; 
+            z-index: 6000;
+            width: 100%;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 70px; width: 70px; border-radius: 50%; object-fit: cover; }
+        
+        .main-title-header { 
+            font-size: 48px; 
+            font-weight: 700; 
+            color: #1a73e8; 
+            text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 4px rgba(0, 0, 0, 0.15), -1px -1px 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .staff-logo-link {
+            display: inline-flex; flex-direction: row; align-items: center;
+            margin-left: 8vw; gap: 10px; text-decoration: none;
+        }
+
+        .staff-logo-img {
+            height: 70px; width: 70px; border-radius: 50%; object-fit: cover;
+            border: 2px solid #1a73e8; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: transform 0.2s ease-in-out;
+        }
+
+        .staff-text-indicator {
+            font-size: 20px; font-weight: bold; color: #d32f2f; background: #fff;
+            padding: 4px 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .staff-logo-img:hover { transform: scale(1.1); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .user-profile-wrapper {
+            display: flex; align-items: center; gap: 10px; background: #f1f8e9;
+            padding: 5px 12px; border-radius: 20px; border: 1px solid #c8e6c9; position: relative; cursor: pointer;
+        }
+
+        .profile-icon { font-size: 30px; color: #1a73e8; }
+        .user-details { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-name { font-size: 14px; font-weight: 700; color: #333; }
+        .user-email { font-size: 11px; color: #666; font-weight: 400; }
+
+        /* Notification Box */
+        #noti-box {
+            display: none; position: absolute; top: 40px; right: 0; background: white;
+            width: 300px; max-width: 95vw; max-height: 400px; overflow-y: auto;
+            border: 1px solid #ce93d8; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            z-index: 2000; padding: 10px;
+        }
+        .noti-item { background: #f3e5f5; border-left: 4px solid #7b1fa2; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 12px; }
+        .noti-item .noti-time { font-size: 10px; color: #777; display: block; margin-top: 3px; text-align: right; }
+
+        /* News Ticker & Navigation Links */
+        .news-ticker-bar { background: #1a73e8; color: white; display: flex; align-items: center; padding: 5px 5%; font-size: 14px; }
+        .ticker-label { background: #ffc107; color: #000; padding: 2px 10px; font-weight: bold; border-radius: 4px; margin-right: 15px; white-space: nowrap; }
+
+        .sub-nav {
+            background: linear-gradient(120deg, #ff6b8b 0%, #ffb3b3 40%, #ffe5b4 75%, #d8b4f8 100%) !important;
+            padding: 10px 5%; display: flex; flex-direction: column; gap: 12px; align-items: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1); position: relative; z-index: 5000;
+        }
+
+        .nav-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; }
+        .nav-links a, .dropdown-btn {
+            font-weight: 600; color: #333; font-size: 14px; cursor: pointer; background: none;
+            border: none; padding: 6px 10px; display: flex; align-items: center; gap: 5px; text-decoration: none;
+        }
+
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content {
+            display: none; position: absolute; background-color: #ffffff !important; min-width: 260px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2) !important; z-index: 99999 !important;
+            border-radius: 8px; border: 1px solid #ddd; padding: 6px 0; top: 100%; left: 0;
+        }
+        .dropdown-content.show-dropdown { display: block !important; }
+        .dropdown-content a {
+            color: #333 !important; padding: 10px 18px !important; text-decoration: none !important;
+            display: flex !important; align-items: center; gap: 10px; text-align: left; font-size: 14px !important;
+            border-bottom: 1px solid #f5f5f5; transition: background 0.2s;
+        }
+        .dropdown-content a:hover { background-color: #f1f1f1 !important; color: #1a73e8 !important; }
+
+        .search-container { width: 100%; display: flex; justify-content: center; }
+        .search-container input { padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; width: 100%; max-width: 300px; }
+
+        /* Footer */
+        .main-footer {
+            background: #222222 !important; color: #ffffff !important; padding: 40px 5% 20px !important;
+            margin-top: auto; position: relative !important; z-index: 10 !important; 
+        }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; }
+        .footer-section h4 { color: #ffffff !important; border-bottom: 2px solid #1a73e8 !important; display: inline-block !important; margin-bottom: 15px !important; padding-bottom: 5px !important; }
+        .footer-section p, .footer-section a { font-size: 14px !important; color: #cccccc !important; margin-bottom: 8px !important; display: block !important; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a { color: #ffffff !important; }
+        .social-icons a:hover { color: #1a73e8 !important; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 13px; color: #888; }
+
+        /* Responsive Dashboard Styles */
+        @media (min-width: 769px) {
+            .sub-nav { flex-direction: row; justify-content: space-between; padding: 5px 5%; }
+            .nav-links a, .dropdown-btn { padding: 3px 10px; }
+            .nav-links { width: auto; gap: 15px; }
+            .search-container { width: auto; }
+            .dropdown:hover .dropdown-content { display: block !important; }
+        }
+        @media (max-width: 768px) {
+            header { padding: 24px 10px 10px 10px !important; gap: 5px !important; }
+            .logo-img { height: 35px !important; width: 35px !important; }
+            .main-title-header { font-size: 30px !important; white-space: nowrap !important; }
+            .header-right { gap: 14px !important; }
+            .staff-logo-img { width: 38px !important; height: 38px !important; border-radius: 50% !important; }
+            #bell-icon, .profile-icon { font-size: 32px !important; width: 32px !important; height: 32px !important; }
+            .user-name, .user-email, .staff-text-indicator { display: none !important; }
+            .staff-logo-link { margin-left: auto !important; }
+            .nav-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; justify-items: center; }
+            .nav-links a, .dropdown-btn { font-size: 11px; padding: 5px 2px; flex-direction: column; text-align: center; }
+            .dropdown-content { left: 50% !important; transform: translateX(-50%) !important; }
+            .hw-page-title { font-size: 18px !important; }
+        }
+
+        /* =========================================================
+           --- Homework Editor பிரத்யேக வடிவமைப்பு ---
+           ========================================================= */
+        main.homework-main { 
+            padding: 30px; 
+            max-width: 1050px; 
+            margin: 30px auto; 
+            width: 95%; 
+            background: rgba(255, 255, 255, 0.95); /* Yellow bg-க்கு மேல் தெளிவாக தெரிய */
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .hw-page-title { font-size: 24px; font-weight: 700; color: #1a73e8; }
+        .back-btn { background: #6c757d; color: white; padding: 8px 15px; border-radius: 6px; text-decoration: none; font-weight: bold; }
+        .back-btn:hover { background: #5a6268; }
+        
+        .controls-section { background: #f8f9fa; padding: 25px; border-radius: 12px; display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 25px; border: 1px solid #eee; }
+        .input-group { display: flex; flex-direction: column; flex: 1; }
+        .input-group label { font-weight: 600; font-size: 14px; margin-bottom: 5px; color: #333;}
+        .input-group select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 15px; }
+        
+        #calendarSection, #editorSection { display: none; background: #fff; padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .days-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 10px; }
+        .day-box { background: #f8f9fa; border: 2px solid #e9ecef; border-radius: 8px; padding: 15px 10px; text-align: center; font-weight: bold; cursor: pointer; transition: 0.2s;}
+        .day-box:hover, .day-box.active { background: #1a73e8; color: white; border-color: #1a73e8; }
+        .day-box.has-data { border-bottom: 4px solid #28a745; background-color: #e8f5e9; }
+        
+        .hw-table { width: 100%; border-collapse: collapse; min-width: 800px; margin-top: 10px;}
+        .hw-table th, .hw-table td { border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 14px; color: #333;}
+        .hw-table th { background-color: #e8f0fe; color: #0d47a1; font-weight: bold;}
+        .hw-table input[type="text"] { width: 100%; border: none; outline: none; text-align: center; background: transparent; padding: 5px; }
+        .hw-table input[type="text"]:focus { border-bottom: 2px solid #1a73e8; background: #f8f9fa;}
+        .hw-table input[type="checkbox"] { transform: scale(1.3); cursor: pointer;}
+        
+        .send-btn { background: #e91e63; color: white; border: none; padding: 15px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; transition: 0.3s;}
+        .send-btn:hover { background: #c2185b; box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);}
+        .notice-msg { background: #e3f2fd; color: #1a73e8; padding: 10px; border-radius: 5px; font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none; border-left: 4px solid #1a73e8;}
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="image_0.png" alt="Logo" class="logo-img">
+            <h1 class="main-title-header">Class Room</h1>
+            <a href="dashboard2.html" class="staff-logo-link" title="Staff Room-க்குச் செல்">
+                <img src="1000015786.png" alt="Staff Logo" class="staff-logo-img" onerror="this.src='staff.png'">
+                <span class="staff-text-indicator">Switch to Staff Room</span>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <div class="notification-container" style="position: relative; cursor: pointer;">
+                <i class="bi bi-bell-fill" id="bell-icon" style="font-size: 32px; color: #ff0000;" onclick="toggleNotificationBox()"></i>
+                <span id="noti-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;">0</span>
+                <div id="noti-box">
+                    <h4 style="font-size: 14px; color: #4a148c; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                        <span>அறிவிப்புகள் (Notifications)</span>
+                        <span style="font-size: 11px; color: #666; cursor: pointer;" onclick="clearNotifications()">Clear All</span>
+                    </h4>
+                    <div id="noti-list" style="font-size: 13px; color: #333;">
+                        <p style="text-align: center; color: #888; padding: 10px;">புதிய அறிவிப்புகள் ஏதுமில்லை!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)">
+                <i class="bi bi-person-circle profile-icon" style="font-size: 32px; color: #ffb300;"></i>
+                <div class="user-details">
+                    <span class="user-name">ஆசிரியர்</span>
+                    <span class="user-email" id="user-email-top">Loading...</span> 
+                </div>
+                <div id="user-dropdown" style="display: none; position: absolute; top: 48px; right: 0; background: #ffffff !important; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important; z-index: 99999999 !important; padding: 12px; text-align: left;">
+                    <p style="margin: 0; font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                        <i class="bi bi-person-fill-check"></i> Log in மின்னஞ்சல்:
+                    </p>
+                    <p id="user-email-dropdown" style="margin: 0; font-size: 13px; color: #1a73e8; font-weight: 600; word-break: break-all; margin-bottom: 10px;">Loading...</p>
+                    <div id="admin-btn-wrapper" style="display: none; margin-bottom: 10px;">
+                        <a href="admin.html" style="color: #1a73e8; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #e8f0fe; padding: 8px 12px; border-radius: 6px;">
+                            <i class="bi bi-shield-lock-fill"></i> Admin Panel (அட்மின்)
+                        </a>
+                    </div>
+                    <div style="height: 1px; background: #eee; margin-bottom: 8px;"></div>
+                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="news-ticker-bar">
+        <div class="ticker-label">முக்கிய அறிவிப்பு:</div>
+        <marquee behavior="scroll" direction="left" id="web-ticker">செய்திகள் ஏற்றப்படுகிறது...</marquee>
+    </div>
+
+    <nav class="sub-nav">
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="bi bi-house-door-fill"></i><span>Home</span></a>
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleServicesMenu(event)">
+                    <i class="bi bi-grid-fill"></i> <span>Services</span>
+                </button>
+                <div class="dropdown-content" id="servicesDropdown">
+                    <a href="data-input.html"><i class="bi bi-database-fill"></i> Data Input</a>
+                    <a href="applications.html"><i class="bi bi-file-earmark-text"></i> Forms (படிவங்கள்)</a>
+                    <a href="registers.html"><i class="bi bi-journal-check"></i> Registers (பதிவேடுகள்)</a>
+                    <a href="daily.html"><i class="bi bi-chat-left-text"></i> Daily Messages</a>
+                    <a href="tlm.html"><i class="bi bi-book"></i> TLMs (கற்றல் கருவிகள்)</a>
+                    <a href="homework.html"><i class="bi bi-pencil-square"></i> Daily Homework</a>
+                    <a href="exam.html"><i class="bi bi-pen"></i> Exam (தேர்வுகள்)</a>
+                    <a href="gos.html"><i class="bi bi-file-earmark-pdf-fill"></i> GO's (அரசாணைகள்)</a>
+                    <a href="lesson-plan.html"><i class="bi bi-journal-text"></i> Lesson Plan (பாடக்குறிப்பு)</a>
+                    <a href="others.html"><i class="bi bi-briefcase"></i> Other Resources</a>
+                </div>
+            </div>
+            <a href="about.html"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a>
+            <a href="contact.html"><i class="bi bi-envelope-fill"></i><span>Contact Us</span></a>
+        </div>
+        <div class="search-container">
+            <div style="position: relative; width: 100%; max-width: 300px;">
+                <input type="text" id="dashboard-search" placeholder="வலைத்தளத்தில் தேடுக..." oninput="globalSearch()" autocomplete="off">
+                <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0px 8px 16px rgba(0,0,0,0.15); z-index: 100000; max-height: 350px; overflow-y: auto; margin-top: 5px; text-align: left;">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="homework-main">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #e8f0fe; padding-bottom: 15px;">
+            <div class="hw-page-title"><i class="bi bi-journal-check"></i> Teacher's Homework Editor</div>
+            <a href="dashboard.html" class="back-btn"><i class="bi bi-arrow-left"></i> Dashboard</a>
+        </div>
+
+        <div class="controls-section">
+            <div class="input-group">
+                <label>வகுப்பைத் தேர்ந்தெடுக்கவும்:</label>
+                <select id="classSelect" onchange="checkSelections()">
+                    <option value="">-- வகுப்பைத் தேர்வு செய்க --</option>
+                    <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">வகுப்பு ${i}</option>`);</script>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>மாதத்தைத் தேர்ந்தெடுக்கவும்:</label>
+                <select id="monthSelect" onchange="checkSelections()">
+                    <option value="">-- மாதத்தைத் தேர்வு செய்க --</option>
+                    <option value="1">ஜனவரி</option><option value="2">பிப்ரவரி</option><option value="3">மார்ச்</option>
+                    <option value="4">ஏப்ரல்</option><option value="5">மே</option><option value="6">ஜூன்</option>
+                    <option value="7">ஜூலை</option><option value="8">ஆகஸ்ட்</option><option value="9">செப்டம்பர்</option>
+                    <option value="10">அக்டோபர்</option><option value="11">நவம்பர்</option><option value="12">டிசம்பர்</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="calendarSection">
+            <h3 style="color: #1a73e8; text-align: center; margin-bottom: 15px;" id="monthDisplayTitle">நாட்கள்</h3>
+            <div class="days-grid" id="daysContainer"></div>
+        </div>
+
+        <div id="editorSection">
+            <h3 style="margin-bottom: 15px; color: #333;">ஹோம்வொர்க் - <span id="selectedDateText" style="color: #ff9800;"></span></h3>
+            <div id="noticeMsg" class="notice-msg"><i class="bi bi-info-circle-fill"></i> அட்மின் பதிவு செய்துள்ள ஹோம்வொர்க் இங்கு காண்பிக்கப்பட்டுள்ளது. நீங்கள் இதை எடிட் செய்து அனுப்பலாம்.</div>
+            
+            <div style="overflow-x:auto;" id="tableContainer"></div>
+            <button class="send-btn" onclick="sendToStudents()"><i class="bi bi-send-fill"></i> Send to Students (மாணவர்களுக்கு அனுப்பு)</button>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>தொடர்புக்கு</h4>
+                <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
+                <p>தமிழ்நாடு, இந்தியா.</p>
+            </div>
+            <div class="footer-section">
+                <h4>உதவி & மன்றம்</h4>
+                <p><a href="forum.html">Forum / கலந்துரையாடல்</a></p>
+                <p><a href="help-center.html">Help Center / உதவி</a></p>
+                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy & Terms / விதிமுறைகள்</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>பின் தொடர</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/18Z5eobDmT/" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://x.com/TnTeacherFriend" target="_blank" title="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://youtube.com/@tnteachersfriend?si=3cNg_jEno8je7It7" target="_blank" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="https://t.me/+VvYNqgx676RmZDZl" target="_blank" title="Telegram"><i class="bi bi-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek", 
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com" 
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const database = firebase.database();
+
+        // --- Dashboard UI Elements & Scripts ---
+        function toggleNotificationBox() {
+            let box = document.getElementById('noti-box');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        function listenNotifications() {
+            database.ref('global_notifications').on('value', (snapshot) => {
+                let notiList = document.getElementById('noti-list');
+                let badge = document.getElementById('noti-badge');
+                if (snapshot.exists()) {
+                    notiList.innerHTML = ""; 
+                    let count = 0;
+                    snapshot.forEach((childSnapshot) => {
+                        let noti = childSnapshot.val();
+                        let date = noti.date ? new Date(noti.date).toLocaleDateString('ta-IN') : "";
+                        notiList.innerHTML += `
+                            <div class="noti-item">
+                                <strong>${noti.title}</strong>
+                                <p>${noti.message}</p>
+                                <span class="noti-time">${date}</span>
+                            </div>`;
+                        count++;
+                    });
+                    badge.innerText = count;
+                    badge.style.display = 'block';
+                }
+            });
+        }
+
+        function clearNotifications() {
+            document.getElementById('noti-list').innerHTML = "<p style='text-align: center; color: #888; padding: 10px;'>புதிய அறிவிப்புகள் ஏதுமில்லை!</p>";
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        function toggleServicesMenu(event) {
+            event.stopPropagation();
+            let dropdown = document.getElementById('servicesDropdown');
+            if(dropdown) dropdown.classList.toggle('show-dropdown');
+        }
+
+        function toggleUserDropdown(event) {
+            event.stopPropagation(); 
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            if (servicesDropdown) servicesDropdown.classList.remove('show-dropdown');
+            
+            let dropdown = document.getElementById('user-dropdown');
+            if (dropdown) dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.addEventListener('click', function(e) {
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            let dropdownBtn = document.querySelector('.dropdown-btn');
+            if (servicesDropdown && !servicesDropdown.contains(e.target) && e.target !== dropdownBtn) {
+                servicesDropdown.classList.remove('show-dropdown');
+            }
+            
+            let userDropdown = document.getElementById('user-dropdown');
+            let wrapper = document.querySelector('.user-profile-wrapper');
+            if (userDropdown && userDropdown.style.display === 'block') {
+                if (wrapper && !wrapper.contains(e.target)) userDropdown.style.display = 'none';
+            }
+
+            let searchContainer = document.querySelector('.search-container');
+            let suggestionsBox = document.getElementById('search-suggestions');
+            if (searchContainer && !searchContainer.contains(e.target)) {
+                if(suggestionsBox) suggestionsBox.style.display = "none";
+            }
+        });
+
+        function handleLogout(event) {
+            event.preventDefault();
+            firebase.auth().signOut().then(() => { window.location.href = "index.html"; });
+        }
+
+        // Global Search Logic
+        const searchIndex = [
+            { title: "Data Input (தரவு உள்ளீடு)", url: "data-input.html", keywords: "data entry, student details, emis" },
+            { title: "Forms (படிவங்கள்)", url: "applications.html", keywords: "leave letter, forms" },
+            { title: "Registers (பதிவேடுகள்)", url: "registers.html", keywords: "attendance, registers" },
+            { title: "Daily Messages (தினசரி தகவல்கள்)", url: "daily.html", keywords: "news, messages" },
+            { title: "TLMs (கற்றல் கருவிகள்)", url: "tlm.html", keywords: "tlms, materials" },
+            { title: "Daily Homework (வீட்டுப்பாடம்)", url: "homework.html", keywords: "homework" },
+            { title: "Exam (தேர்வுகள்)", url: "exam.html", keywords: "exam, test" },
+            { title: "GO's (அரசாணைகள்)", url: "gos.html", keywords: "government orders, rules" },
+            { title: "Lesson Plan (பாடக்குறிப்பு)", url: "lesson-plan.html", keywords: "lesson plan" },
+            { title: "Other Resources (பிற வளங்கள்)", url: "others.html", keywords: "software, tools" }
+        ];
+
+        function globalSearch() {
+            let input = document.getElementById('dashboard-search').value.toLowerCase().trim();
+            let suggestionsBox = document.getElementById('search-suggestions');
+            suggestionsBox.innerHTML = ""; 
+            if (input.length === 0) { suggestionsBox.style.display = "none"; return; }
+            let matches = searchIndex.filter(item => item.title.toLowerCase().includes(input) || item.keywords.toLowerCase().includes(input));
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    let div = document.createElement('div');
+                    div.innerHTML = `<a href="${match.url}" style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; font-size: 14px;"><i class="bi bi-search" style="color: #1a73e8;"></i> <span>${match.title}</span></a>`;
+                    let link = div.querySelector('a');
+                    link.onmouseover = () => link.style.backgroundColor = "#f8f9fa";
+                    link.onmouseout = () => link.style.backgroundColor = "transparent";
+                    suggestionsBox.appendChild(div);
+                });
+                suggestionsBox.style.display = "block";
+            } else {
+                suggestionsBox.innerHTML = `<div style="padding: 15px; color: #dc3545; font-size: 14px; text-align: center;"><i class="bi bi-emoji-frown"></i> முடிவுகள் காணப்படவில்லை</div>`;
+                suggestionsBox.style.display = "block";
+            }
+        }
+
+        // Auth & Firebase Load
+        window.addEventListener('DOMContentLoaded', () => {
+            listenNotifications();
+            
+            database.ref('site_updates').on('value', (snapshot) => {
+                if (snapshot.exists() && snapshot.val().ticker) {
+                    document.getElementById('web-ticker').innerText = snapshot.val().ticker;
+                }
+            });
+
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    document.getElementById('user-email-top').innerText = user.email;
+                    document.getElementById('user-email-dropdown').innerText = user.email;
+                    if (user.email === "tnteachersfriend@gmail.com") {
+                        document.getElementById('admin-btn-wrapper').style.display = "block";
+                    }
+                }
+            });
+
+            buildHomeworkTable(); // Homework table load
+        });
+
+        // --- Homework Editor Logic ---
+        let udiseNumber = localStorage.getItem('udise_number');
+        if(!udiseNumber) {
+            udiseNumber = prompt("உங்களது பள்ளியின் UDISE எண்ணை உள்ளிடவும்:");
+            if(udiseNumber) localStorage.setItem('udise_number', udiseNumber);
+        }
+
+        let currentYear = new Date().getFullYear();
+        let selectedDate = null, selectedClassVal = null, selectedMonthVal = null;
+        const subjectNames = ['தமிழ்', 'ஆங்கிலம்', 'கணக்கு', 'அறிவியல்', 'சமூக அறிவியல்', 'மற்றவை'];
+
+        function buildHomeworkTable() {
+            let html = `<table class="hw-table">
+                <thead><tr><th rowspan="2">வ.எண்</th><th rowspan="2">பாடம்</th><th rowspan="2">பக்க எண்</th><th rowspan="2">கேள்வி எண்</th><th rowspan="2">விவரம்</th><th colspan="3">செயல்பாடு</th></tr>
+                <tr><th>Read</th><th>Write</th><th>Test</th></tr></thead><tbody>`;
+            subjectNames.forEach((sub, i) => {
+                for(let j = 0; j < 2; j++) {
+                    html += `<tr>`;
+                    if(j === 0) html += `<td rowspan="2">${i+1}</td><td rowspan="2"><b>${sub}</b></td>`;
+                    html += `<td><input type="text" id="sub_${i}_page_${j}" placeholder="-"></td>
+                        <td><input type="text" id="sub_${i}_qno_${j}" placeholder="-"></td>
+                        <td style="text-align:left;"><input type="text" id="sub_${i}_desc_${j}" placeholder="..."></td>
+                        <td><input type="checkbox" id="sub_${i}_read_${j}"></td>
+                        <td><input type="checkbox" id="sub_${i}_write_${j}"></td>
+                        <td><input type="checkbox" id="sub_${i}_test_${j}"></td></tr>`;
+                }
+            });
+            html += `</tbody></table>`;
+            document.getElementById('tableContainer').innerHTML = html;
+        }
+
+        function checkSelections() {
+            selectedClassVal = document.getElementById('classSelect').value;
+            selectedMonthVal = document.getElementById('monthSelect').value;
+            
+            document.getElementById('editorSection').style.display = 'none';
+            document.getElementById('calendarSection').style.display = 'none';
+
+            if(selectedClassVal && selectedMonthVal) {
+                document.getElementById('monthDisplayTitle').innerText = 
+                    document.getElementById('monthSelect').options[document.getElementById('monthSelect').selectedIndex].text + 
+                    " - வகுப்பு " + selectedClassVal;
+                generateDaysGrid(selectedMonthVal);
+                document.getElementById('calendarSection').style.display = 'block';
+            }
+        }
+
+        function generateDaysGrid(month) {
+            const container = document.getElementById('daysContainer');
+            container.innerHTML = ""; 
+            const daysInMonth = new Date(currentYear, month, 0).getDate();
+            
+            for(let i = 1; i <= daysInMonth; i++) {
+                const box = document.createElement('div');
+                box.className = 'day-box';
+                box.innerText = i;
+                box.id = `daybox-${i}`;
+                box.onclick = () => onDateClick(i, box);
+                container.appendChild(box);
+            }
+            highlightExistingHomework(month);
+        }
+
+        function highlightExistingHomework(month) {
+            if(!udiseNumber || !selectedClassVal) return;
+            // ஏற்கனவே டேட்டா உள்ளதா என்பதை சரிபார்த்து பச்சையாக மாற்ற
+            database.ref(`school_profile/${udiseNumber}/homework_history/class_${selectedClassVal}/${currentYear}_${month}`).once('value').then(snap => {
+                if(snap.exists()){
+                    let records = snap.val();
+                    for(let date in records) {
+                        let box = document.getElementById(`daybox-${date}`);
+                        if(box) box.classList.add('has-data');
+                    }
+                }
+            });
+        }
+
+        function clearTable() {
+            document.querySelectorAll('.hw-table input[type="text"]').forEach(inp => inp.value = "");
+            document.querySelectorAll('.hw-table input[type="checkbox"]').forEach(inp => inp.checked = false);
+            document.getElementById('noticeMsg').style.display = 'none';
+        }
+
+        function populateTable(dataArray) {
+            dataArray.forEach((sub, i) => {
+                sub.rows.forEach((row, j) => {
+                    if(document.getElementById(`sub_${i}_page_${j}`)) {
+                        document.getElementById(`sub_${i}_page_${j}`).value = row.page || "";
+                        document.getElementById(`sub_${i}_qno_${j}`).value = row.qno || "";
+                        document.getElementById(`sub_${i}_desc_${j}`).value = row.desc || "";
+                        document.getElementById(`sub_${i}_read_${j}`).checked = row.read || false;
+                        document.getElementById(`sub_${i}_write_${j}`).checked = row.write || false;
+                        document.getElementById(`sub_${i}_test_${j}`).checked = row.test || false;
+                    }
+                });
+            });
+        }
+
+        function onDateClick(date, boxElement) {
+            selectedDate = date;
+            document.querySelectorAll('.day-box').forEach(b => b.classList.remove('active')); 
+            boxElement.classList.add('active');
+            document.getElementById('selectedDateText').innerText = `${date}-${selectedMonthVal}-${currentYear}`;
+            document.getElementById('editorSection').style.display = 'block';
+            clearTable();
+
+            // 1. School Data Check
+            database.ref(`school_profile/${udiseNumber}/homework_history/class_${selectedClassVal}/${currentYear}_${selectedMonthVal}/${date}`).once('value').then((schoolSnap) => {
+                if(schoolSnap.exists()) {
+                    populateTable(JSON.parse(schoolSnap.val()));
+                } else {
+                    // 2. Global Data Check
+                    database.ref(`global_homework_template/class_${selectedClassVal}/${currentYear}_${selectedMonthVal}/${date}`).once('value').then((globalSnap) => {
+                        if(globalSnap.exists()) {
+                            populateTable(JSON.parse(globalSnap.val()));
+                            document.getElementById('noticeMsg').style.display = 'block'; 
+                        }
+                    });
+                }
+            });
+        }
+
+        function sendToStudents() {
+            let hwData = []; let hasAnyData = false;
+            subjectNames.forEach((sub, i) => {
+                let subData = { subject: sub, rows: [] };
+                for(let j=0; j<2; j++) {
+                    let row = {
+                        page: document.getElementById(`sub_${i}_page_${j}`).value.trim(),
+                        qno: document.getElementById(`sub_${i}_qno_${j}`).value.trim(),
+                        desc: document.getElementById(`sub_${i}_desc_${j}`).value.trim(),
+                        read: document.getElementById(`sub_${i}_read_${j}`).checked,
+                        write: document.getElementById(`sub_${i}_write_${j}`).checked,
+                        test: document.getElementById(`sub_${i}_test_${j}`).checked
+                    };
+                    if(row.page || row.qno || row.desc || row.read || row.write || row.test) hasAnyData = true;
+                    subData.rows.push(row);
+                }
+                hwData.push(subData);
+            });
+
+            if(!hasAnyData) return alert("விவரங்களை உள்ளிடவும்!");
+
+            let jsonContent = JSON.stringify(hwData);
+            let updates = {};
+            updates[`school_profile/${udiseNumber}/homework_history/class_${selectedClassVal}/${currentYear}_${selectedMonthVal}/${selectedDate}`] = jsonContent;
+            updates[`school_profile/${udiseNumber}/daily_tasks/class_${selectedClassVal}/homework`] = jsonContent;
+
+            database.ref().update(updates).then(() => {
+                alert(`வகுப்பு ${selectedClassVal} மாணவர்களுக்கு ஹோம்வொர்க் வெற்றிகரமாக அனுப்பப்பட்டது! 🎉`);
+                let dayBox = document.getElementById(`daybox-${selectedDate}`);
+                if(dayBox) dayBox.classList.add('has-data');
+                document.getElementById('noticeMsg').style.display = 'none';
+            }).catch(e => alert("பிழை: " + e.message));
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502" crossorigin="anonymous"></script>
+    <style>
+        /* --- General Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, #fff0f5 0%, #fefbd8 35%, #e6e6fa 70%, #ffe4e1 100%); 
+            color: #333; 
+            background-attachment: fixed;
+        }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- Header & Navigation (Dashboard-ல் உள்ளவாறு) --- */
+        header {
+            background: url('header-bg.png') no-repeat center center !important;
+            background-size: 100% 100% !important;
+            padding: 10px 2%; 
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            position: sticky; 
+            top: 0; 
+            z-index: 6000;
+            width: 100%;
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 70px; width: 70px; border-radius: 50%; object-fit: cover; }
+        .main-title { 
+            font-size: 48px; font-weight: 700; color: #1a73e8; 
+            text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 4px rgba(0, 0, 0, 0.15), -1px -1px 1px rgba(0, 0, 0, 0.05);
+        }
+
+        .staff-logo-link {
+            display: inline-flex; flex-direction: row; align-items: center; margin-left: 8vw; gap: 10px; text-decoration: none;
+        }
+        .staff-logo-img {
+            height: 70px; width: 70px; border-radius: 50%; object-fit: cover; border: 2px solid #1a73e8; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: transform 0.2s ease-in-out;
+        }
+        .staff-text-indicator {
+            font-size: 20px; font-weight: bold; color: #d32f2f; background: #fff; padding: 4px 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .staff-logo-img:hover { transform: scale(1.1); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+
+        .user-profile-wrapper {
+            display: flex; align-items: center; gap: 10px; background: #f1f8e9; padding: 5px 12px; border-radius: 20px; border: 1px solid #c8e6c9; position: relative;
+        }
+        .profile-icon { font-size: 30px; color: #1a73e8; }
+        .user-details { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-name { font-size: 14px; font-weight: 700; color: #333; }
+        .user-email { font-size: 11px; color: #666; font-weight: 400; }
+
+        #noti-box {
+            display: none; position: absolute; top: 40px; right: 0; background: white; width: 300px; max-width: 95vw; max-height: 400px; overflow-y: auto; border: 1px solid #ce93d8; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 2000; padding: 10px;
+        }
+        .noti-item { background: #f3e5f5; border-left: 4px solid #7b1fa2; padding: 10px; margin-bottom: 8px; border-radius: 4px; font-size: 12px; }
+        .noti-item .noti-time { font-size: 10px; color: #777; display: block; margin-top: 3px; text-align: right; }
+
+        /* --- News Ticker --- */
+        .news-ticker-bar { background: #1a73e8; color: white; display: flex; align-items: center; padding: 5px 5%; font-size: 14px; }
+        .ticker-label { background: #ffc107; color: #000; padding: 2px 10px; font-weight: bold; border-radius: 4px; margin-right: 15px; white-space: nowrap; }
+
+        /* --- Sub Navigation Bar --- */
+        .sub-nav {
+            background: linear-gradient(120deg, #ff6b8b 0%, #ffb3b3 40%, #ffe5b4 75%, #d8b4f8 100%) !important;
+            padding: 10px 5%; display: flex; flex-direction: column; gap: 12px; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.1); position: relative; z-index: 5000;
+        }
+        .nav-links { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; width: 100%; }
+        .nav-links a, .dropdown-btn { font-weight: 600; color: #333; font-size: 14px; cursor: pointer; background: none; border: none; padding: 6px 10px; display: flex; align-items: center; gap: 5px; text-decoration: none; }
+        
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: #ffffff !important; min-width: 260px; box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2) !important; z-index: 99999 !important; border-radius: 8px; border: 1px solid #ddd; padding: 6px 0; top: 100%; left: 0; }
+        .dropdown-content.show-dropdown { display: block !important; }
+        .dropdown-content a { color: #333 !important; padding: 10px 18px !important; text-decoration: none !important; display: flex !important; align-items: center; gap: 10px; text-align: left; font-size: 14px !important; border-bottom: 1px solid #f5f5f5; transition: background 0.2s; }
+        .dropdown-content a:hover { background-color: #f1f1f1 !important; color: #1a73e8 !important; }
+
+        .search-container { width: 100%; display: flex; justify-content: center; }
+        .search-container input { padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; width: 100%; max-width: 300px; }
+
+        /* --- Forum Layout Container --- */
+        .forum-container { 
+            max-width: 1100px; margin: 30px auto; padding: 0 20px; 
+            display: block; width: 100%;
+        }
+        .forum-table { display: table; width: 100%; border-collapse: separate; border-spacing: 20px 0; }
+        .forum-row { display: table-row; }
+        .forum-sidebar { display: table-cell; width: 280px; vertical-align: top; }
+        .forum-main { display: table-cell; vertical-align: top; }
+
+        /* --- Sidebar Category Menu --- */
+        .ask-btn {
+            background: #7b1fa2; color: white; border: none; width: 100%; padding: 14px; 
+            border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; 
+            box-shadow: 0 4px 10px rgba(123, 31, 162, 0.3); margin-bottom: 20px; transition: 0.3s;
+        }
+        .ask-btn:hover { background: #4a148c; transform: translateY(-2px); }
+
+        .category-box { background: white; border-radius: 10px; padding: 15px; border: 1px solid #e0e0e0; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .category-box h3 { font-size: 16px; color: #333; margin-bottom: 12px; padding-bottom: 5px; border-bottom: 2px solid #ffb6c1; }
+        .category-item { 
+            display: block; padding: 10px 12px; border-radius: 6px; color: #555; 
+            font-weight: 600; font-size: 14px; margin-bottom: 5px; cursor: pointer; transition: 0.3s;
+        }
+        .category-item:hover, .category-item.active { background: #f3e5f5; color: #7b1fa2; }
+        .category-item i { margin-right: 8px; }
+
+        /* --- Forum Feed / Cards --- */
+        .topic-card { 
+            background: #f3e5f5; border: 2px solid #ce93d8; border-radius: 12px; 
+            padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.3s;
+        }
+        .topic-card:hover { background: #e1bee7; border-color: #ba68c8; transform: translateY(-2px); }
+        .topic-tag { display: inline-block; background: #7b1fa2; color: white; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; }
+        .topic-title { font-size: 18px; font-weight: 700; color: #4a148c; margin-bottom: 8px; }
+        .topic-desc { font-size: 14px; color: #333; line-height: 1.5; margin-bottom: 15px; }
+        .topic-footer { border-top: 1px dashed #ce93d8; padding-top: 10px; display: table; width: 100%; font-size: 12px; color: #666; }
+        .footer-left { display: table-cell; text-align: left; vertical-align: middle; }
+        .footer-right { display: table-cell; text-align: right; vertical-align: middle; font-weight: 600; color: #7b1fa2; }
+
+        /* --- Modal Form Dialog Box (FIXED FOR OVERFLOW) --- */
+        .modal { 
+            display: none; /* JS will change to flex */
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); z-index: 20000;
+            align-items: center; justify-content: center;
+        }
+        .modal-content { 
+            background: white; width: 90%; max-width: 550px; 
+            padding: 25px; border-radius: 12px; border: 3px solid #ce93d8; position: relative;
+            max-height: 85vh; /* Prevents going off screen */
+            overflow-y: auto; /* Adds scrollbar if content exceeds max-height */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: #666; }
+        .modal h3 { color: #4a148c; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #333; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; outline: none; font-size: 14px;
+        }
+        .form-group textarea { height: 120px; resize: none; }
+        .submit-btn { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; font-size: 15px; }
+        .submit-btn:hover { background: #218838; }
+
+        /* --- Back Button --- */
+        .back-btn-container { max-width: 1100px; margin: 30px auto; padding: 0 20px; text-align: left; }
+        .back-link {
+            display: inline-flex; align-items: center; gap: 8px; background: #ff813d; color: white;
+            padding: 10px 25px; border-radius: 8px; font-weight: 600; font-size: 15px; transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 129, 61, 0.3);
+        }
+        .back-link:hover { background: #e65100; transform: translateX(-5px); }
+        .loading-text { text-align: center; font-size: 16px; color: #666; padding: 40px; }
+
+        /* --- Footer --- */
+        .main-footer { background: #222222 !important; color: #ffffff !important; padding: 40px 5% 20px !important; margin-top: 50px !important; position: relative !important; z-index: 10 !important; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; }
+        .footer-section h4 { color: #ffffff !important; border-bottom: 2px solid #1a73e8 !important; display: inline-block !important; margin-bottom: 15px !important; padding-bottom: 5px !important; }
+        .footer-section p, .footer-section a { font-size: 14px !important; color: #cccccc !important; margin-bottom: 8px !important; display: block !important; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a { color: #ffffff !important; }
+        .social-icons a:hover { color: #1a73e8 !important; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 13px; color: #888; }
+        .footer-bottom p { color: #888888 !important; }
+
+        /* --- Desktop Specific --- */
+        @media (min-width: 769px) {
+            .sub-nav { flex-direction: row; justify-content: space-between; padding: 5px 5%; }
+            .nav-links { width: auto; gap: 15px; }
+            .search-container { width: auto; }
+            .nav-links a, .dropdown-btn { padding: 3px 10px; }
+            .dropdown:hover .dropdown-content { display: block !important; }
+        }
+
+        /* --- Mobile Responsive Rules --- */
+        @media (max-width: 768px) {
+            header { display: flex !important; flex-direction: row !important; justify-content: space-between !important; align-items: center !important; flex-wrap: nowrap !important; padding: 24px 10px 10px 10px !important; gap: 5px !important; }
+            .logo-area { display: flex !important; align-items: center !important; gap: 4px !important; flex-shrink: 0 !important; }
+            .logo-img { height: 35px !important; width: 35px !important; }
+            .main-title { font-size: 30px !important; white-space: nowrap !important; line-height: 1.1 !important; }
+            .header-right { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 14px !important; flex: 1 !important; margin: 0 !important; padding: 0 !important; }
+            
+            .staff-logo-link, .notification-container, .user-profile-wrapper { margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; min-width: unset !important; width: auto !important; height: auto !important; }
+            .staff-logo-img { width: 38px !important; height: 38px !important; border: 1.5px solid #1a73e8 !important; border-radius: 50% !important; object-fit: cover !important; }
+            .staff-text-indicator { display: none; }
+
+            #bell-icon, .profile-icon { font-size: 32px !important; width: 32px !important; height: 32px !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; margin: 0 !important; }
+            #bell-icon { color: #ff0000 !important; }
+            .profile-icon { color: #8e24aa !important; }
+
+            .user-name, .user-email, .logout-text { display: none !important; }
+            #noti-box { width: 260px; right: -20px; top: 38px; font-size: 12px; }
+            
+            .nav-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; justify-items: center; }
+            .nav-links a, .dropdown-btn { font-size: 11px; padding: 5px 2px; flex-direction: column; gap: 2px; text-align: center; }
+            .nav-links a i, .dropdown-btn i { font-size: 14px; }
+            .dropdown-content { left: 50% !important; transform: translateX(-50%) !important; position: absolute !important; }
+            
+            /* Forum Responsive Layout */
+            .forum-table, .forum-row { display: block; width: 100%; }
+            .forum-sidebar, .forum-main { display: block; width: 100%; }
+            .forum-sidebar { margin-bottom: 20px; }
+            .forum-table { border-spacing: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="image_0.png" alt="Logo" class="logo-img">
+            <h1 class="main-title">Class Room</h1>
+            <a href="dashboard2.html" class="staff-logo-link" title="Staff Room-க்குச் செல்">
+                <img src="1000015786.png" alt="Staff Logo" class="staff-logo-img" onerror="this.src='staff.png'">
+                <span class="staff-text-indicator">Switch to Staff Room</span>
+            </a>
+        </div>
+
+        <div class="header-right">
+            <div class="notification-container" style="position: relative; cursor: pointer;">
+                <i class="bi bi-bell-fill" id="bell-icon" style="font-size: 32px; color: #ff0000;" onclick="toggleNotificationBox()"></i>
+                <span id="noti-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;">0</span>
+
+                <div id="noti-box">
+                    <h4 style="font-size: 14px; color: #4a148c; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between;">
+                        <span>அறிவிப்புகள் (Notifications)</span>
+                        <span style="font-size: 11px; color: #666; cursor: pointer;" onclick="clearNotifications()">Clear All</span>
+                    </h4>
+                    <div id="noti-list" style="font-size: 13px; color: #333;">
+                        <p style="text-align: center; color: #888; padding: 10px;">புதிய அறிவிப்புகள் ஏதுமில்லை!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)" style="cursor: pointer;">
+                <i class="bi bi-person-circle profile-icon" style="font-size: 32px; color: #ffb300;"></i>
+                <div class="user-details">
+                    <span class="user-name">ஆசிரியர்</span>
+                    <span class="user-email" id="user-email-top">Loading...</span> 
+                </div>
+
+                <div id="user-dropdown" style="display: none; position: absolute; top: 48px; right: 0; background: #ffffff !important; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important; z-index: 99999999 !important; padding: 12px; text-align: left;">
+                    <p style="margin: 0; font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                        <i class="bi bi-person-fill-check"></i> Log in மின்னஞ்சல்:
+                    </p>
+                    <p id="user-email-dropdown" style="margin: 0; font-size: 13px; color: #1a73e8; font-weight: 600; word-break: break-all; margin-bottom: 10px;">Loading...</p>
+                    <div id="admin-btn-wrapper" style="display: none; margin-bottom: 10px;">
+                        <a href="admin.html" style="color: #1a73e8; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #e8f0fe; padding: 8px 12px; border-radius: 6px;">
+                            <i class="bi bi-shield-lock-fill"></i> Admin Panel (அட்மின்)
+                        </a>
+                    </div>
+                    <div style="height: 1px; background: #eee; margin-bottom: 8px;"></div>
+                    
+                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="news-ticker-bar">
+        <div class="ticker-label">முக்கிய அறிவிப்பு:</div>
+        <marquee behavior="scroll" direction="left" id="web-ticker">செய்திகள் ஏற்றப்படுகிறது...</marquee>
+    </div>
+
+    <nav class="sub-nav">
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="bi bi-house-door-fill"></i><span>Home</span></a>
+            
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleServicesMenu(event)">
+                    <i class="bi bi-grid-fill"></i> <span>Services</span>
+                </button>
+                <div class="dropdown-content" id="servicesDropdown">
+                    <a href="data-input.html"><i class="bi bi-database-fill"></i> Data Input</a>
+                    <a href="applications.html"><i class="bi bi-file-earmark-text"></i> Forms (படிவங்கள்)</a>
+                    <a href="registers.html"><i class="bi bi-journal-check"></i> Registers (பதிவேடுகள்)</a>
+                    <a href="daily.html"><i class="bi bi-chat-left-text"></i> Daily Messages</a>
+                    <a href="tlm.html"><i class="bi bi-book"></i> TLMs (கற்றல் கருவிகள்)</a>
+                    <a href="homework.html"><i class="bi bi-pencil-square"></i> Daily Homework</a>
+                    <a href="exam.html"><i class="bi bi-pen"></i> Exam (தேர்வுகள்)</a>
+                    <a href="gos.html"><i class="bi bi-file-earmark-pdf-fill"></i> GO's (அரசாணைகள்)</a>
+                    <a href="lesson-plan.html"><i class="bi bi-journal-text"></i> Lesson Plan (பாடக்குறிப்பு)</a>
+                    <a href="others.html"><i class="bi bi-briefcase"></i> Other Resources</a>
+                </div>
+            </div>
+
+            <a href="about.html"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a>
+            <a href="contact.html"><i class="bi bi-envelope-fill"></i><span>Contact Us</span></a>
+        </div>
+        <div class="search-container">
+            <div style="position: relative; width: 100%; max-width: 300px;">
+                <input type="text" id="dashboard-search" placeholder="வலைத்தளத்தில் தேடுக..." oninput="globalSearch()" autocomplete="off">
+                <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0px 8px 16px rgba(0,0,0,0.15); z-index: 100000; max-height: 350px; overflow-y: auto; margin-top: 5px; text-align: left;">
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="forum-container">
+        <div style="margin-bottom: 20px;">
+            <div style="position: relative; max-width: 100%; background: #ffffff; padding: 5px 15px; border-radius: 25px; display: flex; align-items: center; border: 1px solid #ddd;">
+                <i class="bi bi-search" style="color: #666;"></i>
+                <input type="text" id="forum-search" placeholder="விவாதங்களைத் தேடுக..." onkeyup="filterSearch()" style="border: none; outline: none; padding-left: 10px; width: 100%;">
+            </div>
+        </div>
+
+        <div class="forum-table">
+            <div class="forum-row">
+                <div class="forum-sidebar">
+                    <button class="ask-btn" onclick="openModal()"><i class="bi bi-plus-circle me-2"></i> புதிய விவாதம்</button>
+                    
+                    <div class="category-box">
+                        <h3>பிரிவுகள் (Categories)</h3>
+                        <span class="category-item active" onclick="filterCategory('all', this)"><i class="bi bi-collection"></i> அனைத்து விவாதங்கள்</span>
+                        <span class="category-item" onclick="filterCategory('பொதுவானவை', this)"><i class="bi bi-chat-left-text"></i> பொதுவானவை</span>
+                        <span class="category-item" onclick="filterCategory('பாடச் சந்தேகங்கள்', this)"><i class="bi bi-book"></i> பாடச் சந்தேகங்கள்</span>
+                        <span class="category-item" onclick="filterCategory('அரசாணைகள்', this)"><i class="bi bi-file-earmark-text"></i> அரசாணைகள் & G.O</span>
+                        <span class="category-item" onclick="filterCategory('தொழில்நுட்ப உதவி', this)"><i class="bi bi-laptop"></i> தொழில்நுட்ப உதவி</span>
+                    </div>
+                </div>
+
+                <div class="forum-main" id="forum-feed">
+                    <div class="loading-text"><i class="bi bi-arrow-clockwise"></i> விவாதங்கள் லோடு ஆகிறது...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="askModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h3>புதிய விவாதத்தைத் தொடங்கு</h3>
+            
+            <div class="form-group">
+                <label>ஆசிரியர் பெயர் (Name):</label>
+                <input type="text" id="authorName" placeholder="உங்கள் பெயரை உள்ளிடவும்">
+            </div>
+            
+            <div class="form-group">
+                <label>விவாதத் தலைப்பு (Topic Title):</label>
+                <input type="text" id="topicTitle" placeholder="தலைப்பைச் சுருக்கமாக தட்டச்சு செய்யவும்">
+            </div>
+            
+            <div class="form-group">
+                <label>பிரிவு (Category):</label>
+                <select id="topicCategory">
+                    <option value="பொதுவானவை">பொதுவானவை</option>
+                    <option value="பாடச் சந்தேகங்கள்">பாடச் சந்தேகங்கள்</option>
+                    <option value="அரசாணைகள்">அரசாணைகள் & G.O</option>
+                    <option value="தொழில்நுட்ப உதவி">தொழில்நுட்ப உதவி</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>விவரம் (Description):</label>
+                <textarea id="topicDesc" placeholder="உங்கள் கருத்து அல்லது கேள்வியை விரிவாக எழுதவும்..."></textarea>
+            </div>
+            
+            <button class="submit-btn" onclick="saveTopicToFirebase()">விவாதத்தைப் பதிவிடு (Post Topic)</button>
+        </div>
+    </div>
+
+    <div class="back-btn-container">
+        <a href="dashboard.html" class="back-link">
+            <i class="bi bi-arrow-left"></i> முதன்மைப் பக்கம் (Back to Dashboard)
+        </a>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>தொடர்புக்கு</h4>
+                <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
+                <p>தமிழ்நாடு, இந்தியா.</p>
+            </div>
+            <div class="footer-section">
+                <h4>உதவி & மன்றம்</h4>
+                <p><a href="forum.html">Forum / கலந்துரையாடல்</a></p>
+                <p><a href="help-center.html">Help Center / உதவி</a></p>
+                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy & Terms / விதிமுறைகள்</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>பின் தொடர</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/18Z5eobDmT/" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://x.com/TnTeacherFriend" target="_blank" title="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://youtube.com/@tnteachersfriend?si=3cNg_jEno8je7It7" target="_blank" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="https://t.me/+VvYNqgx676RmZDZl" target="_blank" title="Telegram"><i class="bi bi-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script> 
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+            messagingSenderId: "294698361211",
+            appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const database = firebase.database();
+
+        // --- GLOBAL HEADER & NAVIGATION FUNCTIONS ---
+        function toggleNotificationBox() {
+            let box = document.getElementById('noti-box');
+            box.style.display = box.style.display === 'block' ? 'none' : 'block';
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        function listenNotifications() {
+            database.ref('global_notifications').on('value', (snapshot) => {
+                let notiList = document.getElementById('noti-list');
+                let badge = document.getElementById('noti-badge');
+                if (snapshot.exists()) {
+                    notiList.innerHTML = ""; 
+                    let count = 0;
+                    snapshot.forEach((childSnapshot) => {
+                        let noti = childSnapshot.val();
+                        let date = noti.date ? new Date(noti.date).toLocaleDateString('ta-IN') : "";
+                        notiList.innerHTML += `
+                            <div class="noti-item">
+                                <strong>${noti.title}</strong>
+                                <p>${noti.message}</p>
+                                <span class="noti-time">${date}</span>
+                            </div>
+                        `;
+                        count++;
+                    });
+                    badge.innerText = count;
+                    badge.style.display = 'block';
+                }
+            });
+        }
+
+        function clearNotifications() {
+            document.getElementById('noti-list').innerHTML = "<p style='text-align: center; color: #888; padding: 10px;'>புதிய அறிவிப்புகள் ஏதுமில்லை!</p>";
+            document.getElementById('noti-badge').style.display = 'none';
+        }
+
+        function toggleServicesMenu(event) {
+            event.stopPropagation();
+            let dropdown = document.getElementById('servicesDropdown');
+            if (dropdown) dropdown.classList.toggle('show-dropdown');
+        }
+
+        function toggleUserDropdown(event) {
+            event.stopPropagation(); 
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            if (servicesDropdown) servicesDropdown.classList.remove('show-dropdown');
+            
+            let dropdown = document.getElementById('user-dropdown');
+            if (dropdown) {
+                dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        // Global Click Listener for dropdowns and Modals
+        window.addEventListener('click', function(e) {
+            let servicesDropdown = document.getElementById('servicesDropdown');
+            let dropdownBtn = document.querySelector('.dropdown-btn');
+            if (servicesDropdown && !servicesDropdown.contains(e.target) && e.target !== dropdownBtn) {
+                servicesDropdown.classList.remove('show-dropdown');
+            }
+            
+            let userDropdown = document.getElementById('user-dropdown');
+            let wrapper = document.querySelector('.user-profile-wrapper');
+            if (userDropdown && userDropdown.style.display === 'block') {
+                if (wrapper && !wrapper.contains(e.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            }
+
+            let searchContainer = document.querySelector('.search-container');
+            let suggestionsBox = document.getElementById('search-suggestions');
+            if (searchContainer && !searchContainer.contains(e.target)) {
+                if(suggestionsBox) suggestionsBox.style.display = "none";
+            }
+            
+            let modal = document.getElementById('askModal');
+            if (e.target == modal) { 
+                modal.style.display = 'none'; 
+            }
+        });
+
+        // Global Search
+        const searchIndex = [
+            { title: "Data Input", url: "data-input.html", keywords: "data entry, student details, emis, marks" },
+            { title: "Forms (படிவங்கள்)", url: "applications.html", keywords: "leave letter, cl, ml, loan form, income tax" },
+            { title: "Registers (பதிவேடுகள்)", url: "registers.html", keywords: "attendance, admission, movement, stock" },
+            { title: "Daily Messages", url: "daily.html", keywords: "news, updates, thoughts, thirukkural" },
+            { title: "TLMs", url: "tlm.html", keywords: "teaching learning materials, charts, models" },
+            { title: "Daily Homework", url: "homework.html", keywords: "assignment, notes" },
+            { title: "Exam (தேர்வுகள்)", url: "exam.html", keywords: "question paper, timetable, results" },
+            { title: "GO's (அரசாணைகள்)", url: "gos.html", keywords: "government orders, rules, salary" },
+            { title: "Lesson Plan", url: "lesson-plan.html", keywords: "notes of lesson, primary, middle" },
+            { title: "Other Resources", url: "others.html", keywords: "software, tools, links" },
+            { title: "About Us", url: "about.html", keywords: "details, profile" },
+            { title: "Contact Us", url: "contact.html", keywords: "email, phone" },
+            { title: "Forum (கலந்துரையாடல்)", url: "forum.html", keywords: "discussion, doubt" },
+            { title: "Help Center", url: "help-center.html", keywords: "support, faq" }
+        ];
+
+        function globalSearch() {
+            let input = document.getElementById('dashboard-search').value.toLowerCase().trim();
+            let suggestionsBox = document.getElementById('search-suggestions');
+            suggestionsBox.innerHTML = ""; 
+            if (input.length === 0) {
+                suggestionsBox.style.display = "none";
+                return;
+            }
+            let matches = searchIndex.filter(item => 
+                item.title.toLowerCase().includes(input) || item.keywords.toLowerCase().includes(input)
+            );
+            if (matches.length > 0) {
+                matches.forEach(match => {
+                    let div = document.createElement('div');
+                    div.innerHTML = `<a href="${match.url}" style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; font-size: 14px;"><i class="bi bi-search" style="color: #1a73e8;"></i><span>${match.title}</span></a>`;
+                    let link = div.querySelector('a');
+                    link.onmouseover = () => link.style.backgroundColor = "#f8f9fa";
+                    link.onmouseout = () => link.style.backgroundColor = "transparent";
+                    suggestionsBox.appendChild(div);
+                });
+                suggestionsBox.style.display = "block";
+            } else {
+                suggestionsBox.innerHTML = `<div style="padding: 15px; color: #dc3545; font-size: 14px; text-align: center;"><i class="bi bi-emoji-frown"></i> முடிவுகள் காணப்படவில்லை</div>`;
+                suggestionsBox.style.display = "block";
+            }
+        }
+
+        function handleLogout(event) {
+            event.preventDefault();
+            if (typeof firebase !== 'undefined') {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = "index.html";
+                });
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+
+        // --- FORUM SPECIFIC FUNCTIONS ---
+        let allTopics = [];
+        let currentSelectedCategory = "all";
+
+        function loadForumTopics() {
+            database.ref('forum_topics').on('value', (snapshot) => {
+                const feed = document.getElementById('forum-feed');
+                feed.innerHTML = "";
+                allTopics = [];
+
+                if (!snapshot.exists()) {
+                    feed.innerHTML = "<div class='loading-text'>இதுவரை விவாதங்கள் ஏதும் இல்லை! முதல் விவாதத்தை நீங்கள் தொடங்குங்கள்.</div>";
+                    return;
+                }
+
+                snapshot.forEach((childSnapshot) => {
+                    let item = childSnapshot.val();
+                    item.id = childSnapshot.key;
+                    allTopics.push(item);
+                });
+
+                allTopics.reverse();
+                renderTopics(allTopics);
+            });
+        }
+
+        function renderTopics(topicsList) {
+            const feed = document.getElementById('forum-feed');
+            feed.innerHTML = "";
+
+            if(topicsList.length === 0) {
+                feed.innerHTML = "<div class='loading-text'>தேடப்பட்ட பிரிவில் பதிவுகள் ஏதும் இல்லை!</div>";
+                return;
+            }
+
+            topicsList.forEach(topic => {
+                const card = document.createElement('div');
+                card.className = 'topic-card';
+                card.setAttribute('data-category', topic.category);
+                card.setAttribute('data-title', topic.title.toLowerCase());
+
+                let dateFormatted = topic.date ? new Date(topic.date).toLocaleDateString('ta-IN') : "சமீபத்தில்";
+
+                card.innerHTML = `
+                    <span class="topic-tag"><i class="bi bi-tag-fill me-1"></i> ${topic.category}</span>
+                    <h4 class="topic-title">${topic.title}</h4>
+                    <p class="topic-desc">${topic.description}</p>
+                    <div class="topic-footer">
+                        <div class="footer-left">
+                            <i class="bi bi-person-fill"></i> பதிவிட்டவர்: <b>${topic.author}</b> | <i class="bi bi-calendar3"></i> ${dateFormatted}
+                        </div>
+                        <div class="footer-right">
+                            <i class="bi bi-chat-square-dots-fill"></i> கலந்துரையாடு
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        function saveTopicToFirebase() {
+            let author = document.getElementById('authorName').value.trim();
+            let title = document.getElementById('topicTitle').value.trim();
+            let category = document.getElementById('topicCategory').value;
+            let desc = document.getElementById('topicDesc').value.trim();
+
+            if (!author || !title || !desc) {
+                alert("தயவுசெய்து அனைத்து விவரங்களையும் பூர்த்தி செய்யவும்!");
+                return;
+            }
+
+            let newTopicRef = database.ref('forum_topics').push();
+            newTopicRef.set({
+                author: author,
+                title: title,
+                category: category,
+                description: desc,
+                date: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                closeModal();
+                document.getElementById('authorName').value = "";
+                document.getElementById('topicTitle').value = "";
+                document.getElementById('topicDesc').value = "";
+            }).catch((error) => {
+                alert("பதிவிடுவதில் பிழை ஏற்பட்டது: " + error.message);
+            });
+        }
+
+        function filterCategory(category, element) {
+            currentSelectedCategory = category;
+            document.querySelectorAll('.category-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+
+            if (category === 'all') {
+                renderTopics(allTopics);
+            } else {
+                let filtered = allTopics.filter(t => t.category === category);
+                renderTopics(filtered);
+            }
+        }
+
+        function filterSearch() {
+            let keyword = document.getElementById('forum-search').value.toLowerCase().trim();
+            let filtered = allTopics;
+            
+            if (currentSelectedCategory !== 'all') {
+                filtered = filtered.filter(t => t.category === currentSelectedCategory);
+            }
+            if (keyword !== "") {
+                filtered = filtered.filter(t => t.title.toLowerCase().includes(keyword) || t.description.toLowerCase().includes(keyword));
+            }
+            renderTopics(filtered);
+        }
+
+        // Modal Box functions using flex to center content properly
+        function openModal() { document.getElementById('askModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('askModal').style.display = 'none'; }
+
+        // --- ON LOAD INITIALIZATIONS ---
+        window.addEventListener('DOMContentLoaded', (event) => {
+            listenNotifications();
+            loadForumTopics();
+
+            database.ref('site_updates').on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    let data = snapshot.val();
+                    if(data.ticker) document.getElementById('web-ticker').innerText = data.ticker;
+                }
+            });
+
+            if (typeof firebase !== 'undefined') {
+                firebase.auth().onAuthStateChanged((user) => {
+                    let emailTop = document.getElementById('user-email-top');
+                    let emailDropdown = document.getElementById('user-email-dropdown');
+                    let adminBtnWrapper = document.getElementById('admin-btn-wrapper'); 
+                    
+                    if (user) {
+                        if (emailTop) emailTop.innerText = user.email;
+                        if (emailDropdown) emailDropdown.innerText = user.email;
+                        if (user.email === "tnteachersfriend@gmail.com") {
+                            if (adminBtnWrapper) adminBtnWrapper.style.display = "block";
+                        } else {
+                            if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                        }
+                    } else {
+                        if (emailTop) emailTop.innerText = "Not Logged In";
+                        if (emailDropdown) emailDropdown.innerText = "Guest User";
+                        if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

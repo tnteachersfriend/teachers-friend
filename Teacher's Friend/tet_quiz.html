@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <title>TET Subjects</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); min-height: 100vh; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: #fff; text-shadow: 2px 2px 5px rgba(0,0,0,0.3); font-size: 35px; text-align: center; }
+        .subject-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-top: 30px; }
+        .subject-btn { background: #fff; padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-decoration: none; display: block; color: #333; font-size: 20px; font-weight: bold; border: 3px solid transparent; }
+        .subject-btn:hover { transform: translateY(-5px); border-color: #a18cd1; }
+        .avg-score { display: block; margin-top: 10px; font-size: 16px; color: #e67e22; font-weight: bold; }
+        .back-btn { margin-top: 40px; padding: 10px 30px; background: #dc3545; color: white; border: none; border-radius: 20px; font-size: 18px; cursor: pointer; text-decoration: none; }
+        .login-prompt { margin-top: auto; padding: 20px; font-size: 16px; font-weight: bold; }
+        .login-prompt a { color: #000; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <h1>பாடத்தைத் தேர்ந்தெடுக்கவும்</h1>
+    
+    <div class="subject-container">
+        <a href="tet_tamil.html" class="subject-btn">தமிழ் <span class="avg-score" id="avg_tamil">சராசரி: 0/30</span></a>
+        <a href="tet_english.html" class="subject-btn" style="background:#e8f4f8;">ஆங்கிலம் <span class="avg-score">சராசரி: 0/30</span></a>
+        <a href="tet_math.html" class="subject-btn" style="background:#fff3e0;">கணக்கு <span class="avg-score">சராசரி: 0/30</span></a>
+        <a href="tet_science.html" class="subject-btn" style="background:#e8f5e9;">அறிவியல் <span class="avg-score">சராசரி: 0/30</span></a>
+        <a href="tet_social.html" class="subject-btn" style="background:#fce4ec;">சமூக அறிவியல் <span class="avg-score">சராசரி: 0/30</span></a>
+        <a href="tet_cdp.html" class="subject-btn" style="background:#f3e5f5;">குழந்தை மேம்பாடு <span class="avg-score">சராசரி: 0/30</span></a>
+    </div>
+
+    <a href="index.html" class="back-btn">Back to Login</a>
+    
+    <div class="login-prompt">
+        <a href="index.html">To download old TNTET Question Please Login</a>
+    </div>
+
+    <script>
+        // தமிழ் பாடத்தின் சராசரியை LocalStorage-ல் இருந்து கணக்கிடுதல்
+        let tamilScores = JSON.parse(localStorage.getItem('tamil_scores') || '{}');
+        let total = 0, count = 0;
+        for(let key in tamilScores) { total += tamilScores[key]; count++; }
+        let avg = count === 0 ? 0 : Math.round(total / count);
+        document.getElementById('avg_tamil').innerText = `சராசரி: ${avg}/30`;
+    </script>
+</body>
+</html>

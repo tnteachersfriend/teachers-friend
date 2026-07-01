@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Friend - Registers</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    <style>
+        /* --- General Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        body { background: url('yellow-bg.png') no-repeat center center fixed; background-size: cover; color: #333; display: flex; flex-direction: column; min-height: 100vh; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- Header --- */
+        header { background: url('header-bg.png') no-repeat center center !important; background-size: 100% 100% !important;padding: 20px;
+    padding-top: calc(40px + env(safe-area-inset-top, 0px)); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .logo-title h1 { color: #fff; font-size: 24px; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+
+        /* --- Main Content --- */
+        main { flex-grow: 1; padding: 30px 5%; max-width: 800px; margin: 0 auto; width: 100%; }
+        h2 { text-align: center; color: #1a73e8; margin-bottom: 20px; }
+
+        /* --- Menu List --- */
+        .register-list { list-style: none; }
+        .reg-item { background: #fff; margin-bottom: 10px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); overflow: hidden; }
+        .reg-btn { width: 100%; text-align: left; padding: 15px 20px; font-size: 16px; font-weight: 600; background: none; border: none; cursor: pointer; color: #333; display: flex; justify-content: space-between; align-items: center; transition: background 0.3s; }
+        .reg-btn:hover { background: #f0f7ff; }
+        .reg-link { display: block; padding: 15px 20px; font-size: 16px; font-weight: 600; color: #333; border-bottom: 1px solid #eee; }
+        .reg-link:hover { background: #f0f7ff; }
+
+        /* --- Dropdown --- */
+        .dropdown-container { display: none; background-color: #f9f9f9; border-top: 1px solid #ddd; }
+        .dropdown-container a { display: block; padding: 12px 40px; border-bottom: 1px solid #eee; font-size: 15px; color: #555; }
+        .dropdown-container a:hover { background-color: #e3f2fd; color: #1a73e8; }
+        
+        .active-dropdown { display: block; }
+        .rotate-icon { transform: rotate(180deg); transition: 0.3s; }
+
+        /* --- Footer & Back Button --- */
+        .bottom-actions { text-align: center; margin: 20px 0; }
+        .back-btn { padding: 10px 25px; background-color: #e53935; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .back-btn:hover { background-color: #c62828; }
+        footer { background: #333; color: #fff; text-align: center; padding: 15px; margin-top: auto; }
+        /* --- DASHBOARD HEADER & FOOTER INTEGRATION --- */
+        header { background: url('header-bg.png') no-repeat center center; background-size: 100% 100%; padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 6000; width: 100%; }
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .logo-img { height: 70px; width: 70px; border-radius: 50%; object-fit: cover; }
+        .main-title { font-size: 48px; font-weight: 700; color: #1a73e8; text-shadow: 1px 1px 0px #fff, 2px 2px 0px #fff, 3px 3px 4px rgba(0, 0, 0, 0.15); }
+        .staff-logo-link { display: inline-flex; align-items: center; margin-left: 8vw; gap: 10px; }
+        .staff-logo-img { height: 70px; width: 70px; border-radius: 50%; object-fit: cover; border: 2px solid #1a73e8; box-shadow: 0 2px 6px rgba(0,0,0,0.15); transition: 0.2s; }
+        .staff-logo-img:hover { transform: scale(1.1); }
+        .staff-text-indicator { font-size: 20px; font-weight: bold; color: #d32f2f; background: #fff; padding: 4px 10px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .user-profile-wrapper { display: flex; align-items: center; gap: 10px; background: #f1f8e9; padding: 5px 12px; border-radius: 20px; border: 1px solid #c8e6c9; cursor: pointer; position: relative; }
+        .profile-icon { font-size: 30px; color: #1a73e8; }
+        .user-details { display: flex; flex-direction: column; line-height: 1.2; }
+        .user-name { font-size: 14px; font-weight: 700; color: #333; }
+        .user-email { font-size: 11px; color: #666; }
+        .news-ticker-bar { background: #1a73e8; color: white; display: flex; align-items: center; padding: 5px 5%; font-size: 14px; }
+        .ticker-label { background: #ffc107; color: #000; padding: 2px 10px; font-weight: bold; border-radius: 4px; margin-right: 15px; white-space: nowrap; }
+        .sub-nav { background: linear-gradient(120deg, #ff6b8b 0%, #ffb3b3 40%, #ffe5b4 75%, #d8b4f8 100%); padding: 10px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0, 0, 0, 0.1); position: relative; z-index: 5000; }
+        .nav-links { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; }
+        .nav-links a, .dropdown-btn { font-weight: 600; color: #333; font-size: 14px; cursor: pointer; background: none; border: none; padding: 3px 10px; display: flex; align-items: center; gap: 5px; }
+        .search-container input { padding: 8px 15px; border-radius: 20px; border: 1px solid #ccc; outline: none; width: 100%; max-width: 300px; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-content { display: none; position: absolute; background-color: #fff; min-width: 260px; box-shadow: 0px 8px 16px rgba(0,0,0,0.2); z-index: 99999; border-radius: 8px; border: 1px solid #ddd; padding: 6px 0; top: 100%; left: 0; }
+        .dropdown-content.show-dropdown { display: block; }
+        .dropdown-content a { color: #333; padding: 10px 18px; display: flex; align-items: center; gap: 10px; font-size: 14px; border-bottom: 1px solid #f5f5f5; transition: 0.2s; }
+        .dropdown-content a:hover { background-color: #f1f1f1; color: #1a73e8; }
+        .main-footer { background: #222 !important; color: #fff !important; padding: 40px 5% 20px !important; margin-top: 50px !important; text-align: left; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; border-bottom: 1px solid #444; padding-bottom: 20px; }
+        .footer-section h4 { color: #fff !important; border-bottom: 2px solid #1a73e8 !important; display: inline-block !important; margin-bottom: 15px !important; padding-bottom: 5px !important; }
+        .footer-section p, .footer-section a { font-size: 14px !important; color: #ccc !important; margin-bottom: 8px !important; display: block !important; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a:hover { color: #1a73e8 !important; }
+        .footer-bottom { text-align: center; padding-top: 20px; font-size: 13px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <img src="image_0.png" alt="Logo" class="logo-img">
+            <h1 class="main-title">Class Room</h1>
+            <a href="dashboard2.html" class="staff-logo-link" title="Staff Room-க்குச் செல்">
+                <img src="1000015786.png" alt="Staff Logo" class="staff-logo-img" onerror="this.src='staff.png'">
+                <span class="staff-text-indicator">Switch to Staff Room</span>
+            </a>
+        </div>
+        <div class="header-right">
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)">
+                <i class="bi bi-person-circle profile-icon"></i>
+                <div class="user-details">
+                    <span class="user-name">ஆசிரியர்</span>
+                    <span class="user-email" id="user-email-top">Loading...</span> 
+                </div>
+                <div id="user-dropdown" style="display: none; position: absolute; top: 48px; right: 0; background: #fff; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 99999; padding: 12px;">
+                    <p style="margin: 0; font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase;">Log in மின்னஞ்சல்:</p>
+                    <p id="user-email-dropdown" style="margin: 0 0 10px 0; font-size: 13px; color: #1a73e8; font-weight: 600; word-break: break-all;">Loading...</p>
+                    <div style="height: 1px; background: #eee; margin-bottom: 8px;"></div>
+                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="news-ticker-bar">
+        <div class="ticker-label">முக்கிய அறிவிப்பு:</div>
+        <marquee behavior="scroll" direction="left" id="web-ticker">செய்திகள் ஏற்றப்படுகிறது...</marquee>
+    </div>
+
+    <nav class="sub-nav">
+        <div class="nav-links">
+            <a href="dashboard.html"><i class="bi bi-house-door-fill"></i><span>Home</span></a>
+            <div class="dropdown">
+                <button class="dropdown-btn" onclick="toggleServicesMenu(event)">
+                    <i class="bi bi-grid-fill"></i> <span>Services</span>
+                </button>
+                <div class="dropdown-content" id="servicesDropdown">
+                    <a href="data-input.html"><i class="bi bi-database-fill"></i> Data Input</a>
+                    <a href="applications.html"><i class="bi bi-file-earmark-text"></i> Forms (படிவங்கள்)</a>
+                    <a href="registers.html"><i class="bi bi-journal-check"></i> Registers</a>
+                    <a href="daily.html"><i class="bi bi-chat-left-text"></i> Daily Messages</a>
+                </div>
+            </div>
+            <a href="about.html"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a>
+            <a href="contact.html"><i class="bi bi-envelope-fill"></i><span>Contact Us</span></a>
+        </div>
+        <div class="search-container">
+            <div style="position: relative; width: 100%; max-width: 300px;">
+                <input type="text" id="dashboard-search" placeholder="வலைத்தளத்தில் தேடுக..." oninput="globalSearch()" autocomplete="off">
+                <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #ddd; border-radius: 8px; z-index: 100000; max-height: 350px; overflow-y: auto; margin-top: 5px;"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        <h2>பதிவேடுகள்</h2>
+        <ul class="register-list">
+            <li class="reg-item">
+                <button class="reg-btn" onclick="toggleDropdown()">
+                    1. CCE பதிவேடுகள் <i class="bi bi-chevron-down" id="cce-icon"></i>
+                </button>
+                <div class="dropdown-container" id="cce-menu">
+                    <a href="subject_teacher.html">பாட ஆசிரியர் பதிவேடு</a>
+                    <a href="class_teacher.html">வகுப்பாசிரியர் பதிவேடு</a>
+                    <a href="co_curricular.html">கல்வி இணைச்செயல்பாடு பதிவேடு</a>
+                    <a href="cumulative_record.html">திரள் பதிவேடு</a>
+                </div>
+            </li>
+            
+            <li class="reg-item"><a href="#" class="reg-link">2. சேர்க்கை நீக்கல் பதிவேடு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">3. ஆசிரியர் விடுப்புப் பதிவேடு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">4. மாணவர் காலாண்டு வருகை சுருக்கப் பதிவேடு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">5. தொகுப்பு மதிப்பீட்டு பதிவேடு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">6. சேர்க்கை விண்ணப்பங்கள் தொகுப்பு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">7. தேக்கப்பட்டியல் பதிவேடு</a></li>
+            <li class="reg-item"><a href="#" class="reg-link">8. மக்கள் தொகை பதிவேடு</a></li>
+        </ul>
+
+        <div class="bottom-actions">
+            <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back</button>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>தொடர்புக்கு</h4>
+                <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
+                <p>தமிழ்நாடு, இந்தியா.</p>
+            </div>
+            <div class="footer-section">
+                <h4>உதவி & மன்றம்</h4>
+                <p><a href="forum.html">Forum / கலந்துரையாடல்</a></p>
+                <p><a href="help-center.html">Help Center / உதவி</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>பின் தொடர</h4>
+                <div class="social-icons">
+                    <a href="#" target="_blank"><i class="bi bi-facebook"></i></a>
+                    <a href="#" target="_blank"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+    <script>
+        function toggleDropdown() {
+            const menu = document.getElementById("cce-menu");
+            const icon = document.getElementById("cce-icon");
+            menu.classList.toggle("active-dropdown");
+            icon.classList.toggle("rotate-icon");
+        }
+        // --- DASHBOARD UI INTERACTION FUNCTIONS ---
+
+function toggleUserDropdown(event) {
+    event.stopPropagation();
+    let servicesDropdown = document.getElementById('servicesDropdown');
+    if (servicesDropdown) servicesDropdown.classList.remove('show-dropdown');
+    
+    let dropdown = document.getElementById('user-dropdown');
+    if (dropdown) {
+        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    }
+}
+
+function toggleServicesMenu(event) {
+    event.stopPropagation();
+    let dropdown = document.getElementById('servicesDropdown');
+    if (dropdown) dropdown.classList.toggle('show-dropdown');
+}
+
+// திரையின் வெற்றுப் பகுதியில் கிளிக் செய்யும் போது திறந்திருக்கும் மெனுக்களை மூட
+window.addEventListener('click', function(e) {
+    let servicesDropdown = document.getElementById('servicesDropdown');
+    let dropdownBtn = document.querySelector('.dropdown-btn');
+    if (servicesDropdown && !servicesDropdown.contains(e.target) && e.target !== dropdownBtn) {
+        servicesDropdown.classList.remove('show-dropdown');
+    }
+    
+    let userDropdown = document.getElementById('user-dropdown');
+    let wrapper = document.querySelector('.user-profile-wrapper');
+    if (userDropdown && userDropdown.style.display === 'block') {
+        if (wrapper && !wrapper.contains(e.target)) {
+            userDropdown.style.display = 'none';
+        }
+    }
+});
+
+function handleLogout(event) {
+    event.preventDefault();
+    if (typeof firebase !== 'undefined') {
+        firebase.auth().signOut().then(() => { window.location.href = "index.html"; });
+    } else {
+        window.location.href = "index.html";
+    }
+}
+
+// குளோபல் தேடல் அட்டவணை (Search Index)
+const searchIndex = [
+    { title: "Data Input (தரவு உள்ளீடு)", url: "data-input.html", keywords: "data entry, student" },
+    { title: "Forms (படிவங்கள்)", url: "applications.html", keywords: "leave, cl, ml" },
+    { title: "Registers (பதிவேடுகள்)", url: "registers.html", keywords: "attendance" },
+    { title: "Daily Messages", url: "daily.html", keywords: "news" }
+];
+
+function globalSearch() {
+    let input = document.getElementById('dashboard-search').value.toLowerCase().trim();
+    let suggestionsBox = document.getElementById('search-suggestions');
+    suggestionsBox.innerHTML = ""; 
+    
+    if (input.length === 0) { suggestionsBox.style.display = "none"; return; }
+
+    let matches = searchIndex.filter(item => item.title.toLowerCase().includes(input) || item.keywords.toLowerCase().includes(input));
+
+    if (matches.length > 0) {
+        matches.forEach(match => {
+            let div = document.createElement('div');
+            div.innerHTML = `<a href="${match.url}" style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; font-size: 14px;"><i class="bi bi-search" style="color: #1a73e8;"></i> <span>${match.title}</span></a>`;
+            let link = div.querySelector('a');
+            link.onmouseover = () => link.style.backgroundColor = "#f8f9fa";
+            link.onmouseout = () => link.style.backgroundColor = "transparent";
+            suggestionsBox.appendChild(div);
+        });
+        suggestionsBox.style.display = "block";
+    } else {
+        suggestionsBox.innerHTML = `<div style="padding: 15px; color: #dc3545; font-size: 14px; text-align: center;">முடிவுகள் காணப்படவில்லை</div>`;
+        suggestionsBox.style.display = "block";
+    }
+}
+
+// பயனர் உள்நுழைந்த மின்னஞ்சல் முகவரியைக் காட்ட
+if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged((user) => {
+        let emailTop = document.getElementById('user-email-top');
+        let emailDropdown = document.getElementById('user-email-dropdown');
+        if (user) {
+            if (emailTop) emailTop.innerText = user.email;
+            if (emailDropdown) emailDropdown.innerText = user.email;
+        }
+    });
+}
+    </script>
+</body>
+</html>

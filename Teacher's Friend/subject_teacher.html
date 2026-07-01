@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>பாட ஆசிரியர் பதிவேடு - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    <style>
+        /* --- பொதுவான வடிவமைப்பு --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; padding: 20px; }
+        .container { max-width: 1300px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        header { background: #1a73e8; color: white;  padding: 20px;
+               padding-top: calc(40px + env(safe-area-inset-top, 0px)); text-align: center; border-radius: 8px; margin-bottom: 20px; }
+        h2, h3 { color: #1a73e8; text-align: center; margin-bottom: 20px; }
+        
+        /* --- தேர்வுப் பகுதி --- */
+        .selection-card { background: #e8f0fe; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #c2e7ff; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .field-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: #333; }
+        select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background: white; outline: none; }
+        
+        /* --- பட்டன்கள் --- */
+        .btn-area { display: flex; gap: 15px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
+        .action-btn { background: #1a73e8; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .action-btn:hover { background: #1557b0; }
+        .save-btn { background: #28a745; }
+        .save-btn:hover { background: #218838; }
+        .print-btn { background: #0288d1; }
+        .print-btn:hover { background: #01579b; }
+        .back-btn { background: #e53935; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 15px; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
+        .back-btn:hover { background: #c62828; }
+
+        .scroll-tip { display: none; text-align: center; background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; border: 1px solid #ffeeba; }
+
+        /* --- பாடங்களின் Tabs --- */
+        .subject-tabs { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 25px; border-bottom: 2px solid #ddd; }
+        .tab-item { padding: 10px 20px; background: #e0e0e0; border-radius: 6px 6px 0 0; cursor: pointer; font-weight: bold; border: 1px solid #ccc; border-bottom: none; font-size: 14px; color: #555; }
+        .tab-item.active { background: #1a73e8; color: white; border-color: #1a73e8; }
+        .tab-content { display: none; margin-top: 20px; }
+        .tab-content.active { display: block; }
+
+        /* --- முகப்புப் பக்கம் --- */
+        .cover-page { border: 4px double #1a73e8; padding: 30px; border-radius: 10px; margin-bottom: 30px; text-align: center; background: #fafafa; }
+        .cover-subtitle { font-size: 20px; color: #444; margin-bottom: 20px; font-weight: bold; }
+        .cover-details { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; max-width: 800px; margin: 0 auto; text-align: left; font-size: 15px; font-weight: 600; background: white; padding: 15px; border-radius: 6px; border: 1px solid #eee; }
+
+        /* --- அட்டவணை வடிவமைப்பு --- */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; background: white; }
+        .marks-table { width: 100%; border-collapse: collapse; min-width: 1250px; } /* Columns அதிகரித்துள்ளதால் அகலத்தை அதிகரித்துள்ளேன் */
+        .marks-table th, .marks-table td { border: 1px solid #aaa; padding: 6px 4px; text-align: center; font-size: 13px; }
+        .marks-table th { background: #f1f3f4; font-weight: 600; color: #333; }
+        .marks-table input { width: 45px; padding: 5px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; font-size: 13px; outline: none; }
+        .marks-table input:focus { border-color: #1a73e8; background-color: #f0f7ff; }
+        
+        .total-cell { font-weight: bold; background: #f9f9f9; width: 50px; }
+        .fa-grand-total { color: #2e7d32; background-color: #e8f5e9; }
+        .final-total { color: #1565c0; background-color: #e3f2fd; }
+        
+        /* புதிய கிரேடு டிசைன் */
+        .grade-cell { font-weight: bold; color: #b71c1c; background-color: #ffebee; width: 50px; }
+        .final-grade-cell { font-weight: bold; color:#1565c0; background-color: #e3f2fd; width: 55px; } /* Total Grade தனித்து தெரிய */
+        
+        /* ஆண்/பெண் வேறுபாடு */
+        .boy-row { background-color: #ffffff; }
+        .girl-row { background-color: #fff9fa; } 
+
+        @media (max-width: 768px) { .scroll-tip { display: block; } .grid-inputs { grid-template-columns: 1fr; } }
+        
+        /* 🖨️ --- அச்சிடும் வடிவமைப்பு (PRINT CSS) --- */
+        @media print {
+            body { background: white; padding: 0; margin: 0; color: #000; }
+            .container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border: none; }
+            header, .selection-card, .btn-area, .subject-tabs, .scroll-tip, h2 { display: none !important; }
+            
+            .cover-page { 
+                height: 95vh; display: flex !important; flex-direction: column; 
+                justify-content: center; border: 6px double #000 !important; 
+                margin: 0 !important; page-break-after: always !important; 
+            }
+            
+            .tab-content { display: block !important; page-break-after: always !important; }
+            .table-responsive { border: none !important; overflow: visible !important; }
+            .marks-table th { background: #e0e0e0 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .marks-table input { border: none !important; background: transparent !important; color: #000 !important; }
+            .marks-table td, .marks-table th { border: 1px solid #000 !important; }
+            
+            .final-grade-cell { background-color: #e0e0e0 !important; color: #000 !important; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/js/8.10.1/-app.js"></script>
+    <script src="https://www.gstatic.com/js/8.10.1/-database.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 style="font-size: 22px;">Teacher's Friend - CCE பதிவேடுகள்</h1>
+    </header>
+
+    <h2><i class="bi bi-journal-bookmark-fill"></i> பாட ஆசிரியர் பதிவேடு (Subject Teacher Register)</h2>
+    
+    <div class="selection-card">
+        <div class="grid-inputs">
+            <div class="field-group">
+                <label>கல்வியாண்டு (Academic Year):</label>
+                <select id="mYear">
+                    <option value="2025-26">2025-26</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2027-28">2027-28</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>பருவம் (Term):</label>
+                <select id="mTerm">
+                    <option value="">--தேர்வு செய்க--</option>
+                    <option value="Term 1">முதல் பருவம் (Term 1)</option>
+                    <option value="Term 2">இரண்டாம் பருவம் (Term 2)</option>
+                    <option value="Term 3">மூன்றாம் பருவம் (Term 3)</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>வகுப்பு (Class):</label>
+                <select id="mClass">
+                    <option value="">--தேர்வு செய்க--</option>
+                    <option value="1">வகுப்பு 1</option>
+                    <option value="2">வகுப்பு 2</option>
+                    <option value="3">வகுப்பு 3</option>
+                    <option value="4">வகுப்பு 4</option>
+                    <option value="5">வகுப்பு 5</option>
+                    <option value="6">வகுப்பு 6</option>
+                    <option value="7">வகுப்பு 7</option>
+                    <option value="8">வகுப்பு 8</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="btn-area">
+            <button type="button" class="action-btn" onclick="generateSubjectForm()">
+                <i class="bi bi-gear-fill"></i> பதிவேட்டை உருவாக்கு (Generate Register)
+            </button>
+            <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back</button>
+        </div>
+    </div>
+
+    <div class="scroll-tip" id="helper-tip"><i class="bi bi-arrow-left-right"></i> அட்டவணையை இடமிருந்து வலமாக நகர்த்தி மதிப்பெண்களை உள்ளிடவும்.</div>
+
+    <div id="register-main-container" style="display: none;">
+        
+        <div class="cover-page" id="coverPageArea">
+            <div style="font-size: 28px; font-weight: bold; color: #111; margin-bottom: 10px;">CCE வகுப்புப் பதிவேடு</div>
+            <div class="cover-subtitle">தொடர் மற்றும் விரிவான மதிப்பீட்டுப் பதிவேடு</div>
+            <br><br>
+            <div class="cover-details">
+                <div>கல்வியாண்டு: <span id="lblYear" style="color:#1a73e8;">-</span></div>
+                <div>பருவம்: <span id="lblTerm" style="color:#1a73e8;">-</span></div>
+                <div>வகுப்பு: <span id="lblClass" style="color:#1a73e8;">-</span></div>
+            </div>
+        </div>
+
+        <div class="subject-tabs" id="tabHeader">
+            <div class="tab-item active" id="tab-Tamil" onclick="switchTab('Tamil')">தமிழ்</div>
+            <div class="tab-item" id="tab-English" onclick="switchTab('English')">ஆங்கிலம்</div>
+            <div class="tab-item" id="tab-Maths" onclick="switchTab('Maths')">கணக்கு</div>
+            <div class="tab-item" id="tab-Science" onclick="switchTab('Science')">அறிவியல்</div>
+            <div class="tab-item" id="tab-Social" onclick="switchTab('Social')">சமூக அறிவியல்</div>
+        </div>
+
+        <form id="marksForm">
+            <div id="Tamil" class="tab-content active">
+                <h3>தமிழ் மதிப்பெண் பதிவேடு</h3>
+                <div class="table-responsive"><table class="marks-table"><thead></thead><tbody id="TamilTableBody"></tbody></table></div>
+            </div>
+            <div id="English" class="tab-content">
+                <h3>ஆங்கில மதிப்பெண் பதிவேடு</h3>
+                <div class="table-responsive"><table class="marks-table"><thead></thead><tbody id="EnglishTableBody"></tbody></table></div>
+            </div>
+            <div id="Maths" class="tab-content">
+                <h3>கணித மதிப்பெண் பதிவேடு</h3>
+                <div class="table-responsive"><table class="marks-table"><thead></thead><tbody id="MathsTableBody"></tbody></table></div>
+            </div>
+            <div id="Science" class="tab-content">
+                <h3>அறிவியல் மதிப்பெண் பதிவேடு</h3>
+                <div class="table-responsive"><table class="marks-table"><thead></thead><tbody id="ScienceTableBody"></tbody></table></div>
+            </div>
+            <div id="Social" class="tab-content">
+                <h3>சமூக அறிவியல் மதிப்பெண் பதிவேடு</h3>
+                <div class="table-responsive"><table class="marks-table"><thead></thead><tbody id="SocialTableBody"></tbody></table></div>
+            </div>
+            
+            <div class="btn-area">
+                <button type="button" class="action-btn save-btn" onclick="saveAllSubjectsMarks()">
+                    <i class="bi bi-cloud-upload-fill"></i> அனைத்து மதிப்பெண்களையும் சேமி (Save Marks)
+                </button>
+                <button type="button" class="action-btn print-btn" onclick="triggerPrint()">
+                    <i class="bi bi-file-earmark-pdf-fill"></i> Print / Download PDF
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // ---  Config ---
+    const Config = {
+        apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+        authDomain: "teacher-s-friend-3aca8.app.com",
+        projectId: "teacher-s-friend-3aca8",
+        storageBucket: "teacher-s-friend-3aca8.storage.app",
+        messagingSenderId: "294698361211",
+        appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+        databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.io.com"
+    };
+
+    if (!.apps.length) { .initializeApp(Config); }
+    const database = .database();
+
+    let studentsList = { males: [], females: [] };
+    const subjectsList = ['Tamil', 'English', 'Maths', 'Science', 'Social'];
+
+    function switchTab(subjectId) {
+        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+        document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(subjectId).classList.add('active');
+        document.getElementById('tab-' + subjectId).classList.add('active');
+    }
+
+    function triggerPrint() {
+        let confirmPrint = confirm("பிரிண்ட் செய்வதற்கு முன் 'Save Marks' கொடுத்தீர்களா? \nஆம் எனில் 'OK' கொடுக்கவும்.");
+        if(confirmPrint) { window.print(); }
+    }
+
+    // முதன்மைச் செயல்பாடு
+    function generateSubjectForm() {
+        const year = document.getElementById('mYear').value;
+        const term = document.getElementById('mTerm').value;
+        const classId = document.getElementById('mClass').value;
+
+        if (!year || !term || !classId) {
+            alert("தயவுசெய்து கல்வியாண்டு, பருவம் மற்றும் வகுப்பைத் தேர்வு செய்யவும்!");
+            return;
+        }
+
+        document.getElementById('lblYear').innerText = year;
+        document.getElementById('lblTerm').innerText = term === 'Term 1' ? 'முதல் பருவம்' : term === 'Term 2' ? 'இரண்டாம் பருவம்' : 'மூன்றாம் பருவம்';
+        document.getElementById('lblClass').innerText = "வகுப்பு - " + classId;
+
+        document.getElementById('register-main-container').style.display = 'block';
+
+        database.ref('students').once('value', (studentSnapshot) => {
+            const allStudents = studentSnapshot.val() || {};
+            let rawStudents = [];
+            
+            for (let key in allStudents) {
+                let student = allStudents[key];
+                if (student.year === year && String(student.class) === String(classId)) {
+                    
+                    let rawName = (student.name || student.sName || "").trim();
+                    if (!rawName) continue; 
+                    
+                    let uniqueNameKey = rawName.toLowerCase().replace(/\s+/g, ''); 
+                    let admNo = student.admNo || student.sAdmNo || "";
+                    let gender = student.gender || student.sGender || "";
+                    
+                    let existingIndex = rawStudents.findIndex(s => s.uniqueNameKey === uniqueNameKey);
+                    
+                    if (existingIndex === -1) {
+                        rawStudents.push({ id: key, admNo: admNo, name: rawName, gender: gender, uniqueNameKey: uniqueNameKey });
+                    } else {
+                        if ((!rawStudents[existingIndex].admNo || rawStudents[existingIndex].admNo === "-") && admNo) {
+                            rawStudents[existingIndex].admNo = admNo;
+                            rawStudents[existingIndex].id = key; 
+                        }
+                    }
+                }
+            }
+
+            if (rawStudents.length === 0) {
+                alert("இந்த வகுப்பில் மாணவர்கள் இல்லை! தயவுசெய்து 'Data Input' பக்கத்தில் முதலில் மாணவர்களைச் சேர்க்கவும்.");
+                document.getElementById('register-main-container').style.display = 'none';
+                return;
+            }
+
+            let males = rawStudents.filter(s => s.gender === 'ஆண்' || s.gender === 'Boy' || s.gender === 'Male');
+            let females = rawStudents.filter(s => s.gender === 'பெண்' || s.gender === 'Girl' || s.gender === 'Female');
+            let unassigned = rawStudents.filter(s => !s.gender || (s.gender !== 'ஆண்' && s.gender !== 'Boy' && s.gender !== 'Male' && s.gender !== 'பெண்' && s.gender !== 'Girl' && s.gender !== 'Female'));
+            males = [...males, ...unassigned];
+
+            const sortAsc = (a, b) => {
+                let numA = parseInt(a.admNo) || 999999;
+                let numB = parseInt(b.admNo) || 999999;
+                return numA - numB;
+            };
+            
+            males.sort(sortAsc);
+            females.sort(sortAsc);
+
+            studentsList = { males, females };
+
+            subjectsList.forEach(sub => { buildTableForSubject(sub, year, term, classId); });
+            switchTab('Tamil');
+        });
+    }
+
+    // --- புதிய வரிசையிலான டேபிள் ஹெடர் (Table Header) ---
+    function buildTableForSubject(subId, year, term, classId) {
+        const tbody = document.getElementById(`${subId}TableBody`);
+        const table = tbody.closest('.marks-table');
+        
+        table.querySelector('thead').innerHTML = `
+            <tr>
+                <th rowspan="2" style="width:40px;">வ.எண்</th>
+                <th rowspan="2" style="width:80px;">சேர்க்கை எண்</th>
+                <th rowspan="2" style="min-width:180px;">மாணவர் பெயர்</th>
+                <th colspan="5" style="background:#d1e7dd;">FA (a) (சிறந்த 2) - 20</th>
+                <th colspan="5" style="background:#cff4fc;">FA (b) (சிறந்த 2) - 20</th>
+                <th rowspan="2" style="background:#e2e3e5; width:50px;">FA Tot (40)</th>
+                <th rowspan="2" style="background:#fff3cd; width:50px;">SA (60)</th>
+                <th rowspan="2" style="width:65px; background:#e3f2fd; color:#0d47a1;">Total Marks (100)</th>
+                <th rowspan="2" style="width:50px; background:#ffebee;">FA Grade</th>
+                <th rowspan="2" style="width:50px; background:#ffebee;">SA Grade</th>
+                <th rowspan="2" style="width:60px; background:#fbe9e7;">Total Grade</th>
+            </tr>
+            <tr>
+                <th>1</th><th>2</th><th>3</th><th>4</th><th style="font-weight:bold; color:#1557b0;">Tot</th>
+                <th>1</th><th>2</th><th>3</th><th>4</th><th style="font-weight:bold; color:#1557b0;">Tot</th>
+            </tr>
+        `;
+
+        tbody.innerHTML = "";
+
+        const marksRef = database.ref(`marks/${year}/${term}/${classId}/${subId}`);
+        marksRef.once('value', (snapshot) => {
+            const savedMarks = snapshot.val() || {};
+            
+            let boySno = 1;
+            let girlSno = 1;
+
+            studentsList.males.forEach((student) => {
+                tbody.innerHTML += createRowHtml(student, boySno++, savedMarks, 'boy-row');
+            });
+
+            studentsList.females.forEach((student) => {
+                tbody.innerHTML += createRowHtml(student, girlSno++, savedMarks, 'girl-row');
+            });
+
+            tbody.querySelectorAll('tr').forEach(row => {
+                const firstInput = row.querySelector('input[type="number"]');
+                if(firstInput) calculateRowTotals(firstInput);
+            });
+        });
+    }
+
+    // --- புதிய டேபிள் செல்களுடன் (Table Cells) ---
+    function createRowHtml(student, index, savedMarks, rowClass) {
+        const m = savedMarks[student.id] || {};
+        
+        const fa1 = m.fa_a1 || ""; const fa2 = m.fa_a2 || ""; const fa3 = m.fa_a3 || ""; const fa4 = m.fa_a4 || "";
+        const fb1 = m.fa_b1 || ""; const fb2 = m.fa_b2 || ""; const fb3 = m.fa_b3 || ""; const fb4 = m.fa_b4 || "";
+        const sa = m.sa || "";
+
+        return `
+            <tr data-student-id="${student.id}" class="${rowClass}">
+                <td>${index}</td>
+                <td style="color:#555; font-weight:bold;">${student.admNo || '-'}</td>
+                <td style="text-align:left; font-weight:600; color:#111;">${student.name}</td>
+                
+                <td><input type="number" class="fa-a" value="${fa1}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-a" value="${fa2}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-a" value="${fa3}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-a" value="${fa4}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td class="total-cell fa-a-total">0</td>
+                
+                <td><input type="number" class="fa-b" value="${fb1}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-b" value="${fb2}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-b" value="${fb3}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td><input type="number" class="fa-b" value="${fb4}" oninput="calculateRowTotals(this)" min="0" max="10"></td>
+                <td class="total-cell fa-b-total">0</td>
+                
+                <td class="total-cell fa-grand-total">0</td>
+                <td><input type="number" class="sa-input" value="${sa}" oninput="calculateRowTotals(this)" min="0" max="60" style="width:50px;"></td>
+                <td class="total-cell final-total">0</td>
+                <td class="grade-cell fa-grade">-</td>
+                <td class="grade-cell sa-grade">-</td>
+                <td class="final-grade-cell final-grade">-</td>
+            </tr>
+        `;
+    }
+
+    // --- சதவீதத்தின்படி கிரேடுகளை கணக்கிடும் செயல்பாடு ---
+    function getGradeFromPercent(p) {
+        if (p >= 91) return "A1";
+        if (p >= 81) return "A2";
+        if (p >= 71) return "B1";
+        if (p >= 61) return "B2";
+        if (p >= 51) return "C1";
+        if (p >= 41) return "C2";
+        if (p >= 33) return "D";
+        return "E";
+    }
+
+    function calculateRowTotals(inputElement) {
+        const row = inputElement.closest('tr');
+        
+        let faAValues = [];
+        row.querySelectorAll('.fa-a').forEach(inp => { 
+            let v = parseFloat(inp.value);
+            if(isNaN(v)) v = 0;
+            if(v > 10) { inp.value = 10; v = 10; } 
+            faAValues.push(v);
+        });
+        faAValues.sort((a, b) => b - a);
+        let faASum = faAValues[0] + faAValues[1]; 
+        row.querySelector('.fa-a-total').innerText = faASum;
+
+        let faBValues = [];
+        row.querySelectorAll('.fa-b').forEach(inp => { 
+            let v = parseFloat(inp.value);
+            if(isNaN(v)) v = 0;
+            if(v > 10) { inp.value = 10; v = 10; }
+            faBValues.push(v);
+        });
+        faBValues.sort((a, b) => b - a);
+        let faBSum = faBValues[0] + faBValues[1];
+        row.querySelector('.fa-b-total').innerText = faBSum;
+
+        let faGrand = faASum + faBSum;
+        row.querySelector('.fa-grand-total').innerText = faGrand;
+
+        let saMark = parseFloat(row.querySelector('.sa-input').value) || 0;
+        if(saMark > 60) { row.querySelector('.sa-input').value = 60; saMark = 60; }
+
+        let total = faGrand + saMark;
+        row.querySelector('.final-total').innerText = total;
+
+        // --- புதிய கிரேடு கணக்கீடு (Auto Grade Calculator) ---
+        let faGrade = "-";
+        if(faGrand > 0) {
+            let faP = (faGrand / 40) * 100;
+            faGrade = getGradeFromPercent(faP);
+        }
+        row.querySelector('.fa-grade').innerText = faGrade;
+
+        let saGrade = "-";
+        if(saMark > 0 || row.querySelector('.sa-input').value !== "") {
+            let saP = (saMark / 60) * 100;
+            saGrade = getGradeFromPercent(saP);
+        }
+        row.querySelector('.sa-grade').innerText = saGrade;
+
+        let totGrade = "-";
+        if(total > 0) {
+            let totP = (total / 100) * 100;
+            totGrade = getGradeFromPercent(totP);
+        }
+        row.querySelector('.final-grade').innerText = totGrade;
+    }
+
+    // ---  இல் சேமிக்கும்போது புதிய கிரேடுகளையும் சேர்த்துச் சேமிக்க ---
+    function saveAllSubjectsMarks() {
+        const year = document.getElementById('mYear').value;
+        const term = document.getElementById('mTerm').value;
+        const classId = document.getElementById('mClass').value;
+
+        if (!year || !term || !classId) return;
+
+        let batch = {};
+
+        subjectsList.forEach(subId => {
+            const tbody = document.getElementById(`${subId}TableBody`);
+            const rows = tbody.querySelectorAll('tr');
+
+            rows.forEach(row => {
+                const sId = row.getAttribute('data-student-id');
+                if(!sId) return;
+                
+                const faInputs = row.querySelectorAll('.fa-a');
+                const fbInputs = row.querySelectorAll('.fa-b');
+                const saMark = row.querySelector('.sa-input').value;
+
+                batch[`marks/${year}/${term}/${classId}/${subId}/${sId}`] = {
+                    fa_a1: faInputs[0].value || "", fa_a2: faInputs[1].value || "", fa_a3: faInputs[2].value || "", fa_a4: faInputs[3].value || "",
+                    fa_a_tot: row.querySelector('.fa-a-total').innerText || "0",
+                    fa_b1: fbInputs[0].value || "", fa_b2: fbInputs[1].value || "", fa_b3: fbInputs[2].value || "", fa_b4: fbInputs[3].value || "",
+                    fa_b_tot: row.querySelector('.fa-b-total').innerText || "0",
+                    fa: row.querySelector('.fa-grand-total').innerText || "0",
+                    sa: saMark || "",
+                    total: row.querySelector('.final-total').innerText || "0",
+                    fa_grade: row.querySelector('.fa-grade').innerText || "-",
+                    sa_grade: row.querySelector('.sa-grade').innerText || "-",
+                    grade: row.querySelector('.final-grade').innerText || "-"
+                };
+            });
+        });
+
+        database.ref().update(batch, (error) => {
+            if (error) { alert("சேமிப்பதில் பிழை: " + error.message); } 
+            else { alert("அனைத்து மதிப்பெண்களும் வெற்றிகரமாகச் சேமிக்கப்பட்டன!"); }
+        });
+    }
+</script>
+
+</body>
+</html>

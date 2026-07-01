@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>கல்வி இணைச் செயல்பாடுகள் - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    
+    <style>
+        /* --- பொதுவான வடிவமைப்பு --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; padding: 20px; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        header { background: #1a73e8; color: white;padding: 20px;
+    padding-top: calc(40px + env(safe-area-inset-top, 0px)); text-align: center; border-radius: 8px; margin-bottom: 20px; }
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 20px; }
+        
+        /* --- தேர்வுப் பகுதி --- */
+        .selection-card { background: #e8f0fe; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #c2e7ff; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .field-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; color: #333; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background: white; outline: none; }
+        
+        /* --- பட்டன்கள் --- */
+        .btn-area { display: flex; gap: 15px; margin-top: 15px; justify-content: center; flex-wrap: wrap; }
+        .action-btn { background: #1a73e8; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; transition: 0.3s; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .action-btn:hover { background: #1557b0; }
+        .save-btn { background: #28a745; } .save-btn:hover { background: #218838; }
+        .print-btn { background: #0288d1; } .print-btn:hover { background: #01579b; }
+        .back-btn { background: #e53935; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 15px; text-align: center; display: inline-flex; align-items: center; gap: 8px; }
+        .back-btn:hover { background: #c62828; }
+
+        .scroll-tip { display: none; text-align: center; background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; border: 1px solid #ffeeba; }
+
+        /* --- முகப்புப் பக்கம் (பிரிண்டில் மட்டும்) --- */
+        .cover-page { display: none; }
+        
+        /* --- அட்டவணை வடிவமைப்பு --- */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px; background: white; }
+        .marks-table { width: 100%; border-collapse: collapse; min-width: 1400px; }
+        .marks-table th, .marks-table td { border: 1px solid #aaa; padding: 5px; text-align: center; font-size: 12px; }
+        .marks-table th { background: #f1f3f4; font-weight: 600; color: #333; }
+        
+        /* Vertical Text for Headers */
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); height: 160px; white-space: nowrap; padding: 5px; }
+        
+        input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: #1a73e8; }
+        
+        .grade-cell { font-weight: bold; color: #d32f2f; background-color: #ffebee; font-size: 14px; }
+        .boy-row { background-color: #ffffff; }
+        .girl-row { background-color: #fff9fa; } 
+
+        @media (max-width: 768px) { .scroll-tip { display: block; } .grid-inputs { grid-template-columns: 1fr; } }
+        
+        /* 🖨️ --- அச்சிடும் வடிவமைப்பு (PRINT CSS) --- */
+        @media print {
+            @page { size: A4 landscape; margin: 10mm; }
+            body { background: white; padding: 0; margin: 0; color: #000; }
+            .container { box-shadow: none; padding: 0; margin: 0; max-width: 100%; border: none; }
+            header, .selection-card, .btn-area, .scroll-tip, h2 { display: none !important; }
+            
+            /* Cover Page Enable on Print */
+            .cover-page { 
+                display: flex !important; flex-direction: column; justify-content: center; align-items: center;
+                height: 90vh; border: 6px double #000 !important; margin: 0 !important; page-break-after: always;
+            }
+            .cover-title { font-size: 32px; font-weight: bold; margin-bottom: 20px; }
+            .cover-details { font-size: 20px; font-weight: 600; line-height: 2; }
+            
+            .table-responsive { border: none !important; overflow: visible !important; page-break-after: always; }
+            .marks-table th { background: #e0e0e0 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .marks-table td, .marks-table th { border: 1px solid #000 !important; }
+            .grade-cell { background-color: #f5f5f5 !important; color: #000 !important; }
+            
+            /* Print Checkbox Fix */
+            input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1px solid #000; }
+            input[type="checkbox"]:checked { background-color: #000; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1 style="font-size: 22px;">Teacher's Friend - கல்வி இணைச் செயல்பாடுகள்</h1>
+    </header>
+
+    <h2><i class="bi bi-star-fill"></i> கல்வி இணைச் செயல்பாடுகள் தரநிலை (Co-Scholastic)</h2>
+    
+    <div class="selection-card">
+        <div class="grid-inputs">
+            <div class="field-group">
+                <label>பள்ளியின் பெயர்:</label>
+                <input type="text" id="mSchool" value="ஊராட்சி ஒன்றிய நடுநிலைப்பள்ளி">
+            </div>
+            <div class="field-group">
+                <label>கல்வியாண்டு:</label>
+                <select id="mYear">
+                    <option value="2025-26">2025-26</option>
+                    <option value="2026-27">2026-27</option>
+                    <option value="2027-28">2027-28</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>பருவம்:</label>
+                <select id="mTerm">
+                    <option value="">--தேர்வு செய்க--</option>
+                    <option value="Term 1">பருவம் 1</option>
+                    <option value="Term 2">பருவம் 2</option>
+                    <option value="Term 3">பருவம் 3</option>
+                </select>
+            </div>
+            <div class="field-group">
+                <label>வகுப்பு:</label>
+                <select id="mClass">
+                    <option value="">--தேர்வு செய்க--</option>
+                    <option value="1">வகுப்பு 1</option><option value="2">வகுப்பு 2</option>
+                    <option value="3">வகுப்பு 3</option><option value="4">வகுப்பு 4</option>
+                    <option value="5">வகுப்பு 5</option><option value="6">வகுப்பு 6</option>
+                    <option value="7">வகுப்பு 7</option><option value="8">வகுப்பு 8</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="btn-area">
+            <button type="button" class="action-btn" onclick="generateRegister()">
+                <i class="bi bi-gear-fill"></i> பதிவேட்டை உருவாக்கு
+            </button>
+            <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back</button>
+        </div>
+    </div>
+
+    <div class="scroll-tip" id="helper-tip"><i class="bi bi-arrow-left-right"></i> அட்டவணையை இடமிருந்து வலமாக நகர்த்திப் பார்க்கவும்.</div>
+
+    <div id="register-main-container" style="display: none;">
+        
+        <div class="cover-page" id="coverPageArea">
+            <div class="cover-title">கல்வி இணைச் செயல்பாடுகள் தரநிலை பதிவேடு</div>
+            <div class="cover-title" id="lblYearTitle" style="color: #555; font-size:26px;">-</div>
+            <br><br>
+            <div class="cover-details">
+                பள்ளியின் பெயர் : <span id="lblSchool" style="color:#1a73e8;">-</span><br>
+                பருவம் : <span id="lblTerm" style="color:#1a73e8;">-</span><br>
+                வகுப்பு : <span id="lblClass" style="color:#1a73e8;">-</span><br>
+                மொத்த மாணவர்கள் : <span id="lblTotalStudents" style="color:#1a73e8;">-</span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width:40px;">வ.எண்</th>
+                        <th rowspan="2" style="width:70px;">சே.எண்</th>
+                        <th rowspan="2" style="min-width:160px;">மாணவர் பெயர்</th>
+                        <th colspan="6" style="background:#e3f2fd;">வாழ்க்கைத்திறன்கள்</th>
+                        <th colspan="6" style="background:#f3e5f5;">மனப்பான்மைகளும் மதிப்புகளும்</th>
+                        <th colspan="6" style="background:#e8f5e9;">நன்னலம், யோகா & முழு உடற்பயிற்சி</th>
+                        <th colspan="6" style="background:#fff3e0;">பாட இணைச் செயல்பாடுகள்</th>
+                    </tr>
+                    <tr>
+                        <th><div class="vertical-text">செய்தி வெளிப்பாடு</div></th>
+                        <th><div class="vertical-text">துணிந்துரைத்தல் / மறுத்தல்</div></th>
+                        <th><div class="vertical-text">பகுத்தறிதல்</div></th>
+                        <th><div class="vertical-text">தன்னையறிதல்</div></th>
+                        <th><div class="vertical-text">குழுப்பணி</div></th>
+                        <th class="grade-cell">தரநிலை</th>
+                        
+                        <th><div class="vertical-text">நாடு / மாநிலச் சின்னங்களை மதித்தல்</div></th>
+                        <th><div class="vertical-text">பண்புடைமை</div></th>
+                        <th><div class="vertical-text">பொதுச்சொத்துக்களைப் பாதுகாத்தல்</div></th>
+                        <th><div class="vertical-text">உயிரினங்களிடத்தில் பரிவு / ஒற்றுமையுணர்வு</div></th>
+                        <th><div class="vertical-text">பாதுகாப்பு / சாலை விதிகளைப் பின்பற்றல்</div></th>
+                        <th class="grade-cell">தரநிலை</th>
+                        
+                        <th><div class="vertical-text">ஆர்வம்</div></th>
+                        <th><div class="vertical-text">தொடர்ச்சி</div></th>
+                        <th><div class="vertical-text">ஒழுங்குமுறை</div></th>
+                        <th><div class="vertical-text">முயற்சி</div></th>
+                        <th><div class="vertical-text">செயல்திறன்</div></th>
+                        <th class="grade-cell">தரநிலை</th>
+                        
+                        <th><div class="vertical-text">முயற்சி</div></th>
+                        <th><div class="vertical-text">தொடங்கலாற்றல்</div></th>
+                        <th><div class="vertical-text">விடாமுயற்சி</div></th>
+                        <th><div class="vertical-text">ஈடுபாடு</div></th>
+                        <th><div class="vertical-text">ஒழுங்குமுறை</div></th>
+                        <th class="grade-cell">தரநிலை</th>
+                    </tr>
+                </thead>
+                <tbody id="dataTableBody">
+                    </tbody>
+            </table>
+        </div>
+
+        <div style="font-size: 12px; font-weight: bold; text-align: left; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+            தரநிலை : ✔✔✔✔✔ = A (சிறப்பு நிலை), ✔✔✔✔ = B (மிக நன்று), ✔✔✔ = C (நன்று), ✔✔ = D (திருப்திகரம்), ✔ = E (முயற்சி தேவை).
+        </div>
+
+        <div class="btn-area">
+            <button type="button" class="action-btn save-btn" onclick="saveData()">
+                <i class="bi bi-cloud-upload-fill"></i> தரவுகளைச் சேமி
+            </button>
+            <button type="button" class="action-btn print-btn" onclick="window.print()">
+                <i class="bi bi-file-earmark-pdf-fill"></i> Print / Download PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Firebase Config ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+        authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+        projectId: "teacher-s-friend-3aca8",
+        storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+        messagingSenderId: "294698361211",
+        appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+        databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+    };
+
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const database = firebase.database();
+
+    // Sections in Co-Scholastic
+    const sections = ['life', 'attitude', 'wellness', 'cocurricular'];
+
+    // 1. மாணவர் தரவுகளை எடுத்து அட்டவணையை உருவாக்கும் செயல்பாடு
+    function generateRegister() {
+        const schoolName = document.getElementById('mSchool').value;
+        const year = document.getElementById('mYear').value;
+        const term = document.getElementById('mTerm').value;
+        const classId = document.getElementById('mClass').value;
+
+        if (!year || !term || !classId) {
+            alert("தயவுசெய்து கல்வியாண்டு, பருவம் மற்றும் வகுப்பைத் தேர்வு செய்யவும்!");
+            return;
+        }
+
+        document.getElementById('lblYearTitle').innerText = year;
+        document.getElementById('lblSchool').innerText = schoolName || "-";
+        document.getElementById('lblTerm').innerText = term === 'Term 1' ? 'முதல் பருவம்' : term === 'Term 2' ? 'இரண்டாம் பருவம்' : 'மூன்றாம் பருவம்';
+        document.getElementById('lblClass').innerText = classId;
+
+        document.getElementById('register-main-container').style.display = 'block';
+        if(window.innerWidth <= 768) { document.getElementById('helper-tip').style.display = 'block'; }
+
+        // Data-Input-ல் சேமிக்கப்பட்ட ஒட்டுமொத்த மாணவர் பட்டியலை எடுத்தல்
+        database.ref('students').once('value', (snapshot) => {
+            const allStudents = snapshot.val() || {};
+            let rawStudents = [];
+            let seenIds = new Set();
+            
+            for (let key in allStudents) {
+                let student = allStudents[key];
+                // வகுப்பு மற்றும் ஆண்டை வடிகட்டுதல்
+                if (student.year === year && String(student.class) === String(classId)) {
+                    
+                    let rawName = (student.name || student.sName || "").trim();
+                    if (!rawName) continue; 
+                    
+                    let uniqueNameKey = rawName.toLowerCase().replace(/\s+/g, ''); 
+                    let admNo = student.admNo || student.sAdmNo || "";
+                    let gender = student.gender || student.sGender || "";
+                    
+                    // இரட்டிப்பான பெயர்களைத் தவிர்த்தல் (Deduplication)
+                    let existingIndex = rawStudents.findIndex(s => s.uniqueNameKey === uniqueNameKey);
+                    
+                    if (existingIndex === -1) {
+                        rawStudents.push({ id: key, admNo: admNo, name: rawName, gender: gender, uniqueNameKey: uniqueNameKey });
+                    } else {
+                        if ((!rawStudents[existingIndex].admNo || rawStudents[existingIndex].admNo === "-") && admNo) {
+                            rawStudents[existingIndex].admNo = admNo;
+                            rawStudents[existingIndex].id = key; 
+                        }
+                    }
+                }
+            }
+
+            if (rawStudents.length === 0) {
+                alert("இந்த வகுப்பில் மாணவர்கள் இல்லை! தயவுசெய்து 'Data Input' பக்கத்தில் முதலில் மாணவர்களைச் சேர்க்கவும்.");
+                document.getElementById('register-main-container').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('lblTotalStudents').innerText = rawStudents.length;
+
+            // ஆண் / பெண் எனத் தனித்தனியாகப் பிரித்தல்
+            let males = rawStudents.filter(s => s.gender === 'ஆண்' || s.gender === 'Boy' || s.gender === 'Male');
+            let females = rawStudents.filter(s => s.gender === 'பெண்' || s.gender === 'Girl' || s.gender === 'Female');
+            let unassigned = rawStudents.filter(s => !s.gender || (s.gender !== 'ஆண்' && s.gender !== 'Boy' && s.gender !== 'Male' && s.gender !== 'பெண்' && s.gender !== 'Girl' && s.gender !== 'Female'));
+            males = [...males, ...unassigned];
+
+            // சேர்க்கை எண் (Admission No) அடிப்படையில் ஏறுவரிசையில் அடுக்குதல்
+            const sortAsc = (a, b) => {
+                let numA = parseInt(a.admNo) || 999999;
+                let numB = parseInt(b.admNo) || 999999;
+                return numA - numB;
+            };
+            
+            males.sort(sortAsc);
+            females.sort(sortAsc);
+
+            renderTable(year, term, classId, males, females);
+        });
+    }
+
+    // 2. அட்டவணையை திரையில் வரையும் (Render) செயல்பாடு
+    function renderTable(year, term, classId, males, females) {
+        const tbody = document.getElementById('dataTableBody');
+        tbody.innerHTML = "";
+
+        // Firebase-ல் ஏற்கனவே சேமிக்கப்பட்ட கோ-ஸ்கொலாஸ்டிக் தரவுகளை எடுத்தல்
+        const dbRef = database.ref(`coscholastic/${year}/${term}/${classId}`);
+        dbRef.once('value', (snapshot) => {
+            const savedData = snapshot.val() || {};
+            
+            let boySno = 1;
+            let girlSno = 1;
+
+            // ஆண்களுக்கான வரிசைகள்
+            males.forEach(student => {
+                tbody.innerHTML += createRow(student, boySno++, savedData, 'boy-row');
+            });
+
+            // பெண்களுக்கான வரிசைகள்
+            females.forEach(student => {
+                tbody.innerHTML += createRow(student, girlSno++, savedData, 'girl-row');
+            });
+
+            // தரவுகள் லோடு ஆனவுடன் கிரேடுகளை மீண்டும் கணக்கிடச் செய்தல்
+            tbody.querySelectorAll('tr').forEach(row => {
+                const sId = row.dataset.studentId;
+                sections.forEach(sec => calcGrade(sId, sec));
+            });
+        });
+    }
+
+    // 3. ஒவ்வொரு வரிசைக்கான HTML-ஐ உருவாக்கும் செயல்பாடு
+    function createRow(student, sno, savedData, rowClass) {
+        const data = savedData[student.id] || {};
+        
+        let rowHtml = `<tr data-student-id="${student.id}" class="${rowClass}">
+            <td>${sno}</td>
+            <td style="font-weight:bold; color:#555;">${student.admNo || '-'}</td>
+            <td style="text-align:left; font-weight:600;">${student.name}</td>`;
+            
+        // 4 பிரிவுகளுக்கும் Checkbox-களை உருவாக்குதல்
+        sections.forEach(sec => {
+            let ticks = data[sec] && data[sec].ticks ? data[sec].ticks : [false, false, false, false, false];
+            for(let i=0; i<5; i++) {
+                let isChecked = ticks[i] ? "checked" : "";
+                rowHtml += `<td><input type="checkbox" class="chk_${sec}_${student.id}" onchange="calcGrade('${student.id}', '${sec}')" ${isChecked}></td>`;
+            }
+            let gr = data[sec] && data[sec].grade ? data[sec].grade : "-";
+            rowHtml += `<td class="grade-cell" id="gr_${sec}_${student.id}">${gr}</td>`;
+        });
+
+        rowHtml += `</tr>`;
+        return rowHtml;
+    }
+
+    // 4. செக்பாக்ஸ்களை எண்ணி கிரேடைத் தானாகக் கணக்கிடும் செயல்பாடு
+    function calcGrade(studentId, section) {
+        let boxes = document.querySelectorAll(`.chk_${section}_${studentId}`);
+        let count = 0;
+        boxes.forEach(b => { if(b.checked) count++; });
+        
+        let grade = "-";
+        if(count === 5) grade = "A";
+        else if(count === 4) grade = "B";
+        else if(count === 3) grade = "C";
+        else if(count === 2) grade = "D";
+        else if(count === 1) grade = "E";
+        
+        document.getElementById(`gr_${section}_${studentId}`).innerText = grade;
+    }
+
+    // 5. அனைத்துத் தரவுகளையும் Firebase-ல் சேமிக்கும் செயல்பாடு
+    function saveData() {
+        const year = document.getElementById('mYear').value;
+        const term = document.getElementById('mTerm').value;
+        const classId = document.getElementById('mClass').value;
+
+        let batch = {};
+        const rows = document.querySelectorAll('#dataTableBody tr');
+
+        rows.forEach(row => {
+            const sId = row.dataset.studentId;
+            let studentRecord = {};
+            
+            sections.forEach(sec => {
+                let ticks = Array.from(document.querySelectorAll(`.chk_${sec}_${sId}`)).map(b => b.checked);
+                let grade = document.getElementById(`gr_${sec}_${sId}`).innerText;
+                studentRecord[sec] = { ticks: ticks, grade: grade };
+            });
+
+            batch[`coscholastic/${year}/${term}/${classId}/${sId}`] = studentRecord;
+        });
+
+        if(Object.keys(batch).length > 0) {
+            database.ref().update(batch, (error) => {
+                if(error) alert("சேமிப்பதில் பிழை: " + error.message);
+                else alert("கல்வி இணைச் செயல்பாடுகள் தரவுகள் வெற்றிகரமாகச் சேமிக்கப்பட்டன!");
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

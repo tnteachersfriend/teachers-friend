@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; text-align: center; }
+        #admin-panel { display: none; max-width: 1000px; margin: 20px auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); text-align: left; }
+        #loading-message { margin-top: 50px; font-size: 18px; color: #1a73e8; font-weight: bold; }
+        
+        h2 { color: #0d47a1; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; margin-bottom: 20px; }
+        h3 { color: #1a73e8; margin-top: 10px; font-size: 18px; }
+        label { font-weight: 600; color: #333; font-size: 14px; display: block; margin-top: 12px; }
+        input[type="text"], input[type="number"], select, input[type="file"] { width: 100%; padding: 10px; margin: 8px 0 15px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+        button { background: #1a73e8; color: white; padding: 10px 15px; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; margin-top: 10px; }
+        button:hover { background: #0d47a1; }
+        
+        /* Stats Dashboard Styling */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .stat-card { background: #f8f9fa; border-left: 4px solid #1a73e8; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+        .stat-card h4 { margin: 0; font-size: 12px; color: #555; text-transform: uppercase; }
+        .stat-card span { font-size: 24px; font-weight: bold; color: #1a73e8; display: block; margin-top: 5px; }
+
+        /* Compact Tabs Styling */
+        .tab-container { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 25px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; justify-content: center; }
+        .tab-btn { background: #e2e8f0; color: #333; border: none; padding: 8px 12px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; width: auto; margin-top: 0; }
+        .tab-btn.active { background: #1a73e8; color: white; }
+        .tab-btn i { margin-right: 5px; }
+        
+        .admin-section { display: none; }
+        .admin-section.active { display: block; background: #fafafa; padding: 20px; border-radius: 8px; border: 1px solid #eee; }
+        
+        .flex-row { display: flex; gap: 15px; flex-wrap: wrap; }
+        .flex-row > div { flex: 1; min-width: 150px; }
+        
+        .status-msg { margin-top: 10px; font-size: 13px; font-weight: bold; display: none; word-wrap: break-word; }
+        
+        /* Homework Styles */
+        .days-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); gap: 8px; margin: 15px 0; }
+        .day-box { background: #fff; border: 1px solid #ccc; border-radius: 6px; padding: 8px; text-align: center; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .day-box:hover { background: #e3f2fd; border-color: #1a73e8; }
+        .day-box.active { background: #1a73e8; color: white; border-color: #1a73e8; }
+        .day-box.has-data { border-bottom: 4px solid #28a745; }
+        
+        .hw-table { width: 100%; border-collapse: collapse; min-width: 700px; margin-top:15px; }
+        .hw-table th, .hw-table td { border: 1px solid #ccc; padding: 8px; text-align: center; font-size: 13px; background: #fff; }
+        .hw-table th { background-color: #f8f9fa; }
+        .hw-table input[type="text"] { width: 100%; border: none; outline: none; background: transparent; text-align: center; padding: 3px; }
+    </style>
+</head>
+<body>
+
+    <div id="loading-message">பாதுகாப்பு சரிபார்க்கப்படுகிறது (Verifying Access)...</div>
+
+    <div id="admin-panel">
+        <h2><i class="bi bi-shield-lock"></i> Admin Dashboard Panel</h2>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h4>Total Users</h4>
+                <span id="stat-total-users">0</span>
+            </div>
+            <div class="stat-card">
+                <h4>Total Students</h4>
+                <span id="stat-total-students">0</span>
+            </div>
+            <div class="stat-card">
+                <h4>Today Visitors (Teacher)</h4>
+                <span id="stat-today-teachers">0</span>
+            </div>
+            <div class="stat-card">
+                <h4>Today Visitors (Student)</h4>
+                <span id="stat-today-students">0</span>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <button class="tab-btn active" onclick="switchTab('news-tab', this)"><i class="bi bi-newspaper"></i> News</button>
+            <button class="tab-btn" onclick="switchTab('homework-tab', this)"><i class="bi bi-journal-check"></i> Master HW</button>
+            <button class="tab-btn" onclick="switchTab('exam-tab', this)"><i class="bi bi-file-earmark-text"></i> Exam PDF</button>
+            <button class="tab-btn" onclick="switchTab('lesson-tab', this)"><i class="bi bi-book"></i> Lesson Plan</button>
+            <button class="tab-btn" onclick="switchTab('go-tab', this)"><i class="bi bi-building"></i> GOs</button>
+            <button class="tab-btn" onclick="switchTab('daily-msg-tab', this)"><i class="bi bi-chat-quote"></i> Daily Msg</button>
+            <button class="tab-btn" onclick="switchTab('bookback-tab', this)"><i class="bi bi-journal-bookmark"></i> Book Back</button>
+        </div>
+
+        <div id="news-tab" class="admin-section active">
+            <h3>முக்கிய செய்திகள் (Ticker News)</h3>
+            <input type="text" id="tickerInput" placeholder="உதாரணம்: நாளை பள்ளி விடுமுறை...">
+            <button onclick="updateNews()"><i class="bi bi-broadcast"></i> Update News</button>
+        </div>
+       
+        <div id="homework-tab" class="admin-section">
+            <h3>அட்மின் ஹோம்வொர்க் செட் (Global Template)</h3>
+            <div class="flex-row">
+                <div>
+                    <label>வகுப்பு:</label>
+                    <select id="classSelect" onchange="checkSelections()">
+                        <option value="">-- தேர்வு செய்க --</option>
+                        <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">வகுப்பு ${i}</option>`);</script>
+                    </select>
+                </div>
+                <div>
+                    <label>மாதம்:</label>
+                    <select id="monthSelect" onchange="checkSelections()">
+                        <option value="">-- தேர்வு செய்க --</option>
+                        <option value="1">ஜனவரி</option><option value="2">பிப்ரவரி</option><option value="3">மார்ச்</option>
+                        <option value="4">ஏப்ரல்</option><option value="5">மே</option><option value="6">ஜூன்</option>
+                        <option value="7">ஜூலை</option><option value="8">ஆகஸ்ட்</option><option value="9">செப்டம்பர்</option>
+                        <option value="10">அக்டோபர்</option><option value="11">நவம்பர்</option><option value="12">டிசம்பர்</option>
+                    </select>
+                </div>
+            </div>
+            <div id="calendarSection" style="display:none;">
+                <h4 id="monthDisplayTitle" style="color: #1a73e8; margin-top: 15px; font-size: 14px;">நாட்கள்</h4>
+                <div class="days-grid" id="daysContainer"></div>
+            </div>
+            <div id="editorSection" style="display:none;">
+                <h4 style="font-size: 14px;">ஹோம்வொர்க் அட்டவணை - <span id="selectedDateText" style="color: #ff9800;"></span></h4>
+                <div style="overflow-x:auto;" id="tableContainer"></div>
+                <button onclick="saveGlobalHomework()"><i class="bi bi-send-fill"></i> Save Master Homework</button>
+            </div>
+        </div>
+
+        <div id="exam-tab" class="admin-section">
+            <h3>தேர்வு வினாத்தாள்கள் பதிவேற்றம் (Exam Papers)</h3>
+            <p style="font-size:12px; color:#666;">குறிப்பு: கோப்பு தானாகவே <b>exams/classX_Subject_type_No.pdf</b> என்ற வடிவில் சேமிக்கப்படும்.</p>
+            <div class="flex-row">
+                <div>
+                    <label>வகுப்பு:</label>
+                    <select id="examClass">
+                        <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">வகுப்பு ${i}</option>`);</script>
+                    </select>
+                </div>
+                <div>
+                    <label>பாடம் (Exact match for exam.html):</label>
+                    <select id="examSubject">
+                        <option value="தமிழ்">தமிழ்</option>
+                        <option value="ஆங்கிலம்">ஆங்கிலம்</option>
+                        <option value="கணக்கு">கணக்கு</option>
+                        <option value="அறிவியல்">அறிவியல்</option>
+                        <option value="சமூகவியல்">சமூகவியல்</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex-row">
+                <div>
+                    <label>தேர்வு வகை:</label>
+                    <select id="examType">
+                        <option value="weekly">வாராந்திர தேர்வு (Weekly)</option>
+                        <option value="monthly">மாதாந்திர தேர்வு (Monthly)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>தேர்வு எண் (எ.கா: 1, 2, 3...):</label>
+                    <input type="number" id="examNumber" min="1" value="1">
+                </div>
+            </div>
+            <input type="file" id="examFile" accept=".pdf">
+            <button onclick="uploadExamFile()"><i class="bi bi-cloud-arrow-up"></i> Upload Exam Paper</button>
+            <p id="examFile-status" class="status-msg"></p>
+        </div>
+
+        <div id="lesson-tab" class="admin-section">
+            <h3>பாடக்குறிப்பு பதிவேற்றம் (Lesson Plan)</h3>
+            <div class="flex-row">
+                <div>
+                    <label>வகுப்பு:</label>
+                    <select id="lessonClass">
+                        <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">வகுப்பு ${i}</option>`);</script>
+                    </select>
+                </div>
+                <div>
+                    <label>பாடம்:</label>
+                    <select id="lessonSubject">
+                        <option value="tamil">தமிழ்</option>
+                        <option value="english">ஆங்கிலம்</option>
+                        <option value="maths">கணக்கு</option>
+                        <option value="science">அறிவியல்</option>
+                        <option value="social">சமூக அறிவியல்</option>
+                    </select>
+                </div>
+                <div>
+                    <label>மாதம்:</label>
+                    <select id="lessonMonth">
+                        <option value="june">ஜூன்</option><option value="july">ஜூலை</option>
+                        <option value="august">ஆகஸ்ட்</option><option value="september">செப்டம்பர்</option>
+                        <option value="october">அக்டோபர்</option><option value="november">நவம்பர்</option>
+                        <option value="december">டிசம்பர்</option><option value="january">ஜனவரி</option>
+                        <option value="february">பிப்ரவரி</option><option value="march">மார்ச்</option>
+                        <option value="april">ஏப்ரல்</option>
+                    </select>
+                </div>
+            </div>
+            <input type="file" id="lessonFile" accept=".pdf">
+            <button onclick="uploadLessonPlan()"><i class="bi bi-cloud-arrow-up"></i> Upload Lesson Plan</button>
+            <p id="lessonFile-status" class="status-msg"></p>
+        </div>
+
+        <div id="go-tab" class="admin-section">
+            <h3>அரசாணைகள் பதிவேற்றம் (GOs)</h3>
+            <label>G.O தலைப்பு (உதா: Hill Rotation.No.107):</label>
+            <input type="text" id="goName" placeholder="G.O Title...">
+            <input type="file" id="goFile" accept=".pdf">
+            <button onclick="uploadGeneralFile('goFile', 'GOs', document.getElementById('goName').value)"><i class="bi bi-cloud-arrow-up"></i> Upload GO</button>
+            <p id="goFile-status" class="status-msg"></p>
+        </div>
+
+        <div id="daily-msg-tab" class="admin-section">
+            <h3>தினசரி செய்திகள் (Daily Messages)</h3>
+            <div class="flex-row">
+        <div>
+            <label>மாதம்:</label>
+            <select id="msgMonth">
+                <option value="06">ஜூன்</option><option value="07">ஜூலை</option>
+                <option value="06">ஆகஸ்ட்</option><option value="07">செப்டம்பர்</option>
+                <!-- பிற மாதங்களை இங்கு சேர்க்கவும் -->
+            </select>
+        </div>
+        <div>
+            <label>தேதி:</label>
+            <select id="msgDate">
+                <script>for(let i=1; i<=31; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+            </select>
+        </div>
+    </div>
+            <label>செய்தியின் தலைப்பு / தேதி:</label>
+            <input type="text" id="dailyMsgTitle" placeholder="உதா: ஜூன் 7 செய்தி">
+            <input type="file" id="dailyMsgFile" accept=".pdf, image/*">
+            <button onclick="uploadGeneralFile('dailyMsgFile', 'DailyMessages', document.getElementById('dailyMsgTitle').value)"><i class="bi bi-cloud-arrow-up"></i> Upload Daily Message</button>
+            <p id="dailyMsgFile-status" class="status-msg"></p>
+        </div>
+
+        <div id="bookback-tab" class="admin-section">
+            <h3>புத்தக வினா-விடை (Book Back Q&A)</h3>
+            <p style="font-size:12px; color:#666;">குறிப்பு: இது நேரடியாக Firebase-ல் லிங்க் செய்யப்படும். bookback.html-ல் தானாக வந்துவிடும்.</p>
+            <div class="flex-row">
+                <div>
+                    <label>வகுப்பு:</label>
+                    <select id="bbClass">
+                        <script>for(let i=1; i<=12; i++) document.write(`<option value="${i}">வகுப்பு ${i}</option>`);</script>
+                    </select>
+                </div>
+                <div>
+                    <label>பருவம் / Term:</label>
+                    <select id="bbTerm">
+                        <option value="term_1">பருவம் 1</option>
+                        <option value="term_2">பருவம் 2</option>
+                        <option value="term_3">பருவம் 3</option>
+                        <option value="full_year">முழு ஆண்டு (Full Year)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>பாடம்:</label>
+                    <select id="bbSubject">
+                        <option value="tamil">தமிழ்</option>
+                        <option value="english">ஆங்கிலம்</option>
+                        <option value="maths">கணக்கு</option>
+                        <option value="science">அறிவியல்</option>
+                        <option value="social">சமூக அறிவியல்</option>
+                    </select>
+                </div>
+            </div>
+            <input type="file" id="bbFile" accept=".pdf">
+            <button onclick="uploadBookBack()"><i class="bi bi-cloud-arrow-up"></i> Upload Book Back Q&A</button>
+            <p id="bbFile-status" class="status-msg"></p>
+        </div>
+
+        <button onclick="window.location.href='dashboard.html'" style="background: #6c757d; width: 100%; margin-top: 20px;">
+            <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+        </button>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script> 
+    
+    <script>
+    // 1. FIREBASE CONFIGURATION
+    const firebaseConfig = {
+        apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+        authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+        databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com",
+        projectId: "teacher-s-friend-3aca8"
+    };
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const database = firebase.database(); 
+    const ADMIN_EMAIL = "tnteachersfriend@gmail.com"; 
+
+    async function uploadFileToR2(file, folderName = "admin-uploads") {
+    try {
+        // Netlify Function மூலம் பாதுகாப்பாக Environment Variables-ஐப் பயன்படுத்தி Presigned URL பெறுகிறோம்
+        const response = await fetch("/.netlify/functions/get-upload-url", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                fileName: file.name,
+                fileType: file.type,
+                folder: folderName
+            })
+        });
+
+        if (!response.ok) throw new Error("Netlify சர்வரில் இருந்து தற்காலிக லிங்க் பெறுவதில் தோல்வி!");
+
+        const data = await response.json();
+        const { uploadUrl, fileKey } = data;
+
+        // R2-விற்கு நேரடியாக ஃபைலை அப்லோடு செய்யும் பகுதி
+        const uploadResponse = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: { "Content-Type": file.type },
+            body: file
+        });
+
+        if (uploadResponse.ok) {
+            // அப்லோடு ஆன பிறகு கிடைக்கும் பொதுவான R2 லிங்க்
+            return `https://pub-52b2110c34374c8497787aaee097c4c3.r2.dev/${fileKey}`; 
+        } else {
+            throw new Error("Cloudflare R2-விற்கு அப்லோடு செய்வதில் பிழை!");
+        }
+
+    } catch (error) {
+        console.error("R2 Upload Error:", error);
+        alert("கோப்பு அப்லோடு செய்வதில் பிழை ஏற்பட்டது: " + error.message);
+        return null;
+    }
+}
+    
+    const R2_BUCKET = "staffroom-storage";
+    
+    // முக்கியமானது: உங்கள் Cloudflare R2 Bucket-ன் "Public Access" URL-ஐ கீழே உள்ள வரியில் கொடுக்கவும். 
+    // இது இல்லையென்றால் Download ஆகாது. (உதா: https://pub-12345.r2.dev)
+    const R2_PUBLIC_URL_PREFIX = "https://pub-52b2110c34374c8497787aaee097c4c3.r2.dev"; 
+
+    // 3. AUTHENTICATION
+    firebase.auth().onAuthStateChanged((user) => {
+        if (user && user.email === ADMIN_EMAIL) {
+            document.getElementById('loading-message').style.display = "none";
+            document.getElementById('admin-panel').style.display = "block";
+            fetchDashboardStats();
+            buildHomeworkTable();
+            
+            database.ref('site_updates/ticker').once('value').then((snapshot) => {
+                if(snapshot.exists()) document.getElementById('tickerInput').value = snapshot.val();
+            });
+        } else {
+            alert("Access Denied! You are not an Admin."); window.location.href = "index.html"; 
+        }
+    });
+
+    // 4. FETCH DASHBOARD STATS
+    function fetchDashboardStats() {
+        database.ref('users').once('value').then(snap => {
+            let teachers = 0, students = 0;
+            snap.forEach(child => { if(child.val().role === 'student') students++; else teachers++; });
+            document.getElementById('stat-total-users').innerText = teachers + students;
+            document.getElementById('stat-total-students').innerText = students;
+        });
+        const today = new Date().toISOString().split('T')[0];
+        database.ref(`analytics/visitors/${today}`).once('value').then(snap => {
+            if(snap.exists()){
+                let data = snap.val();
+                document.getElementById('stat-today-teachers').innerText = data.teachers || 0;
+                document.getElementById('stat-today-students').innerText = data.students || 0;
+            }
+        });
+    }
+
+    // ==========================================
+    // 5. SPECIFIC UPLOAD FUNCTIONS (PATH DYNAMICS)
+    // ==========================================
+    
+    // Helper to do actual R2 Upload securely via Netlify Function
+    async function doR2Upload(file, r2Key, statusMsgEl) {
+        statusMsgEl.style.display = "block";
+        statusMsgEl.style.color = "#ff9800";
+        statusMsgEl.innerText = "பதிவேற்றப்படுகிறது... (Uploading...)";
+        
+        try {
+            // 1. Netlify Function-லிருந்து பாதுகாப்பான அப்லோடு லிங்க்கை (Presigned URL) பெறுதல்
+            // குறிப்பு: r2Key என்பதே முழுமையான Path என்பதால், அதை fileName ஆக அனுப்புகிறோம்.
+            const response = await fetch("/.netlify/functions/get-upload-url", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    fileName: r2Key, 
+                    fileType: file.type,
+                    folder: "" // Path ஏற்கனவே r2Key-ல் இருப்பதால் இது காலியாக இருக்கலாம்
+                })
+            });
+
+            if (!response.ok) throw new Error("பாதுகாப்பான அப்லோடு லிங்க் பெறுவதில் தோல்வி!");
+
+            const data = await response.json();
+            const uploadUrl = data.uploadUrl;
+
+            // 2. பெறப்பட்ட லிங்க்கைப் பயன்படுத்தி நேரடியாக R2-ல் ஃபைலை அப்லோடு செய்தல்
+            const uploadResponse = await fetch(uploadUrl, {
+                method: "PUT",
+                headers: { "Content-Type": file.type },
+                body: file
+            });
+
+            if (!uploadResponse.ok) throw new Error("R2-விற்கு அப்லோடு செய்வதில் பிழை!");
+
+            // 3. வெற்றி செய்தி
+            statusMsgEl.style.color = "#28a745";
+            statusMsgEl.innerHTML = `வெற்றிகரமாக பதிவேற்றப்பட்டது!<br><small>Path: ${r2Key}</small>`;
+            return true;
+
+        } catch (error) {
+            statusMsgEl.style.color = "red";
+            statusMsgEl.innerText = "பிழை: " + error.message;
+            console.error("Upload Error:", error);
+            return false;
+        }
+    }
+
+    // 5.1 EXAM UPLOAD (மேம்படுத்தப்பட்டது - Firebase-ல் URL சேமிக்கப்படும்)
+    async function uploadExamFile() {
+        const fileInput = document.getElementById('examFile');
+        if (fileInput.files.length === 0) return alert("கோப்பைத் தேர்ந்தெடுக்கவும்");
+        
+        const cls = document.getElementById('examClass').value;
+        const sub = document.getElementById('examSubject').value;
+        const type = document.getElementById('examType').value;
+        const num = document.getElementById('examNumber').value;
+        const statusMsg = document.getElementById('examFile-status');
+        
+        const r2Key = `exams/class${cls}_${sub}_${type}_${num}.pdf`; 
+        
+        let success = await doR2Upload(fileInput.files[0], r2Key, statusMsg);
+        if(success) {
+            // exam.html எளிதாக எடுக்க Firebase-லும் லிங்கை சேமிக்கிறோம்
+            const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
+            await database.ref(`exam_links/class_${cls}/${sub}/${type}_${num}`).set({
+                url: publicUrl,
+                uploadedAt: new Date().toISOString()
+            });
+            statusMsg.innerHTML += "<br>Firebase-ல் லிங்க் செய்யப்பட்டது!";
+            fileInput.value = "";
+        }
+    }
+
+    // 5.2 LESSON PLAN UPLOAD
+    async function uploadLessonPlan() {
+        const fileInput = document.getElementById('lessonFile');
+        if (fileInput.files.length === 0) return alert("கோப்பைத் தேர்ந்தெடுக்கவும்");
+        
+        const cls = document.getElementById('lessonClass').value;
+        const sub = document.getElementById('lessonSubject').value;
+        const month = document.getElementById('lessonMonth').value;
+        
+        const file = fileInput.files[0];
+        const ext = file.name.split('.').pop();
+        const r2Key = `lesson_plans/class_${cls}/${sub}/${month}_${Date.now()}.${ext}`;
+        const statusMsg = document.getElementById('lessonFile-status');
+
+        let success = await doR2Upload(file, r2Key, statusMsg);
+        if(success) {
+            await database.ref(`lesson_plans/class_${cls}/${sub}/${month}`).set({
+                url: `${R2_PUBLIC_URL_PREFIX}/${r2Key}`, uploadedAt: new Date().toISOString()
+            });
+            statusMsg.innerHTML += "<br>Firebase-ல் லிங்க் செய்யப்பட்டது!";
+            fileInput.value = "";
+        }
+    }
+
+    // 5.3 BOOK BACK Q&A UPLOAD
+    async function uploadBookBack() {
+        const fileInput = document.getElementById('bbFile');
+        if (fileInput.files.length === 0) return alert("கோப்பைத் தேர்ந்தெடுக்கவும்");
+        
+        const cls = document.getElementById('bbClass').value;
+        const term = document.getElementById('bbTerm').value;
+        const sub = document.getElementById('bbSubject').value;
+        
+        const file = fileInput.files[0];
+        const r2Key = `classroom/BookBackQA/class_${cls}/${term}/${sub}_${Date.now()}.pdf`;
+        const statusMsg = document.getElementById('bbFile-status');
+        
+        let success = await doR2Upload(file, r2Key, statusMsg);
+        if(success) {
+            const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
+            await database.ref(`bookback_links/class_${cls}/${term}/${sub}`).set({
+                url: publicUrl,
+                uploadedAt: new Date().toISOString()
+            });
+            statusMsg.innerHTML += "<br>Firebase-ல் லிங்க் செய்யப்பட்டது!";
+            fileInput.value = "";
+        }
+    }
+
+    // 5.4 GENERAL FILE UPLOAD (GOs, Daily Messages)
+    async function uploadDailyMessage() {
+    const fileInput = document.getElementById('dailyMsgFile');
+    const month = document.getElementById('msgMonth').value;
+    const date = document.getElementById('msgDate').value;
+    const title = document.getElementById('dailyMsgTitle').value;
+    
+    if (fileInput.files.length === 0) return alert("கோப்பைத் தேர்ந்தெடுக்கவும்");
+    
+    const file = fileInput.files[0];
+    const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    
+    // கோப்பு பாதையை மாதம்/தேதி அடிப்படையில் மாற்றுதல்
+    const r2Key = `classroom/DailyMessages/${month}/${date}/${Date.now()}_${safeName}`;
+    const statusMsg = document.getElementById('dailyMsgFile-status');
+    
+    let success = await doR2Upload(file, r2Key, statusMsg);
+    
+    if(success) {
+        // Firebase-ல் தரவுகளை சேமித்தல்
+        await database.ref(`uploads/DailyMessages/${month}/${date}`).push({
+            title: title || safeName,
+            url: `${R2_PUBLIC_URL_PREFIX}/${r2Key}`,
+            uploadedAt: new Date().toISOString()
+        });
+        statusMsg.innerHTML += "<br>வெற்றிகரமாக சேமிக்கப்பட்டது!";
+        fileInput.value = ""; 
+    }
+}
+    // ==========================================
+    // 6. UI TABS & HOMEWORK LOGIC
+    // ==========================================
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    function updateNews() {
+        let tickerText = document.getElementById('tickerInput').value;
+        database.ref('site_updates/ticker').set(tickerText).then(() => alert("செய்தி மாற்றப்பட்டது!"));
+    }
+
+    // --- Homework Functionality ---
+    let currentYear = new Date().getFullYear();
+    let selectedDate = null, selectedClassVal = null, selectedMonthVal = null;
+    const subjectNames = ['தமிழ்', 'ஆங்கிலம்', 'கணக்கு', 'அறிவியல்', 'சமூக அறிவியல்', 'மற்றவை'];
+
+    function buildHomeworkTable() {
+        let html = `<table class="hw-table">
+            <thead><tr><th rowspan="2">வ.எண்</th><th rowspan="2">பாடம்</th><th rowspan="2">பக்க எண்</th><th rowspan="2">கேள்வி எண்</th><th rowspan="2">விவரம்</th><th colspan="3">செயல்பாடு</th></tr>
+            <tr><th>Read</th><th>Write</th><th>Test</th></tr></thead><tbody>`;
+        subjectNames.forEach((sub, i) => {
+            for(let j = 0; j < 2; j++) {
+                html += `<tr>`;
+                if(j === 0) html += `<td rowspan="2">${i+1}</td><td rowspan="2"><b>${sub}</b></td>`;
+                html += `<td><input type="text" id="sub_${i}_page_${j}" placeholder="-"></td>
+                    <td><input type="text" id="sub_${i}_qno_${j}" placeholder="-"></td>
+                    <td style="text-align:left;"><input type="text" id="sub_${i}_desc_${j}" placeholder="..."></td>
+                    <td><input type="checkbox" id="sub_${i}_read_${j}"></td>
+                    <td><input type="checkbox" id="sub_${i}_write_${j}"></td>
+                    <td><input type="checkbox" id="sub_${i}_test_${j}"></td></tr>`;
+            }
+        });
+        html += `</tbody></table>`;
+        document.getElementById('tableContainer').innerHTML = html;
+    }
+
+    function checkSelections() {
+        selectedClassVal = document.getElementById('classSelect').value;
+        selectedMonthVal = document.getElementById('monthSelect').value;
+        document.getElementById('editorSection').style.display = 'none';
+        if(selectedClassVal && selectedMonthVal) {
+            document.getElementById('monthDisplayTitle').innerText = document.getElementById('monthSelect').options[document.getElementById('monthSelect').selectedIndex].text + " - வகுப்பு " + selectedClassVal;
+            generateDaysGrid(selectedMonthVal);
+            document.getElementById('calendarSection').style.display = 'block';
+        } else { document.getElementById('calendarSection').style.display = 'none'; }
+    }
+
+    function generateDaysGrid(month) {
+        const container = document.getElementById('daysContainer'); container.innerHTML = "";
+        const daysInMonth = new Date(currentYear, month, 0).getDate();
+        for(let i = 1; i <= daysInMonth; i++) {
+            const box = document.createElement('div');
+            box.className = 'day-box'; box.innerText = i; box.id = `daybox-${i}`;
+            box.onclick = () => onDateClick(i, box); container.appendChild(box);
+        }
+        database.ref(`global_homework_template/class_${selectedClassVal}/${currentYear}_${month}`).once('value').then((snap) => {
+            if(snap.exists()) for(let day in snap.val()) if(document.getElementById(`daybox-${day}`)) document.getElementById(`daybox-${day}`).classList.add('has-data');
+        });
+    }
+
+    function clearTable() {
+        document.querySelectorAll('.hw-table input[type="text"]').forEach(inp => inp.value = "");
+        document.querySelectorAll('.hw-table input[type="checkbox"]').forEach(inp => inp.checked = false);
+    }
+
+    function onDateClick(date, boxElement) {
+        selectedDate = date;
+        document.querySelectorAll('.day-box').forEach(b => b.classList.remove('active')); boxElement.classList.add('active');
+        document.getElementById('selectedDateText').innerText = `${date}-${selectedMonthVal}-${currentYear}`;
+        document.getElementById('editorSection').style.display = 'block';
+        clearTable();
+
+        database.ref(`global_homework_template/class_${selectedClassVal}/${currentYear}_${selectedMonthVal}/${date}`).once('value').then((snap) => {
+            if(snap.exists()) {
+                let data = JSON.parse(snap.val());
+                data.forEach((sub, i) => {
+                    sub.rows.forEach((row, j) => {
+                        document.getElementById(`sub_${i}_page_${j}`).value = row.page || "";
+                        document.getElementById(`sub_${i}_qno_${j}`).value = row.qno || "";
+                        document.getElementById(`sub_${i}_desc_${j}`).value = row.desc || "";
+                        document.getElementById(`sub_${i}_read_${j}`).checked = row.read;
+                        document.getElementById(`sub_${i}_write_${j}`).checked = row.write;
+                        document.getElementById(`sub_${i}_test_${j}`).checked = row.test;
+                    });
+                });
+            }
+        });
+    }
+
+    function saveGlobalHomework() {
+        let hwData = []; let hasAnyData = false;
+        subjectNames.forEach((sub, i) => {
+            let subData = { subject: sub, rows: [] };
+            for(let j=0; j<2; j++) {
+                let row = {
+                    page: document.getElementById(`sub_${i}_page_${j}`).value.trim(),
+                    qno: document.getElementById(`sub_${i}_qno_${j}`).value.trim(),
+                    desc: document.getElementById(`sub_${i}_desc_${j}`).value.trim(),
+                    read: document.getElementById(`sub_${i}_read_${j}`).checked,
+                    write: document.getElementById(`sub_${i}_write_${j}`).checked,
+                    test: document.getElementById(`sub_${i}_test_${j}`).checked
+                };
+                if(row.page || row.qno || row.desc || row.read || row.write || row.test) hasAnyData = true;
+                subData.rows.push(row);
+            }
+            hwData.push(subData);
+        });
+
+        if(!hasAnyData) return alert("விவரங்களை உள்ளிடவும்!");
+        let jsonContent = JSON.stringify(hwData);
+        database.ref(`global_homework_template/class_${selectedClassVal}/${currentYear}_${selectedMonthVal}/${selectedDate}`).set(jsonContent)
+        .then(() => {
+            alert(`வகுப்பு ${selectedClassVal}க்கான Global Homework சேமிக்கப்பட்டது!`);
+            document.getElementById(`daybox-${selectedDate}`).classList.add('has-data');
+        }).catch(e => alert("பிழை: " + e.message));
+    }
+</script>
+</body>
+</html>

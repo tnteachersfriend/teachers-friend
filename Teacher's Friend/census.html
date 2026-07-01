@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Census Data - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { background-color: #fffde7; padding: 5px; font-size: 13px; }
+        
+        .container { 
+            width: 100%; 
+            max-width: 1000px; 
+            margin: auto; 
+            background: white; 
+            padding: 10px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+        }
+        
+        h2 { color: #1a73e8; text-align: center; margin-bottom: 15px; font-size: 18px; }
+        h3 { color: #d81b60; margin-top: 20px; margin-bottom: 8px; border-bottom: 2px solid #f8bbd0; padding-bottom: 5px; font-size: 14px; }
+        
+        .field-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 5px; }
+        .field-group label { font-weight: 600; color: #333; font-size: 14px;}
+        .field-group select { padding: 8px; border: 1px solid #ccc; border-radius: 5px; outline: none; width: 100%; font-size: 14px; }
+        
+        .table-container { 
+            width: 100%; 
+            margin-bottom: 15px; 
+            overflow: hidden; 
+        }
+        
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 11px; 
+            table-layout: fixed; 
+        }
+        
+        th, td { 
+            border: 1px solid #bbb; 
+            padding: 3px 1px; 
+            text-align: center; 
+            vertical-align: middle;
+            word-wrap: break-word; 
+        }
+        
+        th { background-color: #e3f2fd; color: #0d47a1; font-weight: 600; line-height: 1.2; }
+        
+        th:first-child, td:first-child { width: 18%; font-weight: 600; }
+        
+        input[type="number"] { 
+            width: 95%; 
+            padding: 4px 1px; 
+            border: 1px solid #90caf9; 
+            border-radius: 3px; 
+            text-align: center; 
+            font-size: 12px;
+            margin: 0 auto;
+            display: block;
+        }
+        
+        input[type="number"]:focus { outline: none; border-color: #1a73e8; background: #e8f0fe; }
+        
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .readonly-input { background-color: #f5f5f5; font-weight: bold; border: 1px solid #bdbdbd; color: #d32f2f; cursor: not-allowed; }
+        .total-row { background-color: #fff3e0; font-weight: bold; }
+        
+        .btn-area { display: flex; justify-content: space-between; margin-top: 20px; gap: 10px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 600; transition: 0.3s; }
+        .save-btn { background-color: #4caf50; color: white; }
+        .back-btn { background-color: #f44336; color: white; }
+        
+        .info-text { font-size: 10px; color: #666; margin-bottom: 8px; display: block; line-height: 1.3; font-style: italic; }
+
+        @media (min-width: 768px) {
+            body { padding: 20px; }
+            .container { padding: 25px; }
+            h2 { font-size: 22px; }
+            h3 { font-size: 16px; }
+            table { font-size: 14px; }
+            th, td { padding: 8px; }
+            input[type="number"] { padding: 6px; font-size: 14px; width: 85%; }
+            .info-text { font-size: 12px; }
+            .field-group { flex-direction: row; align-items: center; }
+            .field-group select { max-width: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>மக்கள் தொகை கணக்கெடுப்பு</h2>
+
+    <div class="field-group">
+        <label>1. கல்வி ஆண்டு:</label>
+        <select id="academicYear">
+            <option value="2024-2025">2024-2025</option>
+            <option value="2025-2026">2025-2026</option>
+            <option value="2026-2027">2026-2027</option>
+            <option value="2027-2028">2027-2028</option>
+        </select>
+    </div>
+
+    <h3>2. 0-5 வயது குழந்தைகள்</h3>
+    <div class="table-container"><table id="tbl_0_5"></table></div>
+
+    <h3>3. இப்பள்ளியில் பயில்பவர்கள்</h3>
+    <span class="info-text">* Students Data-விலிருந்து பிறந்த தேதி அடிப்படையில் தானாக நிரம்பும்.</span>
+    <div class="table-container"><table id="tbl_this_school"></table></div>
+
+    <h3>4. பிற பள்ளியில் பயில்பவர்கள்</h3>
+    <div class="table-container"><table id="tbl_other_school"></table></div>
+
+    <h3>5. பள்ளி வயதினர்</h3>
+    <span class="info-text">* வ.எண் 3 மற்றும் 4-ன் கூட்டுத்தொகை.</span>
+    <div class="table-container"><table id="tbl_school_age"></table></div>
+
+    <h3>6. இடையில் நின்றவர்கள்</h3>
+    <div class="table-container"><table id="tbl_dropout"></table></div>
+
+    <h3>7. இன்னும் சேராதவர்கள்</h3>
+    <div class="table-container"><table id="tbl_never_enrolled"></table></div>
+
+    <h3>8. இயலாக் குழந்தைகள்</h3>
+    <div class="table-container"><table id="tbl_cwsn"></table></div>
+
+    <h3>9. எழுதப்படிக்க தெரிந்தவர்கள்</h3>
+    <div class="table-container"><table id="tbl_literate"></table></div>
+
+    <h3>10. எழுதப்படிக்க தெரியாதவர்கள்</h3>
+    <div class="table-container"><table id="tbl_illiterate"></table></div>
+
+    <h3>11. 5+ வயதினர்</h3>
+    <div class="table-container"><table id="tbl_age_5_plus"></table></div>
+
+       <h3>12. மக்கள் தொகை</h3>
+           <span class="info-text">* வ.எண் 2, 9, 10, 11 ஆகிய அட்டவணைகளின் கூட்டுத்தொகை.</span>
+            <div class="table-container"><table id="tbl_population"></table></div>
+
+        <div class="table-container"><table id="tbl_population"></table></div>
+
+    <div class="btn-area">
+        <button class="back-btn" onclick="window.history.back()">Back</button>
+        <button class="save-btn" onclick="saveCensusData()">Save Data</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+   const firebaseConfig = {
+apiKey: "YOUR_API_KEY",
+authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com",
+projectId: "teacher-s-friend-3aca8",
+storageBucket: "teacher-s-friend-3aca8.appspot.com",
+messagingSenderId: "YOUR_SENDER_ID",
+appId: "YOUR_APP_ID"
+};
+
+if (!firebase.apps.length) {
+firebase.initializeApp(firebaseConfig);
+}
+const database = firebase.database();
+
+    const castes = ["SC(A)", "SC", "ST", "MBC", "DNC", "BCM", "BC", "OC"];
+    const casteKeys = ["sca", "sc", "st", "mbc", "dnc", "bcm", "bc", "oc"];
+
+    // 4 Columns Table (0-5, Literate, Illiterate, 5+ Age & Population)
+    function generateType1Table(tableId, isReadonly) {
+        let html = `<thead><tr><th>சாதி</th><th>ஆண்</th><th>பெண்</th><th>மொத்<br>தம்</th></tr></thead><tbody>`;
+        casteKeys.forEach((c, i) => {
+            let ro = isReadonly ? 'readonly disabled' : '';
+            let cls = isReadonly ? 'readonly-input' : 'calc-input';
+            html += `<tr>
+                <td>${castes[i]}</td>
+                <td><input type="number" id="${tableId}_${c}_m" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_f" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_tot" class="readonly-input row-tot" value="0" readonly disabled></td>
+            </tr>`;
+        });
+        html += `<tr class="total-row">
+            <td>மொத்</td>
+            <td><input type="number" id="${tableId}_tot_m" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_f" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_tot" class="readonly-input" value="0" readonly disabled></td>
+        </tr></tbody>`;
+        document.getElementById(tableId).innerHTML = html;
+    }
+
+    // 6 Columns Table (Age Split) 
+    function generateType2Table(tableId, isReadonly) {
+        let html = `<thead>
+            <tr><th rowspan="2">சாதி</th><th colspan="2">ஆண்</th><th colspan="2">பெண்</th><th rowspan="2">மொத்<br>தம்</th></tr>
+            <tr><th>0-10<br>வயது</th><th>11-14<br>வயது</th><th>0-10<br>வயது</th><th>11-14<br>வயது</th></tr>
+        </thead><tbody>`;
+        casteKeys.forEach((c, i) => {
+            let ro = isReadonly ? 'readonly disabled' : '';
+            let cls = isReadonly ? 'readonly-input' : 'calc-input';
+            html += `<tr>
+                <td>${castes[i]}</td>
+                <td><input type="number" id="${tableId}_${c}_m_10" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_m_14" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_f_10" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_f_14" class="${cls}" value="0" ${ro}></td>
+                <td><input type="number" id="${tableId}_${c}_tot" class="readonly-input row-tot" value="0" readonly disabled></td>
+            </tr>`;
+        });
+        html += `<tr class="total-row">
+            <td>மொத்</td>
+            <td><input type="number" id="${tableId}_tot_m_10" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_m_14" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_f_10" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_f_14" class="readonly-input" value="0" readonly disabled></td>
+            <td><input type="number" id="${tableId}_tot_tot" class="readonly-input" value="0" readonly disabled></td>
+        </tr></tbody>`;
+        document.getElementById(tableId).innerHTML = html;
+    }
+
+    function getVal(id) { let v = parseInt(document.getElementById(id)?.value); return isNaN(v) ? 0 : v; }
+    function setVal(id, val) { let el = document.getElementById(id); if(el) el.value = val; }
+
+    function calculateAll() {
+        casteKeys.forEach(c => {
+            // Type 1 tables calculations (4 columns)
+            ['tbl_0_5', 'tbl_literate', 'tbl_illiterate', 'tbl_age_5_plus'].forEach(tbl => {
+                setVal(`${tbl}_${c}_tot`, getVal(`${tbl}_${c}_m`) + getVal(`${tbl}_${c}_f`));
+            });
+
+            setVal(`tbl_other_school_${c}_tot`, getVal(`tbl_other_school_${c}_m_10`) + getVal(`tbl_other_school_${c}_m_14`) + getVal(`tbl_other_school_${c}_f_10`) + getVal(`tbl_other_school_${c}_f_14`));
+
+            let sa_m_10 = getVal(`tbl_this_school_${c}_m_10`) + getVal(`tbl_other_school_${c}_m_10`);
+            let sa_m_14 = getVal(`tbl_this_school_${c}_m_14`) + getVal(`tbl_other_school_${c}_m_14`);
+            let sa_f_10 = getVal(`tbl_this_school_${c}_f_10`) + getVal(`tbl_other_school_${c}_f_10`);
+            let sa_f_14 = getVal(`tbl_this_school_${c}_f_14`) + getVal(`tbl_other_school_${c}_f_14`);
+            
+            setVal(`tbl_school_age_${c}_m_10`, sa_m_10); setVal(`tbl_school_age_${c}_m_14`, sa_m_14);
+            setVal(`tbl_school_age_${c}_f_10`, sa_f_10); setVal(`tbl_school_age_${c}_f_14`, sa_f_14);
+            setVal(`tbl_school_age_${c}_tot`, sa_m_10 + sa_m_14 + sa_f_10 + sa_f_14);
+
+            ['tbl_dropout', 'tbl_never_enrolled', 'tbl_cwsn'].forEach(tbl => {
+                setVal(`${tbl}_${c}_tot`, getVal(`${tbl}_${c}_m_10`) + getVal(`${tbl}_${c}_m_14`) + getVal(`${tbl}_${c}_f_10`) + getVal(`${tbl}_${c}_f_14`));
+            });
+
+            let pop_m = getVal(`tbl_0_5_${c}_m`) + getVal(`tbl_literate_${c}_m`) + getVal(`tbl_illiterate_${c}_m`) + getVal(`tbl_age_5_plus_${c}_m`);
+            let pop_f = getVal(`tbl_0_5_${c}_f`) + getVal(`tbl_literate_${c}_f`) + getVal(`tbl_illiterate_${c}_f`) + getVal(`tbl_age_5_plus_${c}_f`);
+
+            setVal(`tbl_population_${c}_m`, pop_m);
+            setVal(`tbl_population_${c}_f`, pop_f);
+            setVal(`tbl_population_${c}_tot`, pop_m + pop_f);
+        });
+
+        // Calculate bottom totals for Type 1 tables
+        ['tbl_0_5', 'tbl_literate', 'tbl_illiterate', 'tbl_age_5_plus', 'tbl_population'].forEach(tbl => {
+            let tm=0, tf=0, tt=0;
+            casteKeys.forEach(c => { tm += getVal(`${tbl}_${c}_m`); tf += getVal(`${tbl}_${c}_f`); tt += getVal(`${tbl}_${c}_tot`); });
+            setVal(`${tbl}_tot_m`, tm); setVal(`${tbl}_tot_f`, tf); setVal(`${tbl}_tot_tot`, tt);
+        });
+
+        // Calculate bottom totals for Type 2 tables
+        ['tbl_this_school', 'tbl_other_school', 'tbl_school_age', 'tbl_dropout', 'tbl_never_enrolled', 'tbl_cwsn'].forEach(tbl => {
+            let tm10=0, tm14=0, tf10=0, tf14=0, tt=0;
+            casteKeys.forEach(c => {
+                tm10 += getVal(`${tbl}_${c}_m_10`); tm14 += getVal(`${tbl}_${c}_m_14`);
+                tf10 += getVal(`${tbl}_${c}_f_10`); tf14 += getVal(`${tbl}_${c}_f_14`);
+                tt += getVal(`${tbl}_${c}_tot`);
+            });
+            setVal(`${tbl}_tot_m_10`, tm10); setVal(`${tbl}_tot_m_14`, tm14);
+            setVal(`${tbl}_tot_f_10`, tf10); setVal(`${tbl}_tot_f_14`, tf14); setVal(`${tbl}_tot_tot`, tt);
+        });
+    }
+
+    document.addEventListener('input', e => { if(e.target.classList.contains('calc-input')) calculateAll(); });
+
+    function calculateAge(dobStr) {
+        if(!dobStr) return -1;
+        let dob = new Date(dobStr);
+        let today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        let m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+        return age;
+    }
+
+    function loadStudentsFromFirebase() {
+        database.ref('students').once('value', snapshot => {
+            casteKeys.forEach(c => {
+                setVal(`tbl_this_school_${c}_m_10`, 0); setVal(`tbl_this_school_${c}_m_14`, 0);
+                setVal(`tbl_this_school_${c}_f_10`, 0); setVal(`tbl_this_school_${c}_f_14`, 0);
+            });
+
+            snapshot.forEach(child => {
+                let student = child.val();
+                let dob = student.dob; 
+                let gender = student.gender; 
+                let comm = student.community ? student.community.replace(/\s+/g, '').toLowerCase() : '';
+                
+                if (comm === 'sc(a)') comm = 'sca';
+                if (!casteKeys.includes(comm)) return;
+
+                let age = calculateAge(dob);
+                
+                if (age >= 0 && age <= 10) {
+                    if (gender === 'ஆண்') setVal(`tbl_this_school_${comm}_m_10`, getVal(`tbl_this_school_${comm}_m_10`) + 1);
+                    else if (gender === 'பெண்') setVal(`tbl_this_school_${comm}_f_10`, getVal(`tbl_this_school_${comm}_f_10`) + 1);
+                } else if (age >= 11 && age <= 14) {
+                    if (gender === 'ஆண்') setVal(`tbl_this_school_${comm}_m_14`, getVal(`tbl_this_school_${comm}_m_14`) + 1);
+                    else if (gender === 'பெண்') setVal(`tbl_this_school_${comm}_f_14`, getVal(`tbl_this_school_${comm}_f_14`) + 1);
+                }
+            });
+
+            casteKeys.forEach(c => {
+                let tot = getVal(`tbl_this_school_${c}_m_10`) + getVal(`tbl_this_school_${c}_m_14`) + getVal(`tbl_this_school_${c}_f_10`) + getVal(`tbl_this_school_${c}_f_14`);
+                setVal(`tbl_this_school_${c}_tot`, tot);
+            });
+
+            calculateAll(); 
+        });
+    }
+
+    function loadCensusData(year) {
+        document.querySelectorAll('.calc-input, .readonly-input').forEach(el => { if(el.tagName === 'INPUT') el.value = 0; });
+        
+        database.ref(`census_data/${year}`).once('value', snapshot => {
+            if (snapshot.exists()) {
+                let data = snapshot.val();
+                
+                // Load for all Type 1 Tables (0-5, Literate, Illiterate, 5+ Age)
+                ['tbl_0_5', 'tbl_literate', 'tbl_illiterate', 'tbl_age_5_plus'].forEach(tbl => {
+                    if(data[tbl]) {
+                        casteKeys.forEach(c => {
+                            if(data[tbl][c]) { 
+                                setVal(`${tbl}_${c}_m`, data[tbl][c].m); 
+                                setVal(`${tbl}_${c}_f`, data[tbl][c].f); 
+                            }
+                        });
+                    }
+                });
+
+                // Load for Type 2 Tables
+                ['tbl_other_school', 'tbl_dropout', 'tbl_never_enrolled', 'tbl_cwsn'].forEach(tbl => {
+                    if(data[tbl]) {
+                        casteKeys.forEach(c => {
+                            if(data[tbl][c]) {
+                                setVal(`${tbl}_${c}_m_10`, data[tbl][c].m_10); setVal(`${tbl}_${c}_m_14`, data[tbl][c].m_14);
+                                setVal(`${tbl}_${c}_f_10`, data[tbl][c].f_10); setVal(`${tbl}_${c}_f_14`, data[tbl][c].f_14);
+                            }
+                        });
+                    }
+                });
+            }
+            loadStudentsFromFirebase(); 
+        });
+    }
+
+    function saveCensusData() {
+        let year = document.getElementById('academicYear').value;
+        let dataToSave = { timestamp: firebase.database.ServerValue.TIMESTAMP };
+        
+        // Save for all Type 1 Tables
+        ['tbl_0_5', 'tbl_literate', 'tbl_illiterate', 'tbl_age_5_plus'].forEach(tbl => {
+            dataToSave[tbl] = {};
+            casteKeys.forEach(c => { 
+                dataToSave[tbl][c] = { m: getVal(`${tbl}_${c}_m`), f: getVal(`${tbl}_${c}_f`), tot: getVal(`${tbl}_${c}_tot`) }; 
+            });
+        });
+
+        // Save for Type 2 Tables
+        ['tbl_other_school', 'tbl_dropout', 'tbl_never_enrolled', 'tbl_cwsn'].forEach(tbl => {
+            dataToSave[tbl] = {};
+            casteKeys.forEach(c => {
+                dataToSave[tbl][c] = {
+                    m_10: getVal(`${tbl}_${c}_m_10`), m_14: getVal(`${tbl}_${c}_m_14`),
+                    f_10: getVal(`${tbl}_${c}_f_10`), f_14: getVal(`${tbl}_${c}_f_14`), tot: getVal(`${tbl}_${c}_tot`)
+                };
+            });
+        });
+
+        database.ref(`census_data/${year}`).set(dataToSave).then(() => {
+            alert("Census தரவுகள் வெற்றிகரமாக சேமிக்கப்பட்டன!");
+        }).catch(err => {
+            alert("பிழை: " + err.message);
+        });
+    }
+
+    window.onload = function() {
+        generateType1Table('tbl_0_5', false);
+        generateType2Table('tbl_this_school', true); 
+        generateType2Table('tbl_other_school', false);
+        generateType2Table('tbl_school_age', true); 
+        generateType2Table('tbl_dropout', false);
+        generateType2Table('tbl_never_enrolled', false);
+        generateType2Table('tbl_cwsn', false);
+        
+        // New Tables Generated Here
+        generateType1Table('tbl_literate', false);
+        generateType1Table('tbl_illiterate', false);
+        generateType1Table('tbl_age_5_plus', false);
+
+        generateType1Table('tbl_population', true); 
+
+        loadCensusData(document.getElementById('academicYear').value);
+    };
+
+    document.getElementById('academicYear').addEventListener('change', e => {
+        loadCensusData(e.target.value);
+    });
+</script>
+</body>
+</html>

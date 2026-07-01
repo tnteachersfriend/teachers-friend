@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>வகுப்பு ஆசிரியர் பதிவேடு - Teacher's Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502"
+     crossorigin="anonymous"></script>
+    
+    <style>
+        /* --- பொதுவான வடிவமைப்பு --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', 'Latha', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; padding: 20px; }
+        .container-box { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        header { background: #1a73e8; color: white;padding: 20px;
+    padding-top: calc(40px + env(safe-area-inset-top, 0px)); text-align: center; border-radius: 8px; margin-bottom: 20px; }
+        
+        /* --- தேர்வுப் பகுதி --- */
+        .selection-card { background: #e8f0fe; padding: 20px; border-radius: 10px; margin-bottom: 25px; border: 1px solid #c2e7ff; }
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 14px; }
+        select, input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; outline: none; }
+        
+        /* --- பட்டன்கள் --- */
+        .btn-area { display: flex; gap: 15px; margin-top: 20px; justify-content: center; flex-wrap: wrap; }
+        .action-btn { background: #1a73e8; color: white; border: none; padding: 12px 30px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; transition: 0.3s; }
+        .action-btn:hover { background: #1557b0; }
+        .save-btn { background: #28a745; } .save-btn:hover { background: #218838; }
+        .print-btn { background: #0288d1; } .print-btn:hover { background: #01579b; }
+        .back-btn { background: #e53935; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; font-size: 15px; display: inline-flex; align-items: center; gap: 8px; }
+        
+        /* --- மொபைல் ஸ்க்ரோல் வழிகாட்டி --- */
+        .scroll-tip { display: none; text-align: center; background: #fff3cd; color: #856404; padding: 10px; border-radius: 6px; font-size: 13px; font-weight: bold; margin-bottom: 15px; border: 1px solid #ffeeba; }
+
+        /* --- அறிக்கை வடிவமைப்பு (Report UI) --- */
+        #report-container { display: none; }
+        
+        .cover-page { height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 8px double #1a73e8; margin-bottom: 30px; background: #fff; padding: 40px; text-align: center; border-radius: 10px; }
+        .cover-title { font-size: 35px; font-weight: bold; margin-bottom: 20px; color: #111; }
+        .cover-details { font-size: 22px; line-height: 2; font-weight: 600; color: #444; }
+
+        .student-page { border: 2px solid #ccc; border-radius: 8px; padding: 20px; margin-bottom: 40px; background: #fff; }
+        .page-header { display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: bold; font-size: 15px; border-bottom: 2px solid #333; padding-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+        
+        /* --- Mobile Responsive Tables --- */
+        .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 25px; background: white; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .marks-table { min-width: 1000px; /* மொபைலில் அட்டவணை சுருங்குவதைத் தடுக்கும் */ }
+        .health-table { min-width: 900px; /* மொபைலில் அட்டவணை சுருங்குவதைத் தடுக்கும் */ }
+        
+        th, td { border: 1px solid #222; padding: 6px; text-align: center; }
+        th { background-color: #f1f3f4; font-weight: bold; color: #111; }
+        
+        .subject-col { text-align: left !important; font-weight: bold; width: 120px; }
+        .highlight-col { background-color: #e3f2fd; font-weight: bold; color: #0d47a1; }
+        
+        /* Vertical Text for Health Checkbox Table */
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); height: 150px; font-size: 12px; white-space: nowrap; padding: 5px; }
+        
+        input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: #1a73e8; }
+        
+        .footer-note { font-size: 12px; font-weight: bold; text-align: left; background: #f9f9f9; padding: 10px; border-radius: 6px; border: 1px solid #eee; }
+        
+        @media (max-width: 768px) { 
+            .scroll-tip { display: block; } 
+            .grid-inputs { grid-template-columns: 1fr; } 
+            .container-box { padding: 15px; }
+            .student-page { padding: 10px; }
+        }
+
+        /* 🖨️ --- அச்சிடும் வடிவமைப்பு (PRINT CSS) - Landscape A4 --- */
+        @media print {
+            @page { size: A4 landscape; margin: 10mm; }
+            body { background: white; margin: 0; padding: 0; }
+            .container-box { box-shadow: none; border: none; padding: 0; max-width: 100%; }
+            header, .selection-card, .btn-area, .top-btns, .scroll-tip { display: none !important; }
+            
+            #report-container { display: block; }
+            .cover-page { border: 8px double #000 !important; height: 90vh; page-break-after: always; margin-bottom: 0; }
+            
+            .student-page { border: none; padding: 0; margin-bottom: 0; page-break-after: always; height: 95vh; display: flex; flex-direction: column; justify-content: center; }
+            
+            .table-responsive { border: none !important; overflow: visible !important; margin-bottom: 15px; }
+            table { min-width: 100% !important; font-size: 12px; }
+            th, td { border: 1px solid #000 !important; color: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            th { background-color: #e0e0e0 !important; }
+            .highlight-col { background-color: #f0f0f0 !important; }
+            
+            /* அச்சிடும்போது Checkbox சரியாக தெரிய */
+            input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 14px; height: 14px; border: 1px solid #000; }
+            input[type="checkbox"]:checked { background-color: #000; }
+        }
+    </style>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+<div class="container-box">
+    <header>
+        <h2><i class="bi bi-person-lines-fill"></i> வகுப்பு ஆசிரியர் பதிவேடு (Class Teacher Register)</h2>
+    </header>
+
+    <div class="selection-card">
+        <div class="grid-inputs">
+            <div>
+                <label>பள்ளியின் பெயர் (School Name):</label>
+                <input type="text" id="mSchool" placeholder="பள்ளியின் பெயரை உள்ளிடவும்..." value="ஊராட்சி ஒன்றிய நடுநிலைப் பள்ளி">
+            </div>
+            <div>
+                <label>கல்வியாண்டு (Academic Year):</label>
+                <select id="mYear">
+                    <option value="2025-26">2025-26</option>
+                    <option value="2026-27">2026-27</option>
+                </select>
+            </div>
+            <div>
+                <label>வகுப்பு (Class):</label>
+                <select id="mClass">
+                    <option value="">--தேர்வு செய்க--</option>
+                    <option value="1">வகுப்பு 1</option><option value="2">வகுப்பு 2</option>
+                    <option value="3">வகுப்பு 3</option><option value="4">வகுப்பு 4</option>
+                    <option value="5">வகுப்பு 5</option><option value="6">வகுப்பு 6</option>
+                    <option value="7">வகுப்பு 7</option><option value="8">வகுப்பு 8</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="btn-area top-btns">
+            <button type="button" class="action-btn" onclick="generateClassRegister()">
+                <i class="bi bi-file-earmark-text"></i> பதிவேட்டை உருவாக்கு
+            </button>
+            <button class="back-btn" onclick="window.location.href='dashboard.html'"><i class="bi bi-arrow-left"></i> Back</button>
+        </div>
+    </div>
+
+    <div class="scroll-tip" id="helper-tip">
+        <i class="bi bi-arrow-left-right"></i> அட்டவணையை இடமிருந்து வலமாக நகர்த்தி (Swipe) பார்க்கவும்.
+    </div>
+
+    <div id="report-container">
+        
+        <div class="btn-area top-btns" style="margin-bottom: 20px;">
+            <button class="action-btn save-btn" onclick="saveHealthData()">
+                <i class="bi bi-cloud-arrow-up-fill"></i> உடல்நலக் கல்வி தரவைச் சேமி
+            </button>
+            <button class="action-btn print-btn" onclick="window.print()">
+                <i class="bi bi-printer-fill"></i> Print / Download PDF
+            </button>
+        </div>
+
+        <div id="pages-wrapper"></div>
+
+    </div>
+</div>
+
+<script>
+    // --- Firebase Config (உங்களுடையது) ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+        authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+        projectId: "teacher-s-friend-3aca8",
+        storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+        messagingSenderId: "294698361211",
+        appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+        databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+    };
+
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const database = firebase.database();
+
+    const subjects = [
+        { id: 'Tamil', name: 'தமிழ்' }, { id: 'English', name: 'ஆங்கிலம்' },
+        { id: 'Maths', name: 'கணக்கு' }, { id: 'Science', name: 'அறிவியல்' }, { id: 'Social', name: 'சமூக அறிவியல்' }
+    ];
+
+    async function generateClassRegister() {
+        const schoolName = document.getElementById('mSchool').value || "-";
+        const year = document.getElementById('mYear').value;
+        const classId = document.getElementById('mClass').value;
+
+        if (!classId) { alert("தயவுசெய்து வகுப்பைத் தேர்வு செய்யவும்!"); return; }
+
+        document.getElementById('report-container').style.display = 'block';
+        if(window.innerWidth <= 768) { document.getElementById('helper-tip').style.display = 'block'; }
+        
+        const wrapper = document.getElementById('pages-wrapper');
+        wrapper.innerHTML = "<h3 style='text-align:center;'>தரவுகள் ஏற்றப்படுகின்றன... (Loading...)</h3>";
+
+        try {
+            let studentsSnap = await database.ref('students').once('value');
+            let allStudents = studentsSnap.val() || {};
+            let classStudents = [];
+
+            for (let key in allStudents) {
+                if (allStudents[key].year === year && String(allStudents[key].class) === String(classId)) {
+                    classStudents.push({ id: key, name: allStudents[key].name || allStudents[key].sName, admNo: allStudents[key].admNo || "-" });
+                }
+            }
+
+            if (classStudents.length === 0) {
+                wrapper.innerHTML = "<h3 style='color:red; text-align:center;'>இந்த வகுப்பில் மாணவர்கள் இல்லை!</h3>"; return;
+            }
+
+            classStudents.sort((a, b) => (parseInt(a.admNo) || 9999) - (parseInt(b.admNo) || 9999));
+
+            let marksSnap = await database.ref(`marks/${year}`).once('value');
+            let marksData = marksSnap.val() || {};
+
+            let healthSnap = await database.ref(`health/${year}/${classId}`).once('value');
+            let healthData = healthSnap.val() || {};
+
+            wrapper.innerHTML = ""; 
+
+            // முகப்புப் பக்கம்
+            wrapper.innerHTML += `
+                <div class="cover-page">
+                    <div class="cover-title">வகுப்பு ஆசிரியர் பதிவேடு<br>${year}</div>
+                    <div class="cover-details">
+                        பள்ளியின் பெயர் : <span style="color:#1a73e8;">${schoolName}</span><br>
+                        வகுப்பு : <span style="color:#1a73e8;">${classId}</span><br>
+                        மொத்த மாணவர்கள் : <span style="color:#1a73e8;">${classStudents.length}</span>
+                    </div>
+                </div>
+            `;
+
+            // ஒவ்வொரு மாணவருக்கும் ஒரு படிவம்
+            classStudents.forEach(student => {
+                let html = `
+                <div class="student-page">
+                    <h2 style="text-align:center; margin-bottom:10px; font-size: 18px;">வகுப்பு ஆசிரியர் பதிவேடு ${year}</h2>
+                    <div class="page-header">
+                        <div>பள்ளி : ${schoolName}</div>
+                        <div>மாணவர் : ${student.name}</div>
+                        <div>வகுப்பு : ${classId}</div>
+                    </div>
+                `;
+
+                // --- A. கல்விசார் பாடப் பகுதிகள் (Responsive Table) ---
+                html += `<div class="table-responsive">
+                    <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">கல்விசார்<br>பாடப் பகுதிகள்</th>
+                            <th colspan="4">பருவம் – I</th>
+                            <th colspan="4">பருவம் – II</th>
+                            <th colspan="4">பருவம் – III</th>
+                            <th rowspan="2" class="highlight-col">ஒட்டு மொத்தச்<br>சராசரி</th>
+                            <th rowspan="2" class="highlight-col">ஒட்டு மொத்தத்<br>தரநிலை</th>
+                        </tr>
+                        <tr>
+                            <th>FA(40)</th><th>SA(60)</th><th>Tot(100)</th><th>Gr</th>
+                            <th>FA(40)</th><th>SA(60)</th><th>Tot(100)</th><th>Gr</th>
+                            <th>FA(40)</th><th>SA(60)</th><th>Tot(100)</th><th>Gr</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                subjects.forEach(sub => {
+                    let t1 = getMark(marksData, 'Term 1', classId, sub.id, student.id);
+                    let t2 = getMark(marksData, 'Term 2', classId, sub.id, student.id);
+                    let t3 = getMark(marksData, 'Term 3', classId, sub.id, student.id);
+
+                    let avgMark = ""; let avgGrade = "";
+                    if(t1.tot !== "" && t2.tot !== "" && t3.tot !== "") {
+                        avgMark = Math.round((parseInt(t1.tot) + parseInt(t2.tot) + parseInt(t3.tot)) / 3);
+                        avgGrade = getGrade(avgMark);
+                    }
+
+                    html += `<tr>
+                        <td class="subject-col">${sub.name}</td>
+                        <td>${t1.fa}</td><td>${t1.sa}</td><td>${t1.tot}</td><td>${t1.gr}</td>
+                        <td>${t2.fa}</td><td>${t2.sa}</td><td>${t2.tot}</td><td>${t2.gr}</td>
+                        <td>${t3.fa}</td><td>${t3.sa}</td><td>${t3.tot}</td><td>${t3.gr}</td>
+                        <td class="highlight-col">${avgMark}</td>
+                        <td class="highlight-col">${avgGrade}</td>
+                    </tr>`;
+                });
+                
+                html += `</tbody></table></div>`; // End Table-Responsive 1
+
+                // --- B. உடல் நலக் கல்வி (Responsive Table) ---
+                let hData = healthData[student.id] || {};
+                
+                html += `<div class="table-responsive">
+                    <table class="health-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="3" style="width:100px;">உடல் நலக்<br>கல்வி</th>
+                            <th colspan="5">பருவம் – I</th>
+                            <th colspan="5">பருவம் – II</th>
+                            <th colspan="5">பருவம் – III</th>
+                            <th rowspan="3" class="highlight-col">ஒட்டு மொத்தத்<br>தரநிலை</th>
+                        </tr>
+                        <tr>
+                            ${generateHealthHeaders()} ${generateHealthHeaders()} ${generateHealthHeaders()}
+                        </tr>
+                        <tr>
+                            ${generateHealthCheckboxes(student.id, 'T1', hData.T1)}
+                            ${generateHealthCheckboxes(student.id, 'T2', hData.T2)}
+                            ${generateHealthCheckboxes(student.id, 'T3', hData.T3)}
+                        </tr>
+                        <tr>
+                            <th>தரநிலை</th>
+                            <th colspan="5" id="hGrade_${student.id}_T1" style="color:red; font-size:16px;">${hData.T1?.grade || ""}</th>
+                            <th colspan="5" id="hGrade_${student.id}_T2" style="color:red; font-size:16px;">${hData.T2?.grade || ""}</th>
+                            <th colspan="5" id="hGrade_${student.id}_T3" style="color:red; font-size:16px;">${hData.T3?.grade || ""}</th>
+                            <th id="hOverallGrade_${student.id}" class="highlight-col" style="color:red; font-size:18px;">${hData.overall || ""}</th>
+                        </tr>
+                    </thead>
+                </table></div>`; // End Table-Responsive 2
+
+                html += `
+                    <div class="footer-note">
+                        உடல்நலக் கல்வி தரநிலை : ✔✔✔✔✔ = A (சிறப்பு நிலை), ✔✔✔✔ = B (மிக நன்று), ✔✔✔ = C (நன்று), ✔✔ = D (திருப்திகரம்), ✔ = E (முயற்சி தேவை).<br>
+                        மொத்தத் தரநிலை : A1=91-100 &nbsp;|&nbsp; A2=81-90 &nbsp;|&nbsp; B1=71-80 &nbsp;|&nbsp; B2=61-70 &nbsp;|&nbsp; C1=51-60 &nbsp;|&nbsp; C2=41-50 &nbsp;|&nbsp; D=31-40 &nbsp;|&nbsp; E=20க்குக்கீழ்.
+                    </div>
+                </div>`; 
+
+                wrapper.innerHTML += html;
+            });
+
+        } catch (error) {
+            wrapper.innerHTML = `<h3 style='color:red;'>தரவுகளைப் பெறுவதில் பிழை: ${error.message}</h3>`;
+        }
+    }
+
+    // Helper functions (same as before)
+    function getMark(data, term, cls, sub, sId) {
+        if(data && data[term] && data[term][cls] && data[term][cls][sub] && data[term][cls][sub][sId]) {
+            let m = data[term][cls][sub][sId];
+            return { fa: m.fa||"", sa: m.sa||"", tot: m.total||"", gr: m.grade||"" };
+        }
+        return { fa:"", sa:"", tot:"", gr:"" };
+    }
+
+    function getGrade(mark) {
+        if(mark==="") return "";
+        let m = parseInt(mark);
+        if(m>=91) return "A1"; if(m>=81) return "A2";
+        if(m>=71) return "B1"; if(m>=61) return "B2";
+        if(m>=51) return "C1"; if(m>=41) return "C2";
+        if(m>=33) return "D";  return "E";
+    }
+
+    function generateHealthHeaders() {
+        let headers = ["உடற்தகுதி", "தான் தொடங்கல் & ஆர்வம்", "விளையாட்டுத் திறன்", "விதிகளைப் பின்பற்றுதல்", "வீரருக்குரிய தன்மை"];
+        let html = "";
+        headers.forEach(h => { html += `<th><div class="vertical-text">${h}</div></th>`; });
+        return html;
+    }
+
+    function generateHealthCheckboxes(sId, term, savedData) {
+        let html = "";
+        let checks = savedData ? savedData.ticks : [false,false,false,false,false];
+        for(let i=0; i<5; i++) {
+            let checked = checks[i] ? "checked" : "";
+            html += `<td><input type="checkbox" class="hCheck_${sId}_${term}" onchange="updateHealthGrade('${sId}')" ${checked}></td>`;
+        }
+        return html;
+    }
+
+    function updateHealthGrade(sId) {
+        const terms = ['T1', 'T2', 'T3'];
+        let tickCounts = { T1:0, T2:0, T3:0 };
+
+        terms.forEach(term => {
+            let boxes = document.querySelectorAll(`.hCheck_${sId}_${term}`);
+            let count = 0;
+            boxes.forEach(b => { if(b.checked) count++; });
+            tickCounts[term] = count;
+            
+            let g = "";
+            if(count === 5) g = "A"; else if(count === 4) g = "B"; else if(count === 3) g = "C"; else if(count === 2) g = "D"; else if(count === 1) g = "E";
+            document.getElementById(`hGrade_${sId}_${term}`).innerText = g;
+        });
+
+        let overall = "";
+        if(tickCounts.T1 > 0 && tickCounts.T2 > 0 && tickCounts.T3 > 0) {
+            let avgTicks = Math.round((tickCounts.T1 + tickCounts.T2 + tickCounts.T3) / 3);
+            if(avgTicks === 5) overall = "A"; else if(avgTicks === 4) overall = "B"; else if(avgTicks === 3) overall = "C"; else if(avgTicks === 2) overall = "D"; else if(avgTicks === 1) overall = "E";
+        }
+        document.getElementById(`hOverallGrade_${sId}`).innerText = overall;
+    }
+
+    function saveHealthData() {
+        const year = document.getElementById('mYear').value;
+        const classId = document.getElementById('mClass').value;
+        if (!classId) return;
+
+        let batch = {};
+        let uniqueStudentIds = [];
+        document.querySelectorAll('[id^="hGrade_"]').forEach(el => {
+            let parts = el.id.split('_'); 
+            if(parts.length===3 && !uniqueStudentIds.includes(parts[1])) uniqueStudentIds.push(parts[1]);
+        });
+
+        uniqueStudentIds.forEach(sId => {
+            let sData = {};
+            ['T1', 'T2', 'T3'].forEach(term => {
+                let ticks = Array.from(document.querySelectorAll(`.hCheck_${sId}_${term}`)).map(b => b.checked);
+                let grade = document.getElementById(`hGrade_${sId}_${term}`).innerText;
+                sData[term] = { ticks: ticks, grade: grade };
+            });
+            sData.overall = document.getElementById(`hOverallGrade_${sId}`).innerText;
+            batch[`health/${year}/${classId}/${sId}`] = sData;
+        });
+
+        if(Object.keys(batch).length > 0) {
+            database.ref().update(batch, (error) => {
+                if (error) alert("சேமிப்பதில் பிழை: " + error.message);
+                else alert("உடல்நலக் கல்வி தரவுகள் வெற்றிகரமாகச் சேமிக்கப்பட்டன!");
+            });
+        }
+    }
+</script>
+
+</body>
+</html>
