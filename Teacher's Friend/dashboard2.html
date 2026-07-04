@@ -1092,7 +1092,9 @@ function setupTopVideo(videos) {
         topVideoEl.style.display = 'none';
     }
 }
-// 3. பின்னணியில் Firebase ரியல் டைம் டேட்டாவை எடுத்து அப்டேட் செய்தல் (மாற்றப்பட்டது)
+
+
+// 3. பின்னணியில் Firebase ரியல் டைம் டேட்டாவை எடுத்து அப்டேட் செய்தல்
 function initFirebasePostsListener() {
     database.ref('posts').orderByKey().limitToLast(10).on('value', (snapshot) => {
         let activeStates = {};
@@ -1123,15 +1125,14 @@ function initFirebasePostsListener() {
         // --- புதிய அதிவேக Caching லாஜிக் தொடக்கம் ---
         let topVideoToCache = null;
         if (sortedVideoPosts.length > 0) {
-            topVideoToCache = sortedVideoPosts[0]; // முதல் வீடியோவை மட்டும் எடுக்கிறோம்
+            topVideoToCache = sortedVideoPosts[0]; 
         }
 
-        // Feed-ல் காட்ட படங்களை/வீடியோக்களை நீக்கிவிட்டு வெறும் Text-ஐ மட்டும் எடுக்கிறோம்
         const textOnlyPosts = freshPosts.map(post => {
             return {
                 ...post,
-                mediaType: null, // மீடியாவை மறைக்கிறோம்
-                mediaUrl: null   // URL-ஐ நீக்குகிறோம் (இதனால் Loading இமேஜ் வராது, 5MB எரரும் வராது)
+                mediaType: null,
+                mediaUrl: null   
             };
         });
 
@@ -1140,29 +1141,29 @@ function initFirebasePostsListener() {
             feedPosts: textOnlyPosts
         };
 
+        // பிழை சரிசெய்யப்பட்ட Try-Catch பகுதி
         try {
-            // Text-ஐ மட்டும் சேமிப்பதால் 5MB எரர் வரவே வராது!
-            // Local Storage நிறைந்துவிட்டால் ஆப் முடங்காமல் இருக்க Try-Catch பாதுகாப்பு
-try {
-    localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(freshPosts));
-} catch (e) {
-    console.warn("Local Storage நிறைந்துவிட்டது (Quota Exceeded). பழைய cache அழிக்கப்படுகிறது...");
-    localStorage.clear(); // பழைய இடத்தைக் காலி செய்கிறோம்
-    try {
-        localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(freshPosts));
-    } catch (e2) {
-        console.error("Cache-ஐ சேமிக்க முடியவில்லை:", e2);
-    }
+            localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(cacheObject));
+        } catch (e) {
+            console.warn("Local Storage நிறைந்துவிட்டது (Quota Exceeded). பழைய cache அழிக்கப்படுகிறது...");
+            localStorage.clear(); 
+            try {
+                localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(cacheObject));
+            } catch (e2) {
+                console.error("Cache-ஐ சேமிக்க முடியவில்லை:", e2);
+            }
+        }
         // --- புதிய அதிவேக Caching லாஜிக் முடிவு ---
 
         setupTopVideo(sortedVideoPosts);
-        renderFeedToDOM(activeStates); // முழு டேட்டாவும் திரையில் தோன்றும்
+        renderFeedToDOM(activeStates); 
         
         if (document.getElementById('fsModal').style.display === 'flex' && currentFsPostKey && globalPosts[currentFsPostKey]) {
             updateFullScreenUI(globalPosts[currentFsPostKey]);
         }
     });
 }
+        
   
 // 4. ஃபங்ஷன்களை இயக்குதல்
 
