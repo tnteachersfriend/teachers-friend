@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher's Friend - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502" crossorigin="anonymous"></script>
+
+    <style>
+        /* --- CSS Styles --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body {
+            display: flex; flex-direction: column; 
+            height: 100vh; overflow: hidden; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            position: relative;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #1a73e8 0%, #3b82f6 100%);
+            padding: 5px 3%; 
+            display: flex; flex-direction: column; gap: 4px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            position: sticky; top: 0; z-index: 100; width: 100%;
+        }
+        
+        .header-top { display: flex; align-items: center; justify-content: flex-start; gap: 15px; width: 100%; }
+        .logo-img { height: 42px; width: auto; border-radius: 50%; background: white; padding: 2px; box-shadow: 0 0 10px 2px #ffff00; flex-shrink: 0; }
+        .main-title { font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.4); white-space: nowrap; }
+        
+        .header-bottom { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2); padding-top: 4px; }
+        .nav-menu { background-color: #004d40; padding: 4px 20px; border-radius: 20px; box-shadow: 0 0 10px 2px #ff6600; flex-shrink: 0; }
+        .nav-menu ul { list-style: none; display: flex; gap: 15px; white-space: nowrap; }
+        .nav-menu ul li a { text-decoration: none; color: #ffffff !important; font-weight: 700; font-size: 13px; transition: 0.3s ease; }
+        .nav-menu ul li a:hover { color: #ffff00; }
+        
+        /* --- Running News Section --- */
+        .news-ticker {
+            flex: 1; overflow: hidden; background: rgba(0, 0, 0, 0.25); border-radius: 20px;
+            padding: 4px 0; border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap; display: flex; align-items: center; box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .news-ticker p {
+            display: inline-block; padding-left: 100%; animation: scrollNews 25s linear infinite;
+            font-size: 13px; font-weight: 700; color: #ffff00; margin: 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        @keyframes scrollNews { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        
+        .search-input { padding: 4px 12px; border: none; border-radius: 25px; outline: none; background: rgba(255, 255, 255, 0.95); width: 200px; font-size: 13px; flex-shrink: 0; }
+        
+        /* --- 3 Column Layout (Hero Section) --- */
+        main { flex: 1; display: flex; flex-direction: row; padding: 12px 2%; gap: 15px; overflow: hidden; }
+
+        /* 1. Left Column */
+        .left-col {
+            flex: 0 0 26%; background: rgba(255, 255, 255, 0.95); border-radius: 12px;
+            padding: 18px 15px; overflow-y: auto; box-shadow: 0 8px 20px rgba(0,0,0,0.2); border-top: 4px solid #ff6600;
+        }
+        .left-col h3 { font-size: 18px; color: #d32f2f; margin-bottom: 10px; font-weight: 800; text-align: center; }
+        .left-col p { font-size: 13px; color: #222; line-height: 1.7; text-align: justify; font-weight: 600; }
+        .left-col .highlight { color: #1a73e8; font-weight: 700; }
+
+        /* 2. Center Column (Background Image & Features) */
+        .center-col {
+            flex: 1; background: url('image_1.png') no-repeat center center; background-size: cover;
+            border-radius: 12px; position: relative; display: flex; flex-direction: column;
+            justify-content: flex-end; 
+            padding: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.2);
+        }
+        .center-col::before { 
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 60%, transparent 100%);
+            border-radius: 12px; z-index: 1;
+        }
+        
+        .center-title {
+            position: absolute; top: 15px; left: 0; width: 100%; z-index: 2;
+            font-size: 32px; font-weight: 800; color: #9c27b0; 
+            text-align: center; text-transform: uppercase; letter-spacing: 2px;
+            text-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #ffffff, 2px -2px 0px #ffffff, -2px 2px 0px #ffffff, 0 4px 10px rgba(0,0,0,0.5); 
+        }
+
+        .center-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        
+        /* Buttons in 2 Rows Grid */
+        .feature-buttons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+        .feat-btn { 
+            background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(8px); 
+            border: 1px solid rgba(255,255,255,0.3); color: #fff; 
+            padding: 6px 4px; border-radius: 8px; font-weight: 600; font-size: 10.5px;
+            cursor: pointer; transition: 0.3s; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center;
+        }
+        .feat-btn i { font-size: 16px; color: #ffcc00; } 
+        .feat-btn:hover { background: #ffcc00; color: #000; transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,204,0,0.4); border-color: #ffcc00; }
+        .feat-btn:hover i { color: #d32f2f; }
+        
+        .register-free-btn { 
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); color: white; font-size: 15px; font-weight: 800; padding: 8px 30px; 
+            border-radius: 30px; border: none; cursor: pointer; text-transform: uppercase; box-shadow: 0 5px 20px rgba(255, 75, 43, 0.5); 
+            animation: pulse 2s infinite; letter-spacing: 1px; margin-top: 5px;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* 3. Right Column */
+        .right-col { flex: 0 0 24%; display: flex; justify-content: center; align-items: center; }
+        .login-box { background: #d4af37; padding: 18px 20px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); width: 100%; border: 3px solid #f39c12; transition: all 0.3s ease; }
+        .login-tabs { display: flex; margin-bottom: 12px; background: rgba(0, 0, 0, 0.15); padding: 3px; border-radius: 25px; }
+        .tab-btn { flex: 1; padding: 8px 10px; text-align: center; cursor: pointer; font-weight: 800; color: #fff; transition: 0.3s; border-radius: 20px; font-size: 13px; }
+        .tab-btn.active { color: #ffffff; background: #dc3545; box-shadow: 0 3px 10px rgba(220, 53, 69, 0.4); }
+        .input-group { margin-bottom: 10px; }
+        .input-label { display: block; margin-bottom: 3px; font-weight: 700; font-size: 12.5px; color: #111; }
+        .input-field { width: 100%; padding: 8px 10px; border: 2px solid #bdc3c7; border-radius: 6px; outline: none; transition: 0.3s; background: #ffffff; font-size: 13px; color: #000; font-weight: 600; }
+        .input-field:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.25); }
+        .login-btn { width: 100%; padding: 10px; background: linear-gradient(135deg, #1a73e8 0%, #3b82f6 100%); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 5px; font-size: 14px; transition: 0.3s; }
+        .login-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26, 115, 232, 0.4); }
+        .btn-otp { background: #e67e22; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3); }
+        .btn-success { background: #28a745; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); }
+        
+        /* Checkbox Terms and Conditions */
+        .terms-checkbox { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; text-align: left; }
+        .terms-checkbox input { margin-top: 2px; cursor: pointer; width: 15px; height: 15px; flex-shrink: 0; }
+        .terms-checkbox label { font-size: 11px; font-weight: 700; color: #111; line-height: 1.4; cursor: pointer; }
+        .terms-checkbox a { color: #1a73e8; text-decoration: underline; }
+
+        footer { background: #0f172a; padding: 6px 3%; display: flex; justify-content: space-between; align-items: center; color: #94a3b8; border-top: 3px solid #1a73e8; font-size: 12px; z-index: 100; }
+        footer b { color: #f1f5f9; }
+        
+        /* Mobile View Adjustments (Updated) */
+@media (max-width: 900px) {
+    /* 1. ஒரே View-வில் fit ஆக Body மற்றும் Main அமைப்புகளை மாற்றுதல் (No Scroll) */
+    body { 
+        height: 100vh !important; 
+        overflow: hidden !important; 
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%) !important; 
+    }
+    
+    main { 
+        flex-direction: column; 
+        height: calc(100vh - 80px); /* திரைக்கு ஏற்றவாறு உயரத்தை அமைத்தல் */
+        overflow: hidden; 
+        padding: 10px 3%; 
+        gap: 10px; 
+    }
+
+    /* 2. Header பகுதியை 5mm (தோராயமாக 20px) கீழே இறக்குதல் (Status Bar Padding) */
+    header { 
+        padding-top: 20px !important; 
+        padding-bottom: 8px !important; 
+    }
+
+    /* 3. Navigation, Search, Running News மற்றும் Left column ஆகியவற்றை Mobile-ல் மறைத்தல் */
+    .header-bottom, .left-col { 
+        display: none !important; 
+    }
+
+    /* 4. Center Col மற்றும் Right Col-ஐ திரைக்கு ஏற்றவாறு சுருக்குதல் */
+    .center-col, .right-col { 
+        flex: 1 1 auto; 
+        width: 100%; 
+        max-width: 100%; 
+    }
+    
+    /* 5. Free Educational Platform பகுதி அமைப்புகள் */
+    .center-col { 
+        min-height: 0 !important; /* பழைய 450px உயரத்தை ரத்து செய்தல் */
+        justify-content: center; 
+        padding: 10px; 
+    }
+    .center-title { 
+        position: relative !important; 
+        top: 0 !important; 
+        font-size: 20px !important; 
+        margin-bottom: 8px; 
+    }
+    .register-free-btn { 
+        padding: 6px 15px; 
+        font-size: 12px; 
+        margin-bottom: 8px; 
+        margin-top: 0;
+    }
+    .feature-buttons { 
+        grid-template-columns: repeat(4, 1fr) !important; /* சிறிய பட்டன்களாக 4 வரிசைகளில் அமைத்தல் */
+        gap: 4px !important; 
+    }
+    .feat-btn { 
+        padding: 5px 2px; 
+        font-size: 9px; 
+    }
+    .feat-btn i { 
+        font-size: 14px; 
+    }
+
+    /* 6. Login பகுதி அமைப்புகள் (உயரத்தை சேமிக்க சிறிய அளவுகள்) */
+    .right-col { 
+        display: flex; 
+        align-items: center; 
+    }
+    .login-box { 
+        padding: 10px 15px !important; 
+        margin-bottom: 0; 
+        width: 100%; 
+    }
+    .login-tabs { 
+        margin-bottom: 8px; 
+    }
+    .tab-btn { 
+        padding: 6px 8px; 
+        font-size: 11px; 
+    }
+    .input-group { 
+        margin-bottom: 6px; 
+    }
+    .input-label { 
+        margin-bottom: 2px; 
+        font-size: 11px; 
+    }
+    .input-field { 
+        padding: 6px 10px; 
+        font-size: 12px; 
+    }
+    .login-btn { 
+        padding: 8px; 
+        font-size: 12px; 
+        margin-top: 2px; 
+    }
+
+    /* 7. Footer அமைப்புகள் */
+    footer { 
+        padding: 6px 3%; 
+        flex-direction: row !important; 
+        justify-content: space-between; 
+        font-size: 10px; 
+        gap: 0; 
+    }
+}
+
+        
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <img src="image_0.png" alt="Logo" class="logo-img">
+        <h1 class="main-title">Teacher's Friend</h1>
+    </div>
+    <div class="header-bottom">
+        <nav class="nav-menu">
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Services</a></li>
+                <li><a href="#">About Us</a></li>
+            </ul>
+        </nav>
+        
+        <div class="news-ticker">
+            <p>🌟 முக்கியச் செய்திகள்: TET 2026 ஆன்லைன் மாதிரித் தேர்வுகள் விரைவில்! | ஆசிரியர்கள் மற்றும் மாணவர்களுக்கான புதிய பாடக் குறிப்புகள் பதிவேற்றம் செய்யப்பட்டுள்ளன! 🌟</p>
+        </div>
+
+        <input type="text" placeholder="தேடுக..." class="search-input">
+    </div>
+</header>
+
+<main>
+    <div class="left-col">
+        <h3>Teacher's Friend</h3>
+        <p>இது ஆசிரியர்கள் மற்றும் மாணவர்களுக்கான <span class="highlight">இலவச பிரத்தியேக தளம்.</span></p><br>
+        <p>இங்கு தமிழகத்தைச் சார்ந்த ஆசிரியர்களுக்கான பாடக் குறிப்புகள், கற்றல் கற்பித்தல் உபகரணங்கள், வீட்டுப்பாடக் குறிப்புகள், புத்தக வினா விடைகள், மாதிரி தேர்வுகள், வினா வங்கிகள், வழிகாட்டுதல் வீடியோக்கள் மற்றும் தினசரி தகவல்கள் கிடைக்கும்.</p><br>
+        <p>மேலும் வகுப்பறை மேலாண்மைக்கு தேவையான படிவங்கள், பதிவேடுகள் போன்றவையும், ஆசிரியர்கள் தங்கள் கருத்துக்களை பரிமாறிக் கொள்ளவும் வசதிகள் உள்ளன.</p><br>
+        <p>மாணவர்களுக்கான வீட்டுப்பாடங்கள், வினா விடைகள், Video Lessons, Quiz, Educational Games போன்ற அனைத்து வசதிகளையும் ஒரே இடத்தில் பெறலாம்.</p><br>
+        <p style="text-align: center; color: #d32f2f; font-weight: 800;">இது கல்வி சேவைக்கான முற்றிலும் இலவச தளம்!</p>
+    </div>
+
+    <div class="center-col">
+        <h2 class="center-title">Free Educational Platform</h2>
+        
+        <div class="center-content">
+            <button class="register-free-btn" onclick="showRegister()">Register For FREE</button>
+            <div class="feature-buttons">
+                <button class="feat-btn"><i class="bi bi-ui-checks"></i> <span>Forms</span></button>
+                <button class="feat-btn"><i class="bi bi-journal-bookmark-fill"></i> <span>Registers</span></button>
+                <button class="feat-btn"><i class="bi bi-journal-text"></i> <span>Notes of Lessons</span></button>
+                <button class="feat-btn"><i class="bi bi-question-circle"></i> <span>Q & A</span></button>
+                <button class="feat-btn"><i class="bi bi-card-checklist"></i> <span>Modal Exams</span></button>
+                <button class="feat-btn"><i class="bi bi-play-btn"></i> <span>Videos</span></button>
+                <button class="feat-btn"><i class="bi bi-controller"></i> <span>Games</span></button>
+                <button class="feat-btn"><i class="bi bi-chat-dots"></i> <span>Chats</span></button>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="right-col">
+        <div class="login-box" id="loginBox">
+            <div class="login-tabs">
+                <div class="tab-btn active" id="tabTeacher" onclick="switchTab('teacher')">Teacher Login</div>
+                <div class="tab-btn" id="tabStudent" onclick="switchTab('student')">Student Login</div>
+            </div>
+
+            <div id="teacherSection">
+                <form id="loginForm">
+                    <div class="input-group">
+                        <label class="input-label">மின்னஞ்சல் / மொபைல் எண்</label>
+                        <input type="text" id="loginId" class="input-field" placeholder="Email or Mobile" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">கடவுச்சொல்</label>
+                        <input type="password" id="loginPassword" class="input-field" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="login-btn">உள்நுழை (Login)</button>
+                </form>
+                <p style="text-align: center; margin-top: 10px; font-size: 12px;">
+                    <a href="javascript:void(0)" onclick="showForgotPassword()" style="color: #7f1d1d; font-weight: 700; text-decoration: none;">Forgot Password / Username?</a>
+                </p>
+            </div>
+
+            <div id="studentSection" style="display: none;">
+                <div id="udiseStep">
+                    <div class="input-group">
+                        <label class="input-label">பள்ளியின் UDISE எண்</label>
+                        <input type="text" id="udiseNumber" class="input-field" placeholder="UDISE Number" required>
+                    </div>
+                    <button type="button" class="login-btn btn-success" onclick="verifyUdise()">பள்ளியைச் சரிபார்க்க</button>
+                </div>
+                <div id="schoolInfoBox" style="display: none; background:#fff; padding:8px; border-left:4px solid #28a745; margin-bottom:10px;">
+                    <p style="font-size: 12px; font-weight: bold; color: #333;" id="schoolNameDisplay"></p>
+                </div>
+                <div id="studentLoginStep" style="display: none;">
+                    <div class="input-group">
+                        <label class="input-label">பயனர் பெயர் (சேர்க்கை எண்)</label>
+                        <input type="text" id="admissionNumber" class="input-field" placeholder="Admission Number" required>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">கடவுச்சொல் (பிறந்த தேதி)</label>
+                        <input type="date" id="dob" class="input-field" required>
+                    </div>
+                    <button type="button" class="login-btn" onclick="loginStudent()">உள்நுழை (Student)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-box" id="forgotBox" style="display: none;">
+            <div style="text-align: center;">
+                <h2 style="margin-bottom: 5px; font-size: 16px; color:#111;">கடவுச்சொல்லை மீட்டெடுக்க</h2>
+            </div>
+            <form id="forgotForm">
+                <div class="input-group">
+                    <label class="input-label">மின்னஞ்சல் (Email)</label>
+                    <input type="email" id="forgotEmail" class="input-field" placeholder="example@mail.com" required>
+                </div>
+                <button type="submit" class="login-btn btn-otp">Reset Link அனுப்பு</button>
+            </form>
+            <p style="text-align: center; margin-top: 10px;"><a href="javascript:void(0)" onclick="showLogin()" style="color: #1a73e8; font-weight: 700; font-size: 12px; text-decoration:none;">உள்நுழைய செல்லவும்</a></p>
+        </div>
+
+        <div class="login-box" id="registerBox" style="display: none;">
+            <div style="text-align: center;">
+                <h2 style="margin-bottom: 8px; font-size: 16px; color:#111;">புதிய கணக்கு உருவாக்க</h2>
+            </div>
+            <div id="regStep1">
+                <div class="input-group" style="margin-bottom: 6px;"><input type="text" id="regUdise" class="input-field" placeholder="UDISE Number" required></div>
+                <div class="input-group" style="margin-bottom: 6px;"><input type="text" id="regName" class="input-field" placeholder="Full Name" required></div>
+                <div class="input-group" style="margin-bottom: 6px;"><input type="email" id="regEmail" class="input-field" placeholder="Email" required></div>
+                <div class="input-group" style="margin-bottom: 6px;"><input type="tel" id="regMobile" class="input-field" placeholder="10 Digit Mobile" required maxlength="10"></div>
+                
+                <div class="terms-checkbox">
+                    <input type="checkbox" id="agreeTerms">
+                    <label for="agreeTerms">நான் <a href="privacy_policy_terms.html" target="_blank">Privacy Policy</a> மற்றும் <a href="privacy_policy_terms.html" target="_blank">Terms & Conditions</a>-ஐ படித்து ஏற்றுக்கொள்கிறேன்.</label>
+                </div>
+
+                <button type="button" class="login-btn btn-otp" onclick="sendRegisterOTP()" id="btnSendOtp">Send OTP</button>
+            </div>
+            <div id="regStep2" style="display: none;">
+                <div class="input-group"><input type="text" id="regOtp" class="input-field" placeholder="Enter OTP"></div>
+                <button type="button" class="login-btn btn-success" onclick="verifyRegisterOTP()" id="btnVerifyOtp">Verify OTP</button>
+            </div>
+            <div id="regStep3" style="display: none;">
+                <div class="input-group"><input type="password" id="regPassword" class="input-field" placeholder="New Password" required></div>
+                <div class="input-group"><input type="password" id="confirmPassword" class="input-field" placeholder="Confirm Password" required></div>
+                <button type="button" class="login-btn" onclick="finalizeRegistration()">Create Account</button>
+            </div>
+            <div id="recaptcha-container" style="margin-top: 5px;"></div>
+            <p style="text-align: center; margin-top: 10px; font-size: 12px; font-weight: 700;">ஏற்கனவே கணக்கு உள்ளதா? <a href="javascript:void(0)" onclick="showLogin()" style="color: #1a73e8;">உள்நுழையவும்</a></p>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <p><b>தொடர்புக்கு:</b> tnteachersfriend@gmail.com</p>
+    <p>© 2026 Teacher's Friend. All rights reserved.</p>
+</footer>
+
+<script>
+    function closeQuizModal() { document.getElementById('quizModalOverlay').style.display = 'none'; }
+    window.onload = function() { document.getElementById('quizModalOverlay').style.display = 'flex'; }
+
+    const firebaseConfig = {  
+        apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek", authDomain: "teacher-s-friend-3aca8.firebaseapp.com", projectId: "teacher-s-friend-3aca8", storageBucket: "teacher-s-friend-3aca8.firebasestorage.app", messagingSenderId: "294698361211", appId: "1:294698361211:web:1e2322906d536a4d3e1dde", measurementId: "G-L1P4CB6QG2", databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"   
+    };  
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }  
+    const auth = firebase.auth(); const database = firebase.database(); 
+
+    auth.onAuthStateChanged((user) => { if (user) { window.location.href = "dashboard.html"; } });
+
+    function showRegister() {  
+        document.getElementById('loginBox').style.display = 'none'; document.getElementById('forgotBox').style.display = 'none'; document.getElementById('registerBox').style.display = 'block'; resetRegisterForm();
+    }  
+    function showLogin() {  
+        document.getElementById('registerBox').style.display = 'none'; document.getElementById('forgotBox').style.display = 'none'; document.getElementById('loginBox').style.display = 'block'; switchTab('teacher');  
+    }  
+    function showForgotPassword() {  
+        document.getElementById('loginBox').style.display = 'none'; document.getElementById('registerBox').style.display = 'none'; document.getElementById('forgotBox').style.display = 'block';  
+    }  
+    function switchTab(type) {  
+        if (type === 'teacher') {  
+            document.getElementById('teacherSection').style.display = 'block'; document.getElementById('studentSection').style.display = 'none'; document.getElementById('tabTeacher').classList.add('active'); document.getElementById('tabStudent').classList.remove('active');  
+        } else {  
+            document.getElementById('teacherSection').style.display = 'none'; document.getElementById('studentSection').style.display = 'block'; document.getElementById('tabTeacher').classList.remove('active'); document.getElementById('tabStudent').classList.add('active');  
+        }  
+    }
+
+    let confirmationResult = null;
+    function setupRecaptcha() { if (!window.recaptchaVerifier) { window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', { 'size': 'invisible' }); } }
+    function resetRegisterForm() { document.getElementById('regStep1').style.display = 'block'; document.getElementById('regStep2').style.display = 'none'; document.getElementById('regStep3').style.display = 'none'; document.getElementById('agreeTerms').checked = false; setupRecaptcha(); }
+
+    function sendRegisterOTP() {
+        const udise = document.getElementById('regUdise').value.trim(); 
+        const name = document.getElementById('regName').value.trim(); 
+        const email = document.getElementById('regEmail').value.trim(); 
+        const mobile = document.getElementById('regMobile').value.trim();
+        const termsAccepted = document.getElementById('agreeTerms').checked;
+
+        if (!udise || !name || !email || !mobile) { alert("அனைத்து தகவல்களையும் நிரப்பவும்."); return; }
+        if (mobile.length !== 10) { alert("சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்."); return; }
+        
+        // Privacy Policy Validation Added Here
+        if (!termsAccepted) { alert("கணக்கை உருவாக்க Privacy Policy மற்றும் Terms & Conditions-ஐ ஏற்க வேண்டும்!"); return; }
+
+        document.getElementById('btnSendOtp').innerText = "Sending...";
+        auth.signInWithPhoneNumber("+91" + mobile, window.recaptchaVerifier).then((result) => {
+            confirmationResult = result; document.getElementById('regStep1').style.display = 'none'; document.getElementById('regStep2').style.display = 'block'; alert("OTP அனுப்பப்பட்டுள்ளது.");
+        }).catch((error) => { alert("OTP பிழை: " + error.message); document.getElementById('btnSendOtp').innerText = "Send OTP"; });
+    }
+
+    function verifyRegisterOTP() {
+        const otp = document.getElementById('regOtp').value.trim(); if(!otp) return;
+        document.getElementById('btnVerifyOtp').innerText = "Verifying...";
+        confirmationResult.confirm(otp).then((result) => {
+            document.getElementById('regStep2').style.display = 'none'; document.getElementById('regStep3').style.display = 'block'; alert("சரிபார்க்கப்பட்டது! கடவுச்சொல்லை உருவாக்கவும்.");
+        }).catch((error) => { alert("தவறான OTP: " + error.message); document.getElementById('btnVerifyOtp').innerText = "Verify OTP"; });
+    }
+
+    function finalizeRegistration() {
+        const pass = document.getElementById('regPassword').value; const confPass = document.getElementById('confirmPassword').value;
+        if (pass !== confPass || pass.length < 6) { alert("கடவுச்சொற்கள் பொருந்தவில்லை அல்லது 6 எழுத்துகளுக்கு குறைவு."); return; }
+        const user = auth.currentUser; 
+        user.linkWithCredential(firebase.auth.EmailAuthProvider.credential(document.getElementById('regEmail').value.trim(), pass)).then((usercred) => {
+            const uid = usercred.user.uid; const mobile = document.getElementById('regMobile').value.trim();
+            database.ref('users/' + uid).set({ uid: uid, udise: document.getElementById('regUdise').value.trim(), name: document.getElementById('regName').value.trim(), email: document.getElementById('regEmail').value.trim(), mobile: mobile, role: "teacher" });
+            database.ref('phoneToEmail/' + mobile).set(document.getElementById('regEmail').value.trim());
+            alert("கணக்கு உருவாக்கப்பட்டது.");
+        }).catch((error) => { alert("பிழை: " + error.message); });
+    }
+
+    document.getElementById('loginForm')?.addEventListener('submit', (e) => {  
+        e.preventDefault(); const loginId = document.getElementById('loginId').value.trim(); const pass = document.getElementById('loginPassword').value;  
+        if(loginId.includes('@')) { processFirebaseLogin(loginId, pass); } 
+        else { database.ref('phoneToEmail/' + loginId).once('value').then((snap) => { if(snap.exists()) { processFirebaseLogin(snap.val(), pass); } else { alert("கணக்கு இல்லை!"); } }); }
+    });  
+    
+    function processFirebaseLogin(email, password) { auth.signInWithEmailAndPassword(email, password).catch(() => { if(confirm("கடவுச்சொல் மறந்துவிட்டதா?")) showForgotPassword(); }); }
+
+    document.getElementById('forgotForm')?.addEventListener('submit', (e) => {  
+        e.preventDefault(); auth.sendPasswordResetEmail(document.getElementById('forgotEmail').value).then(() => { alert("Link அனுப்பப்பட்டுள்ளது."); showLogin(); });  
+    });
+
+    let currentUdise = "";  
+    function verifyUdise() {  
+        const udise = document.getElementById('udiseNumber').value.trim(); if(udise === '') return;  
+        database.ref('school_profile/' + udise + '/info').once('value').then((snap) => {  
+            if(snap.exists()) {  
+                document.getElementById('udiseStep').style.display = 'none'; document.getElementById('schoolInfoBox').style.display = 'block';  
+                document.getElementById('schoolNameDisplay').innerHTML = `${snap.val().schoolName} <br> ${snap.val().village}`;  
+                document.getElementById('studentLoginStep').style.display = 'block'; currentUdise = udise; 
+            } else { alert("பள்ளி பதிவு செய்யப்படவில்லை."); }  
+        });  
+    }  
+  
+    function loginStudent() {  
+        const admNo = document.getElementById('admissionNumber').value.trim(); const dob = document.getElementById('dob').value; if(!admNo || !dob) return;  
+        database.ref('students').once('value').then((snap) => {  
+            if(snap.exists()) {  
+                let success = false, sName = "", sClass = ""; 
+                Object.values(snap.val()).forEach(s => { if(s.admNo == admNo && s.dob == dob) { success = true; sName = s.name; sClass = s.class || s.className || "5"; } });  
+                if(success) { localStorage.setItem('student_admission', admNo); localStorage.setItem('student_name', sName); localStorage.setItem('udise_number', currentUdise); localStorage.setItem('student_class', sClass); window.location.href = "student_dashboard.html"; } 
+                else { alert("தவறான தகவல்கள்!"); }  
+            }  
+        });  
+    }  
+</script>
+</body>
+</html>
