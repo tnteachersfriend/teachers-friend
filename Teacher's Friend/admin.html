@@ -537,7 +537,7 @@
         // 4. பதிவேற்றம் வெற்றியடைந்தால், Firebase Database-ல் லிங்க்கை சேமித்தல்
         const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
         
-        await database.ref(`uploads/DailyMessages/${month}/${date}`).push({
+        await database.ref(`uploads/DailyMessages/${month}/${date}`).set({
             title: title || `செய்தி ${date}`,
             url: publicUrl,
             uploadedAt: new Date().toISOString()
@@ -549,11 +549,6 @@
         document.getElementById('dailyMsgTitle').value = "";
     }
 }
-
-        
-   
-        
-        
 
     // ==========================================
     // 6. UI TABS & HOMEWORK LOGIC
