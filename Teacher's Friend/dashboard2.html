@@ -1154,16 +1154,37 @@ function initFirebasePostsListener() {
             }
         }
         // --- புதிய அதிவேக Caching லாஜிக் முடிவு ---
-
-        setupTopVideo(sortedVideoPosts);
+             setupTopVideo(sortedVideoPosts);
         renderFeedToDOM(activeStates); 
         
         if (document.getElementById('fsModal').style.display === 'flex' && currentFsPostKey && globalPosts[currentFsPostKey]) {
             updateFullScreenUI(globalPosts[currentFsPostKey]);
         }
+        
+        // --- புதிய கோடு: URL மூலம் தானாக ஸ்க்ரோல் செய்தல் ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const viewTarget = urlParams.get('view');
+        
+        if (viewTarget === 'top' && !window.hasAutoScrolled) {
+            const topClipSection = document.getElementById('topClipCard');
+            if (topClipSection) {
+                setTimeout(() => {
+                    topClipSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    window.hasAutoScrolled = true;
+                }, 500);
+            }
+        } else if (viewTarget === 'new' && !window.hasAutoScrolled) {
+            const firstPost = document.querySelector('.feed-container .post-card');
+            if (firstPost) {
+                setTimeout(() => {
+                    firstPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    window.hasAutoScrolled = true;
+                }, 500);
+            }
+        }
     });
 }
-        
+  
   
 // 4. ஃபங்ஷன்களை இயக்குதல்
 
@@ -1317,10 +1338,15 @@ async function createPost() {
 
 async function uploadFileToR2(file, folderName = "user-uploads") {
     try {
+        // ஃபைல் பெயரில் ஸ்பேஸ் இருந்தால் அதை நீக்க ஒரு பாதுகாப்பு சேர்க்கப்பட்டுள்ளது
+        const safeFileName = file.name.replace(/\s+/g, '-');
+        
         const response = await fetch("/.netlify/functions/get-upload-url", {
-    method: "POST",
-    body: JSON.stringify({ fileName: file.name, fileType: file.type, folder: "posts" })
-});
+            method: "POST",
+            // "posts" என்பதற்குப் பதிலாக folderName என மாற்றப்பட்டுள்ளது
+            body: JSON.stringify({ fileName: safeFileName, fileType: file.type, folder: folderName })
+        });
+
 
 // பிழை எதனால் வந்தது என்பதைத் துல்லியமாகக் கண்டுபிடிக்க புதிய குறியீடு
 if (!response.ok) {

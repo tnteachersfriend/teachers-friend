@@ -895,10 +895,14 @@
                 gap: 12px !important; 
             }
             
-            .menu-card { 
-                height: auto !important; 
-                padding: 15px 5px !important; 
+                        .menu-card { 
+                height: 95px !important; /* auto என்பதை மாற்றி 95px என நிலையான அளவு கொடுக்கப்பட்டுள்ளது */
+                padding: 10px 5px !important; 
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: center !important;
             }
+
             
             .menu-card i { 
                 font-size: 26px !important; 
@@ -938,6 +942,11 @@
             .ad-sidebar {
                 display: none; 
             }
+                  .post-card {
+            min-width: 115px !important;
+            max-width: 115px !important;
+            height: 170px !important;
+           }
         }
 
     </style>
@@ -1046,10 +1055,11 @@
 </div>
    </nav>
 
-      <section class="hero" style="padding: 15px 5%;">
-    <div class="story-scroll-wrapper" style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; -ms-overflow-style: none;">
+      <section class="hero" style="padding: 5px 5%;">
+    <div class="story-scroll-wrapper" style="display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none;">
         
-        <a id="dashboard-daily-link" href="#" target="_blank" style="flex-shrink: 0; width: 150px; height: 250px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #ffb300; display: block; background: #fff;">
+                <a id="dashboard-daily-link" href="#" target="_blank" style="flex-shrink: 0; width: 115px; height: 170px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #ffb300; display: block; background: #fff;">
+
             <img id="dashboard-daily-img" src="placeholder.jpg" alt="இன்றைய செய்தி" style="width: 100%; height: 100%; object-fit: cover;">
             
             <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 40px 10px 12px;">
@@ -1569,9 +1579,9 @@ function updateTodayMessageImage() {
     }
 }
 
-// --- 2. Staff Room Updates (கிளிக் செய்தால் Modal திறக்கும் வசதியுடன்) ---
+// --- 2. Staff Room Updates (வீடியோ மற்றும் லிங்க் வசதியுடன்) ---
 function loadStaffRoomPosts() {
-    const postsRef = firebase.database().ref('posts'); // உங்கள் டேட்டாபேஸ் path
+    const postsRef = firebase.database().ref('posts');
     
     postsRef.on('value', (snapshot) => {
         const postsData = snapshot.val();
@@ -1616,29 +1626,42 @@ function loadStaffRoomPosts() {
             const card = document.createElement('div');
             card.className = post.isLatest ? 'post-card latest-post' : 'post-card';
             
-            // --- புதிதாக சேர்க்கப்பட்ட Click Event ---
+            // --- புதிய டிசைன்: பேடிங் இல்லாமல் வீடியோ முழுமையாக அமைய ---
             card.style.cursor = 'pointer';
-            card.onclick = () => openFullScreenPost(post);
+            card.style.position = 'relative';
+            card.style.padding = '0';
+            card.style.overflow = 'hidden';
+
+            // --- கிளிக் செய்தால் Dashboard2-க்குச் செல்லும் லிங்க் ---
+            if(post.isLatest) {
+                card.onclick = () => window.location.href = 'dashboard2.html?view=new';
+            } else {
+                card.onclick = () => window.location.href = 'dashboard2.html?view=top';
+            }
             
             let badgeHtml = post.isLatest 
-                ? `<span class="post-badge">New</span>` 
-                : `<span class="inspire-badge"><i class="bi bi-star-fill"></i> Top</span>`;
+                ? `<span class="post-badge" style="position:absolute; top:8px; left:8px; z-index:10;">New</span>` 
+                : `<span class="inspire-badge" style="position:absolute; top:8px; left:8px; z-index:10;"><i class="bi bi-star-fill"></i> Top</span>`;
 
-            let inspireDisplay = post.inspiresCount !== undefined ? post.inspiresCount : 0;
+            let mediaHTML = '';
+            // வீடியோ இருந்தால் அதை ஓட வைப்பது, இல்லையென்றால் இமேஜ்
+            if (post.mediaType === 'video' && post.mediaUrl) {
+                mediaHTML = `<video src="${post.mediaUrl}" autoplay loop muted playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;"></video>
+                             <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:2;"></div>`;
+            } else if (post.mediaType === 'image' && post.mediaUrl) {
+                mediaHTML = `<img src="${post.mediaUrl}" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;">
+                             <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2;"></div>`;
+            } else {
+                // இரண்டும் இல்லை என்றால் கறுப்பு பின்னணி
+                mediaHTML = `<div style="width: 100%; height: 100%; background:#333; position: absolute; top:0; left:0; z-index:1;"></div>`;
+            }
 
             card.innerHTML = `
-                <div>
-                    <div class="post-header">
-                        <span class="post-author"><i class="bi bi-person-circle"></i> ${post.userName || 'ஆசிரியர்'}</span>
-                        ${badgeHtml}
-                    </div>
-                    <div class="post-content">
-                        ${post.text || post.content || ''}
-                    </div>
-                </div>
-                <div class="post-footer">
-                    <span><i class="bi bi-clock"></i> ${post.time || 'சமீபத்தில்'}</span>
-                    <span class="inspire-count"><i class="bi bi-heart-fill"></i> ${inspireDisplay}</span>
+                ${mediaHTML}
+                ${badgeHtml}
+                <div style="position:absolute; bottom:8px; left:8px; right:8px; z-index:10; color:white; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);">
+                    <div style="font-size:12px; font-weight:bold; margin-bottom:4px;"><i class="bi bi-person-circle"></i> ${post.userName || 'ஆசிரியர்'}</div>
+                    <div style="font-size:10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height:1.4;">${post.text || post.content || ''}</div>
                 </div>
             `;
             container.appendChild(card);
@@ -1683,7 +1706,9 @@ function loadDashboardDailyMessage() {
         if (snapshot.exists()) {
             // பதிவேற்றப்பட்ட தரவுகள் பல இருக்கலாம் (push), முதல் தரவை மட்டும் எடுக்கிறோம்
             const dataObject = snapshot.val();
-            const firstKey = Object.keys(dataObject)[0];
+            const keys = Object.keys(dataObject);
+const firstKey = keys[keys.length - 1]; // இது எப்போதும் கடைசியாக பதிவேற்றிய புதிய படத்தைக் காட்டும்
+
             const data = dataObject[firstKey];
 
             // படத்தின் ஆதாரத்தை (Source) மாற்றுதல்

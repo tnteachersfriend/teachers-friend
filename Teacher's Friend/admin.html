@@ -217,10 +217,20 @@
         <div>
             <label>மாதம்:</label>
             <select id="msgMonth">
-                <option value="06">ஜூன்</option><option value="07">ஜூலை</option>
-                <option value="06">ஆகஸ்ட்</option><option value="07">செப்டம்பர்</option>
-                <!-- பிற மாதங்களை இங்கு சேர்க்கவும் -->
-            </select>
+    <option value="01">ஜனவரி</option>
+<option value="02">பிப்ரவரி</option>
+<option value="03">மார்ச்</option>
+<option value="04">ஏப்ரல்</option>
+<option value="05">மே</option>
+<option value="06">ஜூன்</option>
+<option value="07">ஜூலை</option>
+<option value="08">ஆகஸ்ட்</option>
+<option value="09">செப்டம்பர்</option>
+<option value="10">அக்டோபர்</option>
+<option value="11">நவம்பர்</option>
+<option value="12">டிசம்பர்</option>
+</select>
+
         </div>
         <div>
             <label>தேதி:</label>
@@ -232,7 +242,9 @@
             <label>செய்தியின் தலைப்பு / தேதி:</label>
             <input type="text" id="dailyMsgTitle" placeholder="உதா: ஜூன் 7 செய்தி">
             <input type="file" id="dailyMsgFile" accept=".pdf, image/*">
-            <button onclick="uploadGeneralFile('dailyMsgFile', 'DailyMessages', document.getElementById('dailyMsgTitle').value)"><i class="bi bi-cloud-arrow-up"></i> Upload Daily Message</button>
+            <button onclick="triggerDailyMessageUpload()"><i class="bi bi-cloud-arrow-up"></i> Upload Daily Message</button>
+
+
             <p id="dailyMsgFile-status" class="status-msg"></p>
         </div>
 
@@ -330,9 +342,7 @@
         return null;
     }
 }
-    
-    const R2_BUCKET = "staffroom-storage";
-    
+       
     // முக்கியமானது: உங்கள் Cloudflare R2 Bucket-ன் "Public Access" URL-ஐ கீழே உள்ள வரியில் கொடுக்கவும். 
     // இது இல்லையென்றால் Download ஆகாது. (உதா: https://pub-12345.r2.dev)
     const R2_PUBLIC_URL_PREFIX = "https://pub-52b2110c34374c8497787aaee097c4c3.r2.dev"; 
@@ -497,34 +507,49 @@
     }
 
     // 5.4 GENERAL FILE UPLOAD (GOs, Daily Messages)
-    async function uploadDailyMessage() {
+ async function triggerDailyMessageUpload() {
     const fileInput = document.getElementById('dailyMsgFile');
     const month = document.getElementById('msgMonth').value;
     const date = document.getElementById('msgDate').value;
     const title = document.getElementById('dailyMsgTitle').value;
-    
-    if (fileInput.files.length === 0) return alert("கோப்பைத் தேர்ந்தெடுக்கவும்");
-    
+    const statusMsg = document.getElementById('dailyMsgFile-status');
+
+    // 1. கோப்பு உள்ளதா என சரிபார்த்தல்
+    if (fileInput.files.length === 0) {
+        return alert("தயவுசெய்து பதிவேற்ற வேண்டிய படத்தைத் தேர்ந்தெடுக்கவும்!");
+    }
+
     const file = fileInput.files[0];
     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
     
-    // கோப்பு பாதையை மாதம்/தேதி அடிப்படையில் மாற்றுதல்
+    // 2. Cloudflare R2-ல் சேமிக்கப்பட வேண்டிய சரியான பாதை
     const r2Key = `classroom/DailyMessages/${month}/${date}/${Date.now()}_${safeName}`;
-    const statusMsg = document.getElementById('dailyMsgFile-status');
     
+    // 3. உங்கள் கோப்பில் ஏற்கனவே உள்ள doR2Upload மூலம் அப்லோடு செய்தல்
     let success = await doR2Upload(file, r2Key, statusMsg);
     
-    if(success) {
-        // Firebase-ல் தரவுகளை சேமித்தல்
+    if (success) {
+        // 4. பதிவேற்றம் வெற்றியடைந்தால், Firebase Database-ல் லிங்க்கை சேமித்தல்
+        const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
+        
         await database.ref(`uploads/DailyMessages/${month}/${date}`).push({
-            title: title || safeName,
-            url: `${R2_PUBLIC_URL_PREFIX}/${r2Key}`,
+            title: title || `செய்தி ${date}`,
+            url: publicUrl,
             uploadedAt: new Date().toISOString()
         });
-        statusMsg.innerHTML += "<br>வெற்றிகரமாக சேமிக்கப்பட்டது!";
+        
+        // 5. வேலை முடிந்ததும் Form-ஐ காலி செய்தல்
+        statusMsg.innerHTML += "<br><strong>வெற்றிகரமாக Today பகுதியில் இணைக்கப்பட்டது!</strong>";
         fileInput.value = ""; 
+        document.getElementById('dailyMsgTitle').value = "";
     }
 }
+
+        
+   
+        
+        
+
     // ==========================================
     // 6. UI TABS & HOMEWORK LOGIC
     // ==========================================
