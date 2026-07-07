@@ -386,21 +386,25 @@
     // ==========================================
     
     // Helper to do actual R2 Upload securely via Netlify Function
-    async function doR2Upload(file, r2Key, statusMsgEl) {
+        async function doR2Upload(file, r2Key, statusMsgEl) {
         statusMsgEl.style.display = "block";
         statusMsgEl.style.color = "#ff9800";
         statusMsgEl.innerText = "பதிவேற்றப்படுகிறது... (Uploading...)";
         
         try {
-            // 1. Netlify Function-லிருந்து பாதுகாப்பான அப்லோடு லிங்க்கை (Presigned URL) பெறுதல்
-            // குறிப்பு: r2Key என்பதே முழுமையான Path என்பதால், அதை fileName ஆக அனுப்புகிறோம்.
+            // r2Key-ல் இருந்து Folder மற்றும் File Name-ஐ சரியாகப் பிரித்தெடுத்தல்
+            const lastSlashIndex = r2Key.lastIndexOf('/');
+            const exactFolder = lastSlashIndex !== -1 ? r2Key.substring(0, lastSlashIndex) : "uploads";
+            const exactFileName = lastSlashIndex !== -1 ? r2Key.substring(lastSlashIndex + 1) : r2Key;
+
+            // 1. Netlify Function-க்கு சரியான முறையில் தகவல்களை அனுப்புதல்
             const response = await fetch("/.netlify/functions/get-upload-url", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    fileName: r2Key, 
+                    fileName: exactFileName, 
                     fileType: file.type,
-                    folder: "" // Path ஏற்கனவே r2Key-ல் இருப்பதால் இது காலியாக இருக்கலாம்
+                    folder: exactFolder // இப்போது இது காலியாக இருக்காது!
                 })
             });
 
@@ -430,6 +434,7 @@
             return false;
         }
     }
+
 
     // 5.1 EXAM UPLOAD (மேம்படுத்தப்பட்டது - Firebase-ல் URL சேமிக்கப்படும்)
     async function uploadExamFile() {
