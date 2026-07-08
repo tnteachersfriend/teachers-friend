@@ -1312,15 +1312,17 @@ window.addEventListener('DOMContentLoaded', (event) => {
         listenNotifications();
     }
     // அட்மின் மாற்றும் செய்திகளை உடனுக்குடன் திரையில் காட்ட
+// அட்மின் மாற்றும் செய்திகளை உடனுக்குடன் திரையில் காட்ட
 database.ref('site_updates').on('value', (snapshot) => {
     if (snapshot.exists()) {
         let data = snapshot.val();
-        if(data.ticker) document.getElementById('web-ticker').innerText = data.ticker;
-        if(data.news1) document.getElementById('web-news1').innerText = data.news1;
-        if(data.news2) document.getElementById('web-news2').innerText = data.news2;
-        if(data.news3) document.getElementById('web-news3').innerText = data.news3;
+        if(data.ticker && document.getElementById('web-ticker')) document.getElementById('web-ticker').innerText = data.ticker;
+        if(data.news1 && document.getElementById('web-news1')) document.getElementById('web-news1').innerText = data.news1;
+        if(data.news2 && document.getElementById('web-news2')) document.getElementById('web-news2').innerText = data.news2;
+        if(data.news3 && document.getElementById('web-news3')) document.getElementById('web-news3').innerText = data.news3;
     }
 });
+
 
     // Firebase Auth மூலம் உண்மையான மின்னஞ்சலை மாற்றுதல்
     if (typeof firebase !== 'undefined') {
@@ -1702,23 +1704,18 @@ function loadDashboardDailyMessage() {
     // Firebase reference: uploads/DailyMessages/month/day
     const msgRef = database.ref(`uploads/DailyMessages/${month}/${day}`);
 
-    msgRef.once('value').then((snapshot) => {
+        msgRef.once('value').then((snapshot) => {
         if (snapshot.exists()) {
-            // பதிவேற்றப்பட்ட தரவுகள் பல இருக்கலாம் (push), முதல் தரவை மட்டும் எடுக்கிறோம்
-            const dataObject = snapshot.val();
-            const keys = Object.keys(dataObject);
-const firstKey = keys[keys.length - 1]; // இது எப்போதும் கடைசியாக பதிவேற்றிய புதிய படத்தைக் காட்டும்
-
-            const data = dataObject[firstKey];
+            // .set() பயன்படுத்தியதால் நேரடியாக data-ஐ எடுக்கலாம் (கடினமான Object.keys தேவையில்லை!)
+            const data = snapshot.val(); 
 
             // படத்தின் ஆதாரத்தை (Source) மாற்றுதல்
             imgElement.src = data.url;
-            imgElement.alt = data.title;
+            imgElement.alt = data.title || "இன்றைய செய்தி";
             
             // கிளிக் செய்தால் படத்தை பெரியதாகப் பார்க்க லிங்க் செய்தல்
             linkElement.href = data.url; 
         } else {
-            // தரவு இல்லை என்றால் 'செய்தி இல்லை' என்று காட்டலாம்
             imgElement.alt = "இன்று புதிய செய்திகள் இல்லை";
             console.log("இன்றைய தேதிக்கு செய்திகள் இல்லை.");
         }

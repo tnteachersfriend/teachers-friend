@@ -757,8 +757,7 @@
             loadDynamicDailyMessages();
         });
 
-        function loadDynamicDailyMessages() {
-            // HTML-ல் 'dynamic-messages-container' என்ற id இருந்தால் அதில் Data காண்பிக்கப்படும்
+                function loadDynamicDailyMessages() {
             const container = document.getElementById('dynamic-messages-container');
             if(!container) return; 
 
@@ -767,20 +766,25 @@
             database.ref('uploads/DailyMessages').on('value', (snapshot) => {
                 container.innerHTML = "";
                 if (snapshot.exists()) {
-                    // தரவை ரிவர்ஸ் செய்து (புதிய செய்திகள் முதலில் வர) காண்பிக்கிறோம்
                     let messages = [];
-                    snapshot.forEach(child => { messages.push(child.val()); });
-                    messages.reverse(); 
+                    
+                    // மாதம் மற்றும் தேதி என இரண்டு லேயர்களைத் தாண்டித் தரவை எடுக்க வேண்டும்
+                    snapshot.forEach(monthSnapshot => {
+                        monthSnapshot.forEach(daySnapshot => {
+                            messages.push(daySnapshot.val());
+                        });
+                    });
+
+                    messages.reverse(); // புதிய செய்திகள் முதலில் வர
 
                     messages.forEach(data => {
                         let div = document.createElement('div');
                         div.className = "thumbnail-card";
                         
-                        // Cloudflare R2 URL-ஐ நேரடியாக பயன்படுத்துகிறோம்
                         div.innerHTML = `
                             <a href="${data.url}" target="_blank">
-                                <div style="height:120px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:40px; color:#1a73e8; border:1px solid #ccc;">
-                                    <i class="bi bi-card-image"></i>
+                                <div style="height:120px; background:#e8f0fe; border-radius:10px; display:flex; align-items:center; justify-content:center; overflow:hidden; border:1px solid #ccc;">
+                                    <img src="${data.url}" style="width:100%; height:100%; object-fit:cover;" onerror="this.style.display='none'">
                                 </div>
                             </a>
                             <p style="margin-top:10px; font-weight:bold; font-size:14px; color:#333;">${data.title}</p>
@@ -795,6 +799,7 @@
                 }
             });
         }
+
         // 4. LIGHTBOX PREVIEW FUNCTIONS
         function openLightbox(url, title) {
             const modal = document.getElementById('imageModal');
