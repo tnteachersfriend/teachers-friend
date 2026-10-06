@@ -386,55 +386,53 @@
     // ==========================================
     
     // Helper to do actual R2 Upload securely via Netlify Function
-        async function doR2Upload(file, r2Key, statusMsgEl) {
-        statusMsgEl.style.display = "block";
-        statusMsgEl.style.color = "#ff9800";
-        statusMsgEl.innerText = "பதிவேற்றப்படுகிறது... (Uploading...)";
+        // திருத்தப்பட்ட doR2Upload Function
+async function doR2Upload(file, r2Key, statusMsgEl) {
+    statusMsgEl.style.display = "block";
+    statusMsgEl.style.color = "#ff9800";
+    statusMsgEl.innerText = "பதிவேற்றப்படுகிறது... (Uploading...)";
+    
+    try {
+        const lastSlashIndex = r2Key.lastIndexOf('/');
+        const exactFolder = lastSlashIndex !== -1 ? r2Key.substring(0, lastSlashIndex) : "uploads";
+        const exactFileName = lastSlashIndex !== -1 ? r2Key.substring(lastSlashIndex + 1) : r2Key;
+
+        const response = await fetch("/.netlify/functions/get-upload-url", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                fileName: exactFileName, 
+                fileType: file.type,
+                folder: exactFolder
+            })
+        });
+
+        if (!response.ok) throw new Error("பாதுகாப்பான அப்லோடு லிங்க் பெறுவதில் தோல்வி!");
+
+        const data = await response.json();
+        const uploadUrl = data.uploadUrl;
+        const actualFileKey = data.fileKey || r2Key; // சர்வர் கொடுக்கும் உண்மையான File Path-ஐ எடுக்கிறோம்
+
+        const uploadResponse = await fetch(uploadUrl, {
+            method: "PUT",
+            headers: { "Content-Type": file.type },
+            body: file
+        });
+
+        if (!uploadResponse.ok) throw new Error("R2-விற்கு அப்லோடு செய்வதில் பிழை!");
+
+        statusMsgEl.style.color = "#28a745";
+        statusMsgEl.innerHTML = `வெற்றிகரமாக பதிவேற்றப்பட்டது!<br><small>Path: ${actualFileKey}</small>`;
         
-        try {
-            // r2Key-ல் இருந்து Folder மற்றும் File Name-ஐ சரியாகப் பிரித்தெடுத்தல்
-            const lastSlashIndex = r2Key.lastIndexOf('/');
-            const exactFolder = lastSlashIndex !== -1 ? r2Key.substring(0, lastSlashIndex) : "uploads";
-            const exactFileName = lastSlashIndex !== -1 ? r2Key.substring(lastSlashIndex + 1) : r2Key;
+        return actualFileKey; // வெற்றி பெற்றால் உண்மையான Key-ஐ அனுப்புகிறோம்
 
-            // 1. Netlify Function-க்கு சரியான முறையில் தகவல்களை அனுப்புதல்
-            const response = await fetch("/.netlify/functions/get-upload-url", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    fileName: exactFileName, 
-                    fileType: file.type,
-                    folder: exactFolder // இப்போது இது காலியாக இருக்காது!
-                })
-            });
-
-            if (!response.ok) throw new Error("பாதுகாப்பான அப்லோடு லிங்க் பெறுவதில் தோல்வி!");
-
-            const data = await response.json();
-            const uploadUrl = data.uploadUrl;
-
-            // 2. பெறப்பட்ட லிங்க்கைப் பயன்படுத்தி நேரடியாக R2-ல் ஃபைலை அப்லோடு செய்தல்
-            const uploadResponse = await fetch(uploadUrl, {
-                method: "PUT",
-                headers: { "Content-Type": file.type },
-                body: file
-            });
-
-            if (!uploadResponse.ok) throw new Error("R2-விற்கு அப்லோடு செய்வதில் பிழை!");
-
-            // 3. வெற்றி செய்தி
-            statusMsgEl.style.color = "#28a745";
-            statusMsgEl.innerHTML = `வெற்றிகரமாக பதிவேற்றப்பட்டது!<br><small>Path: ${r2Key}</small>`;
-            return true;
-
-        } catch (error) {
-            statusMsgEl.style.color = "red";
-            statusMsgEl.innerText = "பிழை: " + error.message;
-            console.error("Upload Error:", error);
-            return false;
-        }
+    } catch (error) {
+        statusMsgEl.style.color = "red";
+        statusMsgEl.innerText = "பிழை: " + error.message;
+        console.error("Upload Error:", error);
+        return null; // தோல்வியடைந்தால் null அனுப்புகிறோம்
     }
-
+}
 
     // 5.1 EXAM UPLOAD (மேம்படுத்தப்பட்டது - Firebase-ல் URL சேமிக்கப்படும்)
     async function uploadExamFile() {
@@ -581,21 +579,23 @@ async function triggerDailyMessageUpload() {
     
     statusMsg.innerHTML = "பதிவேற்றப்படுகிறது... (Uploading...)";
 
-    let success = await doR2Upload(file, r2Key, statusMsg);
+    // triggerDailyMessageUpload ஃபங்ஷனில் செய்ய வேண்டிய மாற்றம்
+let actualSavedKey = await doR2Upload(file, r2Key, statusMsg); // success-க்கு பதிலாக actualSavedKey
     
-    if (success) {
-        const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
-        
-        await database.ref(`uploads/DailyMessages/${month}/${date}`).set({
-            title: title || `செய்தி ${date}`,
-            url: publicUrl,
-            uploadedAt: new Date().toISOString()
-        });
-        
-        statusMsg.innerHTML += "<br><strong>வெற்றிகரமாக Today பகுதியில் இணைக்கப்பட்டது! (இடம் குறைக்கப்பட்டுள்ளது)</strong>";
-        fileInput.value = ""; 
-        document.getElementById('dailyMsgTitle').value = "";
-    }
+if (actualSavedKey) {
+    // R2_PUBLIC_URL_PREFIX உடன் சர்வர் கொடுத்த உண்மையான Path-ஐ இணைக்கிறோம்
+    const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${actualSavedKey}`; 
+    
+    await database.ref(`uploads/DailyMessages/${month}/${date}`).set({
+        title: title || `செய்தி ${date}`,
+        url: publicUrl,
+        uploadedAt: new Date().toISOString()
+    });
+    
+    statusMsg.innerHTML += "<br><strong>வெற்றிகரமாக Today பகுதியில் இணைக்கப்பட்டது!</strong>";
+    fileInput.value = ""; 
+    document.getElementById('dailyMsgTitle').value = "";
+  }
 }
 
 
