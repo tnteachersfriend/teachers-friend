@@ -217,18 +217,18 @@
         <div>
             <label>மாதம்:</label>
             <select id="msgMonth">
-    <option value="01">ஜனவரி</option>
-<option value="02">பிப்ரவரி</option>
-<option value="03">மார்ச்</option>
-<option value="04">ஏப்ரல்</option>
-<option value="05">மே</option>
-<option value="06">ஜூன்</option>
-<option value="07">ஜூலை</option>
-<option value="08">ஆகஸ்ட்</option>
-<option value="09">செப்டம்பர்</option>
-<option value="10">அக்டோபர்</option>
-<option value="11">நவம்பர்</option>
-<option value="12">டிசம்பர்</option>
+    <option value="January">ஜனவரி</option>
+    <option value="February">பிப்ரவரி</option>
+    <option value="March">மார்ச்</option>
+    <option value="April">ஏப்ரல்</option>
+    <option value="May">மே</option>
+    <option value="June">ஜூன்</option>
+    <option value="July">ஜூலை</option>
+    <option value="August">ஆகஸ்ட்</option>
+    <option value="September">செப்டம்பர்</option>
+    <option value="October">அக்டோபர்</option>
+    <option value="November">நவம்பர்</option>
+    <option value="December">டிசம்பர்</option>
 </select>
 
         </div>
@@ -512,29 +512,78 @@
     }
 
     // 5.4 GENERAL FILE UPLOAD (GOs, Daily Messages)
- async function triggerDailyMessageUpload() {
+ // படத்தை Compress செய்வதற்கான புதிய Function
+async function compressImage(file, quality = 0.6) {
+    return new Promise((resolve) => {
+        // படம் இல்லை என்றால் அப்படியே திருப்பி அனுப்பிவிடும்
+        if (!file.type.match(/image.*/)) {
+            resolve(file); 
+            return;
+        }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // அதிகபட்ச அகலம் 1000px ஆக குறைத்தல்
+                const MAX_WIDTH = 1000;
+                let width = img.width;
+                let height = img.height;
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+                
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Jpeg வடிவில் Compress செய்து அனுப்புதல்
+                canvas.toBlob((blob) => {
+                    const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".jpg"), { type: 'image/jpeg' });
+                    resolve(newFile);
+                }, 'image/jpeg', quality);
+            };
+        };
+    });
+}
+
+// அப்லோடு செய்வதற்கான திருத்தப்பட்ட Function
+async function triggerDailyMessageUpload() {
     const fileInput = document.getElementById('dailyMsgFile');
-    const month = document.getElementById('msgMonth').value;
+    const month = document.getElementById('msgMonth').value; // இப்போது 'October' என வரும்
     const date = document.getElementById('msgDate').value;
     const title = document.getElementById('dailyMsgTitle').value;
     const statusMsg = document.getElementById('dailyMsgFile-status');
 
-    // 1. கோப்பு உள்ளதா என சரிபார்த்தல்
     if (fileInput.files.length === 0) {
         return alert("தயவுசெய்து பதிவேற்ற வேண்டிய படத்தைத் தேர்ந்தெடுக்கவும்!");
     }
 
-    const file = fileInput.files[0];
+    statusMsg.style.display = "block";
+    statusMsg.style.color = "#ff9800";
+    statusMsg.innerHTML = "படம் சுருக்கப்படுகிறது... (Compressing...)";
+
+    const originalFile = fileInput.files[0];
+    
+    // படத்தை Compress செய்தல்
+    const file = await compressImage(originalFile);
+    
     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '_');
     
-    // 2. Cloudflare R2-ல் சேமிக்கப்பட வேண்டிய சரியான பாதை
-    const r2Key = `classroom/DailyMessages/${month}/${date}/${Date.now()}_${safeName}`;
+    // Cloudflare R2-ல் சேமிக்கப்பட வேண்டிய சரியான பாதை (உதா: classroom/DailyMessages/October/7/image.jpg)
+    // Date.now() என்பதை நீக்கிவிட்டோம், அதனால் பெயர்கள் நீளமாக இருக்காது.
+    const r2Key = `classroom/DailyMessages/${month}/${date}/${safeName}`;
     
-    // 3. உங்கள் கோப்பில் ஏற்கனவே உள்ள doR2Upload மூலம் அப்லோடு செய்தல்
+    statusMsg.innerHTML = "பதிவேற்றப்படுகிறது... (Uploading...)";
+
     let success = await doR2Upload(file, r2Key, statusMsg);
     
     if (success) {
-        // 4. பதிவேற்றம் வெற்றியடைந்தால், Firebase Database-ல் லிங்க்கை சேமித்தல்
         const publicUrl = `${R2_PUBLIC_URL_PREFIX}/${r2Key}`;
         
         await database.ref(`uploads/DailyMessages/${month}/${date}`).set({
@@ -543,12 +592,12 @@
             uploadedAt: new Date().toISOString()
         });
         
-        // 5. வேலை முடிந்ததும் Form-ஐ காலி செய்தல்
-        statusMsg.innerHTML += "<br><strong>வெற்றிகரமாக Today பகுதியில் இணைக்கப்பட்டது!</strong>";
+        statusMsg.innerHTML += "<br><strong>வெற்றிகரமாக Today பகுதியில் இணைக்கப்பட்டது! (இடம் குறைக்கப்பட்டுள்ளது)</strong>";
         fileInput.value = ""; 
         document.getElementById('dailyMsgTitle').value = "";
     }
 }
+
 
     // ==========================================
     // 6. UI TABS & HOMEWORK LOGIC
