@@ -6,11 +6,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Teacher's Friend - Staff Room</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <!-- 🚀 Non-blocking Fonts & Icons (பக்கம் 0.01 விநாடியில் திறக்க दोनों CSS-ம் Non-blocking ஆக்கப்பட்டுள்ளன) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    </noscript>
 
 <style>
-        /* --- General Setup --- */
+/* --- General Setup --- */
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
 
 body { 
@@ -57,6 +65,12 @@ a { text-decoration: none; color: inherit; }
 .row2-profile { 
     width: 42px; height: 42px; min-width: 42px; 
     border-radius: 50%; border: 2px solid #8a2be2; object-fit: cover; cursor: pointer;
+    transition: 0.3s;
+}
+.row2-profile.filter-active {
+    border: 3px solid #28a745 !important;
+    box-shadow: 0 0 12px rgba(40, 167, 69, 0.6);
+    transform: scale(1.05);
 }
 .row2-search-box { flex: 1; margin: 0 12px; }
 .row2-input {
@@ -84,19 +98,12 @@ a { text-decoration: none; color: inherit; }
     padding: 0 12px;
 }
 
-/* --- 3. Custom Dynamic Colleagues Widget Styles & Layout --- */
-.main-widgets-wrapper {
-    max-width: 600px;
-    margin: 0 auto 5px auto;
-    padding: 0 12px;
-}
-
 .top-widgets-row {
     display: flex;
     gap: 12px;
     align-items: flex-start;
     width: 100%;
-    height: 170px; /* Top Clip மற்றும் Colleagues கார்டுகளுக்கான நிலையான உயரம் */
+    height: 170px;
 }
 
 .colleagues-card {
@@ -105,9 +112,9 @@ a { text-decoration: none; color: inherit; }
     padding: 10px 12px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    flex: 1; /* மீதமுள்ள இடமான Top video இருந்த இடத்தை முழுமையாக எடுத்துக்கொள்ளும் */
+    flex: 1;
     min-width: 0;
-    height: 100%; /* top-widgets-row இன் 170px உயரத்தை முழுமையாக எடுக்கும் */
+    height: 100%;
     display: flex;
     flex-direction: column;
 }
@@ -120,37 +127,46 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center;
     gap: 6px;
-    flex-shrink: 0; /* ஸ்க்ரோல் செய்யும் போது Title மேலே நிலையாக நிற்க */
+    flex-shrink: 0;
 }
 
-/* --- புதிதாக சேர்க்கப்பட்ட Scrollbar டிசைன் --- */
 .colleagues-scroll-area {
     flex: 1;
-    overflow-y: auto; /* உள்ளே மட்டும் Scroll ஆகும் வசதி */
+    overflow-y: auto;
     overflow-x: hidden;
     padding-right: 4px;
 }
 
-.colleagues-scroll-area::-webkit-scrollbar {
-    width: 4px;
-}
-.colleagues-scroll-area::-webkit-scrollbar-thumb {
-    background: #d8b4f8;
-    border-radius: 4px;
-}
-.colleagues-scroll-area::-webkit-scrollbar-track {
-    background: transparent;
-}
+.colleagues-scroll-area::-webkit-scrollbar { width: 4px; }
+.colleagues-scroll-area::-webkit-scrollbar-thumb { background: #d8b4f8; border-radius: 4px; }
+.colleagues-scroll-area::-webkit-scrollbar-track { background: transparent; }
 
-/* கிரிட் கட்டமைப்பு (2 Columns) */
 .colleagues-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 8px;
 }
 
+.colleague-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff;
+    padding: 5px 6px;
+    border-radius: 10px;
+    border: 1px solid #f0e6ff;
+}
+.colleague-avatar {
+    width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0;
+}
+.colleague-fallback {
+    width: 30px; height: 30px; border-radius: 50%; background: #e9d5ff; color: #8a2be2;
+    display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; flex-shrink: 0;
+}
+.colleague-info { overflow: hidden; }
+.colleague-name { font-size: 11px; font-weight: 600; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.colleague-loc { font-size: 9px; color: #777; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 
-/* See More & Box Animations */
 .see-more-action {
     text-align: center;
     padding-top: 6px;
@@ -162,15 +178,8 @@ a { text-decoration: none; color: inherit; }
     font-weight: 600;
 }
 
-.see-more-wrapper {
-    display: none; 
-    margin-top: 12px;
-    padding-bottom: 4px;
-}
-
-.see-more-wrapper.show {
-    display: block;
-}
+.see-more-wrapper { display: none; margin-top: 12px; padding-bottom: 4px; }
+.see-more-wrapper.show { display: block; }
 
 .horizontal-scroll-box {
     display: flex;
@@ -179,10 +188,7 @@ a { text-decoration: none; color: inherit; }
     padding: 10px 5px;
     scroll-behavior: smooth;
 }
-
-.horizontal-scroll-box::-webkit-scrollbar {
-    display: none;
-}
+.horizontal-scroll-box::-webkit-scrollbar { display: none; }
 
 .suggest-profile-card {
     width: 90px;
@@ -199,237 +205,85 @@ a { text-decoration: none; color: inherit; }
     border: 1px solid #eaeaea;
 }
 
-.suggest-avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 6px;
-}
-
-.suggest-name {
-    font-size: 11px;
-    font-weight: 500;
-    color: #222;
-    width: 100%;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
+.suggest-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-bottom: 6px; }
+.suggest-name { font-size: 11px; font-weight: 500; color: #222; width: 100%; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
 
 .connect-plus-btn {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 20px;
-    height: 20px;
-    background: #8a2be2;
-    color: #fff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    transition: transform 0.2s;
+    position: absolute; top: 4px; right: 4px; width: 20px; height: 20px;
+    background: #8a2be2; color: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: transform 0.2s;
 }
+.connect-plus-btn:hover { transform: scale(1.15); }
 
-.connect-plus-btn:hover {
-    transform: scale(1.15);
-}
-
-/* Clip & Video கார்டுகளுக்கான ஸ்டைல் */
+/* --- Dynamic Top Clip Video Styles --- */
 .moment-card {
-    width: 115px; 
-    height: 170px; 
-    border-radius: 14px; 
-    flex-shrink: 0;
-    position: relative; 
-    background-size: cover; 
-    background-position: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.12); 
-    border: 2px solid #fff; 
-    overflow: hidden;
-    transition: transform 0.2s;
+    width: 115px; height: 170px; border-radius: 14px; flex-shrink: 0;
+    position: relative; background: #333;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.12); border: 2px solid #fff; 
+    overflow: hidden; transition: transform 0.2s; cursor: pointer;
 }
 .moment-card:hover { transform: translateY(-3px); }
 .moment-card span.label {
     position: absolute; bottom: 10px; left: 10px; color: white;
-    font-size: 13px; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+    font-size: 13px; font-weight: 700; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); z-index: 2;
 }
-.moment-badge { position: absolute; top: 10px; left: 10px; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; background: #8a2be2; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; }
-/* --- Dynamic Top Clip Video Styles --- */
-.moment-card {
-    width: 115px; 
-    height: 170px; 
-    border-radius: 14px; 
-    flex-shrink: 0;
-    position: relative; 
-    background: #333; /* வீடியோ லோட் ஆகும் முன் தெரியும் நிறம் */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.12); 
-    border: 2px solid #fff; 
-    overflow: hidden;
-    transition: transform 0.2s;
-    cursor: pointer;
+.moment-badge {
+    position: absolute; top: 10px; left: 10px; width: 30px; height: 30px;
+    border-radius: 50%; border: 2px solid #fff; background: #8a2be2;
+    display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; z-index: 2;
 }
+.top-clip-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.moment-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.7)); z-index: 1; }
 
-.top-clip-media {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 0;
-}
-
-.moment-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.7));
-    z-index: 1;
-}
-
-.moment-badge, .moment-card span.label {
-    z-index: 2; /* வீடியோ மற்றும் Overlay-க்கு மேலே தெரிய வேண்டும் */
-}
-
-/* --- 4. Side Menu Drawer Network Layout Changes --- */
-.drawer-network-box {
-    padding: 10px 15px;
-    border-bottom: 1px solid #eee;
-    background: #fafafa;
-}
-
+/* --- 4. Side Menu Drawer Network Layout --- */
+.drawer-network-box { padding: 10px 15px; border-bottom: 1px solid #eee; background: #fafafa; }
 .network-toggle-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 8px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #333;
-    cursor: pointer;
-    border-radius: 6px;
-    transition: background 0.2s;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 12px 8px; font-size: 14px; font-weight: 600; color: #333;
+    cursor: pointer; border-radius: 6px; transition: background 0.2s;
 }
-
-.network-toggle-item:hover {
-    background: #f3e8fc;
-}
-
-.network-toggle-item i {
-    color: #8a2be2;
-    margin-right: 8px;
-    font-size: 16px;
-}
-
-.network-badge {
-    padding: 2px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    color: #fff;
-    font-weight: 700;
-}
-
+.network-toggle-item:hover { background: #f3e8fc; }
+.network-toggle-item i { color: #8a2be2; margin-right: 8px; font-size: 16px; }
+.network-badge { padding: 2px 10px; border-radius: 12px; font-size: 11px; color: #fff; font-weight: 700; }
 .counter-blue { background: #0084ff; }
 .counter-orange { background: #f39c12; }
 
-.network-expand-list {
-    display: none; /* Programmatically expanded */
-    flex-direction: column;
-    gap: 8px;
-    padding: 6px 4px 12px 12px;
-    max-height: 250px;
-    overflow-y: auto;
-}
+.network-expand-list { display: none; flex-direction: column; gap: 8px; padding: 6px 4px 12px 12px; max-height: 250px; overflow-y: auto; }
+.network-expand-list.open { display: flex; }
 
-.network-expand-list.open {
-    display: flex;
-}
-
-/* Vertical Profile Layout inside Drawer */
-.vertical-user-line {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #ffffff;
-    padding: 6px 8px;
-    border-radius: 8px;
-    border: 1px solid #eaeaea;
-}
-
-.v-user-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    overflow: hidden;
-    flex: 1;
-}
-
-.v-avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.v-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: #222;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-}
-
-.v-actions {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-}
-
-.btn-join-now {
-    background: #28a745;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 11px;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-}
-
-.btn-no-delete {
-    background: #dc3545;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    font-size: 11px;
-    border-radius: 4px;
-    font-weight: 600;
-    cursor: pointer;
-}
+.vertical-user-line { display: flex; align-items: center; justify-content: space-between; background: #ffffff; padding: 6px 8px; border-radius: 8px; border: 1px solid #eaeaea; }
+.v-user-left { display: flex; align-items: center; gap: 8px; overflow: hidden; flex: 1; }
+.v-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.v-name { font-size: 12px; font-weight: 500; color: #222; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.v-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.btn-join-now { background: #28a745; color: #fff; border: none; padding: 4px 8px; font-size: 11px; border-radius: 4px; font-weight: 600; cursor: pointer; }
+.btn-no-delete { background: #dc3545; color: #fff; border: none; padding: 4px 8px; font-size: 11px; border-radius: 4px; font-weight: 600; cursor: pointer; }
 
 /* --- Feed / Posts --- */
 .feed-container { padding: 5px 12px; max-width: 600px; margin: 0 auto; }
-.post-card { background: #ffffff; margin-bottom: 15px; border-radius: 14px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; border: 1px solid rgba(0,0,0,0.05); }
+.post-card { 
+    background: #ffffff; margin-bottom: 15px; border-radius: 14px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06); overflow: hidden; 
+    border: 1px solid rgba(0,0,0,0.05); 
+    animation: fadeInPost 0.2s ease-out;
+}
+@keyframes fadeInPost {
+    from { opacity: 0.7; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 .post-header { display: flex; align-items: center; padding: 12px 15px; justify-content: space-between; }
 .post-user-info { display: flex; align-items: center; gap: 10px; }
 .post-user-info img { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; border: 1px solid #ddd; object-fit: cover; }
 .post-user-info h4 { font-size: 15px; color: #050505; font-weight: 600; }
 .post-user-info p { font-size: 12px; color: #65676b; }
 .post-options { color: #8a2be2; cursor: pointer; font-size: 20px; } 
-.post-content { padding: 0 15px 12px; font-size: 15px; color: #111; line-height: 1.4; }
-.post-image img, .post-video video { width: 100%; max-height: 380px; object-fit: cover; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; }
+.post-content { padding: 0 15px 12px; font-size: 15px; color: #111; line-height: 1.4; word-break: break-word; }
+.post-image img, .post-video video { width: 100%; max-height: 380px; object-fit: cover; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; display: block; }
 .post-audio { padding: 10px 15px; width: 100%; }
 
 .post-actions { display: flex; padding: 6px 10px; justify-content: space-around; background: #fafafa; border-top: 1px solid #eee; }
-.action-btn { flex: 1; display: flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 0; color: #444; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; border-radius: 6px; }
+.action-btn { flex: 1; display: flex; justify-content: center; align-items: center; gap: 6px; padding: 10px 0; color: #444; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; border-radius: 6px; user-select: none; }
 .action-btn:hover { background: #f3e8fc; }
 
 /* --- Comments Section --- */
@@ -442,21 +296,10 @@ a { text-decoration: none; color: inherit; }
 .comment-input-area input { flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 13px; }
 .comment-input-area button { background: #8a2be2; color: #fff; border: none; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 .comment-input-area button:hover { background: #6b21a8; }
-/* --- Nested Comments (Sub-comments) --- */
-.sub-comments-list {
-    margin-left: 20px;
-    border-left: 2px solid #ddd;
-    padding-left: 10px;
-    margin-top: 5px;
-}
-.comment-action-btn {
-    cursor: pointer;
-    font-weight: 600;
-    transition: 0.2s;
-}
-.comment-action-btn:hover {
-    opacity: 0.7;
-}
+
+.sub-comments-list { margin-left: 20px; border-left: 2px solid #ddd; padding-left: 10px; margin-top: 5px; }
+.comment-action-btn { cursor: pointer; font-weight: 600; transition: 0.2s; }
+.comment-action-btn:hover { opacity: 0.7; }
 
 /* --- Custom Modals --- */
 .modal-media-btn { display: flex; align-items: center; gap: 6px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; background: #f9f9f9; font-size: 14px; cursor: pointer; font-weight: 500; transition: 0.2s; }
@@ -496,7 +339,7 @@ a { text-decoration: none; color: inherit; }
 #fsMediaContainer { flex: 1; display: flex; align-items: center; justify-content: center; height: 100vh; width: 100vw; }
 #fsMediaContainer img, #fsMediaContainer video { max-width: 100%; max-height: 100%; object-fit: contain; }
 
-#fsCommentOverlay { position: absolute; bottom: -100%; width: 100%; background: #fff; border-radius: 20px 20px 0 0; z-index: 4020; display: flex; flex-direction: column; transition: bottom 0.3s ease-in-out; max-height: 60vh; }
+#fsCommentOverlay { position: absolute; bottom: -100%; width: 100%; background: #fff; border-radius: 20px 20px 0 0; z-index: 6020 !important; display: flex; flex-direction: column; transition: bottom 0.3s ease-in-out; max-height: 60vh; }
 #fsCommentOverlay.show { bottom: 0; }
 .fs-comment-header { padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 16px; color:#000; }
 .fs-comment-header i { font-size: 24px; cursor: pointer; color: #555; }
@@ -504,119 +347,27 @@ a { text-decoration: none; color: inherit; }
 .fs-comment-input-area { padding: 10px 15px; border-top: 1px solid #ddd; display: flex; gap: 10px; align-items: center; background: #fff; }
 .fs-comment-input-area input { flex: 1; padding: 10px 15px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 14px; }
 .fs-comment-input-area button { background: #8a2be2; color: #fff; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+
 /* --- Vertical Scroll (Reels/Shorts) Styles --- */
-.reels-container {
-    width: 100%;
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory; /* இதுதான் Swipe up செய்யும் போது அடுத்த வீடியோவில் சரியாக நிற்க வைக்கும் */
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-}
-
-.reels-container::-webkit-scrollbar { 
-    display: none; 
-}
-
-.reel-item {
-    width: 100%;
-    height: 100vh;
-    scroll-snap-align: start;
-    position: relative;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.reel-video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* வீடியோ வெட்டப்படாமல் முழுமையாகத் தெரிய */
-}
-
-/* User Info on Top of Video */
-.reel-header {
-    position: absolute;
-    top: calc(env(safe-area-inset-top, 20px) + 15px);
-    left: 60px; /* Back Button-க்கு இடம் விட்டு */
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: white;
-    z-index: 10;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-}
-
-.reel-header img { 
-    width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; 
-}
+.reels-container { width: 100%; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+.reels-container::-webkit-scrollbar { display: none; }
+.reel-item { width: 100%; height: 100vh; scroll-snap-align: start; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+.reel-video { width: 100%; height: 100%; object-fit: contain; }
+.reel-header { position: absolute; top: calc(env(safe-area-inset-top, 20px) + 15px); left: 60px; display: flex; align-items: center; gap: 10px; color: white; z-index: 10; text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+.reel-header img { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1.5px solid #fff; }
 .reel-header span { font-weight: 600; font-size: 15px; }
-
-/* Video Actions (Like, Comment, Share) */
-.reel-actions {
-    position: absolute;
-    bottom: 40px;
-    right: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    z-index: 10;
-    color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
-.reel-action-btn { 
-    display: flex; flex-direction: column; align-items: center; font-size: 28px; cursor: pointer; transition: 0.2s;
-}
+.reel-actions { position: absolute; bottom: 40px; right: 15px; display: flex; flex-direction: column; gap: 25px; z-index: 10; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+.reel-action-btn { display: flex; flex-direction: column; align-items: center; font-size: 28px; cursor: pointer; transition: 0.2s; }
 .reel-action-btn:active { transform: scale(0.9); }
 .reel-action-btn span { font-size: 13px; margin-top: 4px; font-weight: 600; }
-
-.reel-content-text {
-    position: absolute;
-    bottom: 40px;
-    left: 15px;
-    right: 80px;
-    color: white;
-    z-index: 10;
-    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-    font-size: 14px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-}
-
-/* கமெண்ட் செக்ஷன் எல்லாவற்றிற்கும் மேலாகத் தெரிய Z-index திருத்தம் */
-#fsCommentOverlay { z-index: 6020 !important; }
-/* --- Profile Filter & Toast Notification Styles --- */
-.row2-profile {
-    transition: 0.3s;
-}
-
-.row2-profile.filter-active {
-    border: 3px solid #28a745 !important;
-    box-shadow: 0 0 12px rgba(40, 167, 69, 0.6);
-    transform: scale(1.05);
-}
+.reel-content-text { position: absolute; bottom: 40px; left: 15px; right: 80px; color: white; z-index: 10; text-shadow: 0 1px 3px rgba(0,0,0,0.8); font-size: 14px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 
 #custom-toast {
-    position: fixed; 
-    bottom: 30px; 
-    left: 50%; 
-    transform: translateX(-50%);
-    background: #28a745; 
-    color: #fff; 
-    padding: 12px 24px; 
-    border-radius: 30px;
-    z-index: 99999; 
-    font-size: 14px; 
-    font-weight: bold;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3); 
-    opacity: 0; 
-    transition: opacity 0.5s;
-    pointer-events: none; 
-    display: none;
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: #28a745; color: #fff; padding: 12px 24px; border-radius: 30px;
+    z-index: 99999; font-size: 14px; font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.5s;
+    pointer-events: none; display: none;
 }
 </style>
 </head>
@@ -624,16 +375,16 @@ a { text-decoration: none; color: inherit; }
 
     <header class="top-header">
         <div class="header-left">
-            <img src="image_0.png" alt="Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/40'">
+            <img src="image_0.png" alt="Logo" class="logo-img" onerror="this.src=DEFAULT_AVATAR">
         </div>
         <div class="header-center">
             <span class="dynamic-title">Staff Room</span>
         </div>
         <div class="header-right">
             <div class="attached-logos">
-                <img src="staff.png" alt="Staff Room Detail" class="attached-logo-btn" onerror="this.src='https://via.placeholder.com/40'">
+                <img src="staff.png" alt="Staff Room Detail" class="attached-logo-btn" onerror="this.src=DEFAULT_AVATAR">
                 <a href="dashboard.html" style="display:flex;">
-                    <img src="class.png" alt="Classroom Link" class="attached-logo-btn" onerror="this.src='https://via.placeholder.com/40'">
+                    <img src="class.png" alt="Classroom Link" class="attached-logo-btn" onerror="this.src=DEFAULT_AVATAR">
                 </a>
             </div>
             <i class="bi bi-list menu-btn" onclick="toggleMenu()"></i>
@@ -641,7 +392,7 @@ a { text-decoration: none; color: inherit; }
     </header>
 
     <nav class="row2-nav">
-        <img src="https://via.placeholder.com/50" alt="User Profile" class="row2-profile" id="mainProfilePic" onclick="toggleMyPostsFilter()" title="Click to filter your posts">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23d8b4f8'/><circle cx='50' cy='38' r='18' fill='%238a2be2'/><path d='M20 88 C20 65 80 65 80 88' fill='%238a2be2'/></svg>" alt="User Profile" class="row2-profile" id="mainProfilePic" onclick="toggleMyPostsFilter()" title="Click to filter your posts">
         
         <div class="row2-search-box">
             <div class="row2-input" onclick="document.getElementById('postModal').style.display='block'">Thoughts / Posts...</div>
@@ -659,11 +410,10 @@ a { text-decoration: none; color: inherit; }
 
     <div id="custom-toast"></div>
 
-            <div class="main-widgets-wrapper">
+    <div class="main-widgets-wrapper">
         <div class="top-widgets-row">
-            
-                 <div class="moment-card" id="topClipCard" onclick="openTopClipsModal()">
-                <video id="topClipVideo" class="top-clip-media" autoplay muted loop playsinline></video>
+            <div class="moment-card" id="topClipCard" onclick="openTopClipsModal()">
+                <video id="topClipVideo" class="top-clip-media" muted loop playsinline preload="none"></video>
                 <div class="moment-overlay"></div>
                 <div class="moment-badge"><i class="bi bi-play-fill"></i></div>
                 <span class="label">Top Clip</span>
@@ -671,22 +421,16 @@ a { text-decoration: none; color: inherit; }
 
             <div class="colleagues-card">
                 <h3 class="widget-title"><i class="bi bi-people-fill"></i> Colleagues</h3>
-                
                 <div class="colleagues-scroll-area">
-                    
                     <div class="colleagues-grid" id="colleaguesGrid"></div>
-
                     <div class="see-more-wrapper" id="seeMoreWrapper">
                         <div class="horizontal-scroll-box" id="suggestedHorizontalBox"></div>
                     </div>
-
                     <div class="see-more-action" onclick="toggleSeeMore()">
                         <span id="seeMoreText">See More <i class="bi bi-chevron-down"></i></span>
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -721,7 +465,7 @@ a { text-decoration: none; color: inherit; }
             </div>
             
             <div style="text-align:center; margin-bottom:15px;">
-                <img id="profilePicPreview" src="https://via.placeholder.com/80" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #8a2be2; cursor:pointer;" onclick="document.getElementById('profileImageInput').click()">
+                <img id="profilePicPreview" src="" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid #8a2be2; cursor:pointer;" onclick="document.getElementById('profileImageInput').click()">
                 <div style="font-size:12px; color:#888; margin-top:5px;">Click image to change</div>
                 <input type="file" id="profileImageInput" accept="image/*" style="display:none;" onchange="previewProfileImage(event)">
             </div>
@@ -745,7 +489,8 @@ a { text-decoration: none; color: inherit; }
         </div>
     </div>
 
-    <div class="feed-container"></div>
+    <!-- போஸ்ட்கள் லோட் ஆகும் பகுதி -->
+    <div class="feed-container" id="mainFeedContainer"></div>
 
     <div id="fsModal">
         <div class="fs-header">
@@ -783,19 +528,17 @@ a { text-decoration: none; color: inherit; }
             </div>
         </div>
     </div>
-        <div id="topClipsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:5000; flex-direction:column;">
-        
+
+    <div id="topClipsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:5000; flex-direction:column;">
         <i class="bi bi-arrow-left" onclick="closeTopClipsModal()" style="position:absolute; top:calc(env(safe-area-inset-top, 20px) + 15px); left:20px; color:white; font-size:26px; z-index:5010; cursor:pointer; text-shadow:0 2px 4px rgba(0,0,0,0.8);"></i>
-        
-        <div id="topClipsContainer" class="reels-container">
-            </div>
+        <div id="topClipsContainer" class="reels-container"></div>
     </div>
 
     <div class="side-menu-overlay" id="menuOverlay" onclick="toggleMenu()"></div>
     <div class="side-menu" id="sideMenu">
         <div class="menu-profile">
             <div class="menu-profile-info">
-                <img src="https://via.placeholder.com/50" alt="User Profile" id="sideMenuProfilePic" onclick="openProfileEdit()">
+                <img src="" alt="User Profile" id="sideMenuProfilePic" onclick="openProfileEdit()">
                 <h3 id="sideMenuProfileName">ஆசிரியர்</h3>
             </div>
             <i class="bi bi-x close-menu" onclick="toggleMenu()"></i>
@@ -806,15 +549,13 @@ a { text-decoration: none; color: inherit; }
                 <span><i class="bi bi-people-fill"></i> Connects</span>
                 <span class="network-badge counter-blue" id="sidebarConnectsCount">0</span>
             </div>
-            <div class="network-expand-list" id="drawerConnectsList">
-                </div>
+            <div class="network-expand-list" id="drawerConnectsList"></div>
 
             <div class="network-toggle-item" onclick="toggleDrawerSection('drawerInvitesList')">
                 <span><i class="bi bi-person-plus-fill"></i> Invites</span>
                 <span class="network-badge counter-orange" id="sidebarInvitesCount">0</span>
             </div>
-            <div class="network-expand-list" id="drawerInvitesList">
-                </div>
+            <div class="network-expand-list" id="drawerInvitesList"></div>
         </div>
 
         <div class="menu-links">
@@ -822,61 +563,152 @@ a { text-decoration: none; color: inherit; }
             <a href="dashboard.html"><i class="bi bi-grid"></i> Dashboard</a>
             <a href="#"><i class="bi bi-gear"></i> Settings</a>
             <a href="#" onclick="logoutUser()" style="color:#e42645; margin-top: 20px;">
-             <i class="bi bi-box-arrow-right" style="color:#e42645;"></i> Logout</a>
-
+                <i class="bi bi-box-arrow-right" style="color:#e42645;"></i> Logout
+            </a>
         </div>
     </div>
-
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-
+  <!-- ========================================================================= -->
+<!-- 🚀 STEP 1: ZERO-LATENCY CACHE ENGINE (LocalStorage + IndexedDB) -->
+<!-- ========================================================================= -->
 <script>
-// --- 1. Firebase Initial Configuration ---
-const firebaseConfig = {
-    apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
-    authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
-    projectId: "teacher-s-friend-3aca8",
-    storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
-    messagingSenderId: "294698361211",
-    appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
-    databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
-};
+// இன்டர்நெட் இல்லாமலேயே உடனடியாகத் தெரியும் Default Avatar SVG (`via.placeholder.com` தாமதத்தைத் தவிர்க்க)
+const DEFAULT_AVATAR = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%23e9d5ff'/><circle cx='50' cy='38' r='18' fill='%238a2be2'/><path d='M20 88 C20 65 80 65 80 88' fill='%238a2be2'/></svg>";
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
-const storage = firebase.storage();
-
-// --- 2. Core States & Identifiers ---
 let currentUserId = localStorage.getItem('teacherApp_userId');
 if (!currentUserId) {
     currentUserId = 'user_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('teacherApp_userId', currentUserId);
+    try { localStorage.setItem('teacherApp_userId', currentUserId); } catch(e) {}
 }
 
 let currentUserName = localStorage.getItem('teacherApp_userName') || "ஆசிரியர்"; 
-let currentProfilePic = localStorage.getItem('teacherApp_profilePic') || "https://via.placeholder.com/50";
+let currentProfilePic = localStorage.getItem('teacherApp_profilePic') || DEFAULT_AVATAR;
 
 let globalPosts = {}; 
 let currentFsPostKey = null; 
 let allFetchedPosts = []; 
 let sortedVideoPosts = [];
 let reelsObserver = null;
+let feedVideosObserver = null;
 let showOnlyMyPosts = false; 
 let tempProfilePicBase64 = currentProfilePic;
 let tempProfileFileObj = null; 
 let selectedMedia = { type: null, base64: null, fileObj: null };
+let database = null;
+let storage = null;
+let isInitialPostsSynced = false;
 
-// --- 3. Profile UI Updater (புதிதாக சேர்க்கப்பட்டது) ---
+// --- IndexedDB Helper (500MB+ கொள்ளளவு - Base64 படங்கள் இருந்தாலும் ஒருபோதும் தோல்வியடையாது) ---
+const IDB_NAME = 'TeacherFriendCacheDB';
+const IDB_STORE = 'feedStore';
+
+function openCacheDB() {
+    return new Promise((resolve, reject) => {
+        if (!window.indexedDB) return reject("No IndexedDB");
+        const req = indexedDB.open(IDB_NAME, 1);
+        req.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(IDB_STORE)) {
+                db.createObjectStore(IDB_STORE);
+            }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = (e) => reject(e.target.error);
+    });
+}
+
+async function saveToIndexedDB(key, val) {
+    try {
+        const db = await openCacheDB();
+        const tx = db.transaction(IDB_STORE, 'readwrite');
+        tx.objectStore(IDB_STORE).put(val, key);
+    } catch (e) {}
+}
+
+async function getFromIndexedDB(key) {
+    try {
+        const db = await openCacheDB();
+        return new Promise((resolve) => {
+            const tx = db.transaction(IDB_STORE, 'readonly');
+            const req = tx.objectStore(IDB_STORE).get(key);
+            req.onsuccess = () => resolve(req.result || null);
+            req.onerror = () => resolve(null);
+        });
+    } catch (e) {
+        return null;
+    }
+}
+
+// --- LocalStorage Quota Sanitizer (5MB தாண்டாமல் தடுக்கும் ஃபங்ஷன்) ---
+function createLightweightPostCopy(post) {
+    if (!post) return null;
+    const copy = { ...post };
+    // userImage பெரிய Base64 ஆக இருந்தால் (>25KB), LocalStorage-ல் மட்டும் Default Avatar வைக்கிறோம் (IndexedDB-ல் முழுப் படம் இருக்கும்)
+    if (copy.userImage && copy.userImage.startsWith('data:') && copy.userImage.length > 25000) {
+        copy.userImage = DEFAULT_AVATAR;
+    }
+    // mediaUrl பெரிய Base64 ஆக இருந்தால் (>80KB), LocalStorage-ல் மட்டும் தவிர்க்கிறோம் (R2 URL-கள் 100 எழுத்துகளே என்பதால் அப்படியே இருக்கும்!)
+    if (copy.mediaUrl && copy.mediaUrl.startsWith('data:') && copy.mediaUrl.length > 80000) {
+        copy.mediaUrl = null;
+    }
+    return copy;
+}
+
+function savePostsToCache() {
+    const recentPosts = allFetchedPosts.slice(-10);
+    const topVideoToCache = sortedVideoPosts.length > 0 ? sortedVideoPosts[0] : null;
+
+    // 1. IndexedDB-ல் முழு டேட்டாவையும் (Base64 உட்பட) சேமித்தல்
+    saveToIndexedDB('cachedFeedData', {
+        topVideo: topVideoToCache,
+        feedPosts: recentPosts
+    });
+
+    // 2. LocalStorage-ல் 0.01 விநாடியில் உடனடியாக எடுப்பதற்காக Lightweight வடிவத்தில் சேமித்தல்
+    const lightPosts = recentPosts.map(createLightweightPostCopy);
+    const lightTopVideo = createLightweightPostCopy(topVideoToCache);
+
+    // ஒருவேளை பழைய Base64 profilePic ஏற்கனவே 4MB இடத்தை அடைத்திருந்தால் அதைச் சுருக்குதல்
+    const rawProfilePic = localStorage.getItem('teacherApp_profilePic');
+    if (rawProfilePic && rawProfilePic.startsWith('data:') && rawProfilePic.length > 150000) {
+        compressAndSaveProfilePicInLocalStorage(rawProfilePic);
+    }
+
+    for (let count = lightPosts.length; count >= 1; count--) {
+        try {
+            const payload = JSON.stringify({
+                topVideo: lightTopVideo,
+                feedPosts: lightPosts.slice(-count)
+            });
+            localStorage.setItem('teacherApp_cachedPosts', payload);
+            break; // வெற்றிகரமாகச் சேமிக்கப்பட்டதும் வெளியேறு!
+        } catch (e) {
+            // இடம் போதவில்லை என்றால் எண்ணிக்கையைக் குறைத்து மீண்டும் முயற்சிக்கும் (அழிக்காது!)
+        }
+    }
+}
+
+function compressAndSaveProfilePicInLocalStorage(base64Str) {
+    const img = new Image();
+    img.onload = function() {
+        const canvas = document.createElement('canvas');
+        canvas.width = 96;
+        canvas.height = 96;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 96, 96);
+        const smallBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        try {
+            localStorage.setItem('teacherApp_profilePic', smallBase64);
+            currentProfilePic = smallBase64;
+        } catch (e) {}
+    };
+    img.src = base64Str;
+}
+
+// 1. பயனர் படத்தை உடனடியாகத் திரையில் ஏற்றுதல்
 function loadUserProfileUI() {
-    // LocalStorage லிருந்து லேட்டஸ்ட் டேட்டாவை எடுக்கிறோம்
     currentUserName = localStorage.getItem('teacherApp_userName') || "ஆசிரியர்";
-    currentProfilePic = localStorage.getItem('teacherApp_profilePic') || "https://via.placeholder.com/50";
+    currentProfilePic = localStorage.getItem('teacherApp_profilePic') || DEFAULT_AVATAR;
     
-    // திரையில் உள்ள படங்களை மாற்றுகிறோம்
     const mainPic = document.getElementById('mainProfilePic');
     if (mainPic) mainPic.src = currentProfilePic;
     
@@ -887,11 +719,431 @@ function loadUserProfileUI() {
     if (sideName) sideName.innerText = currentUserName;
 }
 
-// --- 4. Menu & UI Toggles ---
+// 2. Top Video Setup (போஸ்ட்கள் ரெண்டர் ஆன பிறகு இயங்கும்)
+function setupTopVideo(videos) {
+    const topVideoEl = document.getElementById('topClipVideo');
+    if (topVideoEl && videos && videos.length > 0 && videos[0].mediaUrl) {
+        const topVideoUrl = videos[0].mediaUrl;
+        if (topVideoEl.getAttribute('src') !== topVideoUrl) {
+            topVideoEl.src = topVideoUrl;
+            topVideoEl.muted = true;
+            setTimeout(() => {
+                topVideoEl.play().catch(() => {});
+            }, 300);
+        }
+        topVideoEl.style.display = 'block';
+    } else if (topVideoEl) {
+        topVideoEl.style.display = 'none';
+    }
+}
+
+// 3. கமெண்ட் HTML உருவாக்கும் ஃபங்ஷன்
+function renderSingleComment(postId, commentId, c, isReply, parentId) {
+    let inspireCount = c.likes ? Object.keys(c.likes).length : 0;
+    let isLiked = c.likes && c.likes[currentUserId] ? true : false;
+    let heartColor = isLiked ? '#e42645' : '#888';
+    let heartIcon = isLiked ? 'bi-heart-fill' : 'bi-heart';
+
+    return `
+        <div class="comment-item" id="comment-${commentId}">
+            <strong>${c.userName}</strong>: ${c.text}
+            <div style="display:flex; gap:15px; font-size:12px; margin-top:5px; color:#555;">
+                <span class="comment-action-btn" onclick="inspireComment('${postId}', '${commentId}')" style="color:${heartColor};">
+                    <i class="bi ${heartIcon}"></i> Inspire ${inspireCount > 0 ? `(${inspireCount})` : ''}
+                </span>
+                <span class="comment-action-btn" onclick="setReply('${postId}', '${c.userName}', '${parentId}')" style="color:#8a2be2;">
+                    <i class="bi bi-reply-fill"></i> Interact
+                </span>
+            </div>
+        </div>
+    `;
+}
+
+function generateCommentsHTML(postId, comments) {
+    if (!comments) return '<p style="text-align:center;">No reviews yet.</p>';
+    
+    let html = '';
+    const allKeys = Object.keys(comments);
+    const parents = allKeys.filter(k => !comments[k].replyTo);
+    const children = allKeys.filter(k => comments[k].replyTo);
+
+    parents.forEach(pKey => {
+        html += renderSingleComment(postId, pKey, comments[pKey], false, pKey);
+        const replies = children.filter(cKey => comments[cKey].replyTo === pKey);
+        if (replies.length > 0) {
+            html += `<div class="sub-comments-list">`;
+            replies.forEach(cKey => {
+                html += renderSingleComment(postId, cKey, comments[cKey], true, pKey);
+            });
+            html += `</div>`;
+        }
+    });
+    return html || '<p style="text-align:center;">No reviews yet.</p>';
+}
+
+// 4. ஒரு போஸ்ட் கார்டின் HTML-ஐ உருவாக்கும் பொதுவான ஃபங்ஷன்
+function buildPostCardHTML(post) {
+    const postKey = post.key;
+    let mediaHTML = '';
+    if (post.mediaUrl) {
+        if (post.mediaType === 'image') {
+            mediaHTML = `<div class="post-image" id="post-media-${postKey}" onclick="openFullScreen('${postKey}')"><img src="${post.mediaUrl}" loading="lazy" decoding="async"></div>`;
+        } else if (post.mediaType === 'video') {
+            mediaHTML = `<div class="post-video" id="post-media-${postKey}" onclick="openFullScreen('${postKey}')">
+                <video src="${post.mediaUrl}" class="feed-video" muted loop playsinline preload="none" style="width:100%; cursor:pointer; pointer-events:none;"></video>
+            </div>`;
+        } else if (post.mediaType === 'audio') {
+            mediaHTML = `<div class="post-audio" id="post-media-${postKey}"><audio src="${post.mediaUrl}" controls preload="none" style="width:100%;"></audio></div>`;
+        }
+    } else {
+        mediaHTML = `<div id="post-media-${postKey}"></div>`;
+    }
+    
+    const likes = post.likes || {};
+    const likeCount = Object.keys(likes).length;
+    const heartIcon = likes[currentUserId] ? '<i class="bi bi-heart-fill" style="color: #e42645;"></i>' : '<i class="bi bi-heart" style="color: #e42645;"></i>';
+    const likeText = likeCount > 0 ? `Inspire (${likeCount})` : 'Inspire';
+    const commentsHTML = generateCommentsHTML(postKey, post.comments);
+    const commentCount = Object.keys(post.comments || {}).length;
+    const avatarSrc = (post.userImage && post.userImage.trim() !== '') ? post.userImage : DEFAULT_AVATAR;
+
+    return `
+        <div class="post-card" id="post-${postKey}" data-postkey="${postKey}">
+            <div class="post-header">
+                <div class="post-user-info">
+                    <img id="post-avatar-${postKey}" src="${avatarSrc}" loading="lazy" decoding="async" onerror="this.src=DEFAULT_AVATAR">
+                    <div><h4>${post.userName}</h4><p>${post.time || 'Just now'} • <i class="bi bi-globe"></i></p></div>
+                </div>
+            </div>
+            <div class="post-content" id="post-content-${postKey}">${post.content || ''}</div>
+            ${mediaHTML}
+            <div class="post-actions">
+                <div class="action-btn" id="like-btn-${postKey}" onclick="toggleLike('${postKey}')">${heartIcon} <span>${likeText}</span></div>
+                <div class="action-btn" onclick="toggleCommentSection('${postKey}')">
+                    <i class="bi bi-chat-text-fill" style="color: #17a2b8;"></i> 
+                    Review (<span id="comment-count-${postKey}">${commentCount}</span>)
+                </div>
+                <div class="action-btn" onclick="sharePost('${postKey}', 'Staff Room Post')"><i class="bi bi-share-fill" style="color: #28a745;"></i> Spread</div>
+            </div>
+            <div class="comment-section" id="comment-section-${postKey}">
+                <div class="comment-list" id="comment-list-${postKey}">${commentsHTML}</div>
+                <div class="comment-input-area">
+                    <input type="text" id="comment-input-${postKey}" placeholder="Write a review...">
+                    <button onclick="submitComment('${postKey}')"><i class="bi bi-send-fill"></i></button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// 5. வீடியோக்கள் ஸ்கிரீனுக்குள் வரும்போது மட்டும் லோட் & பிளே செய்ய
+function initFeedVideosObserver() {
+    if (feedVideosObserver) feedVideosObserver.disconnect();
+
+    feedVideosObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const videoEl = entry.target;
+            if (entry.isIntersecting) {
+                if (videoEl.getAttribute('preload') === 'none') {
+                    videoEl.setAttribute('preload', 'metadata');
+                }
+                videoEl.play().catch(() => {});
+            } else {
+                videoEl.pause();
+            }
+        });
+    }, { threshold: 0.6 });
+
+    document.querySelectorAll('.feed-video').forEach(vid => {
+        feedVideosObserver.observe(vid);
+    });
+}
+// 6. முழு ஃபீடையும் ரெண்டர் செய்யும் ஃபங்ஷன்
+function renderFeedToDOM() {
+    const feedContainer = document.getElementById('mainFeedContainer');
+    if (!feedContainer) return;
+
+    let displayArray = [...allFetchedPosts].reverse();
+
+    if (showOnlyMyPosts) {
+        displayArray = displayArray.filter(post => post.userName === currentUserName);
+        if (displayArray.length === 0) {
+            feedContainer.innerHTML = '<div style="text-align:center; padding:40px; color:#666;"><i class="bi bi-journal-x" style="font-size:40px; color:#ccc;"></i><br><br><b>நீங்கள் இன்னும் எந்தப் பதிவும் செய்யவில்லை!</b></div>';
+            return;
+        }
+    }
+
+    let htmlContent = '';
+    displayArray.forEach(post => {
+        htmlContent += buildPostCardHTML(post);
+    });
+
+    feedContainer.innerHTML = htmlContent;
+    initFeedVideosObserver();
+}
+
+// ஒரு குறிப்பிட்ட போஸ்டின் Like, Comment, Avatar-ஐ மட்டும் ரீ-லோட் இல்லாமல் அப்டேட் செய்யும் ஃபங்ஷன்
+function updateSinglePostDOM(post) {
+    const postKey = post.key;
+
+    // Avatar update (IndexedDB அல்லது Firebase-ல் இருந்து முழுப் படம் வந்தால்)
+    if (post.userImage && post.userImage !== DEFAULT_AVATAR) {
+        const avatarEl = document.getElementById(`post-avatar-${postKey}`);
+        if (avatarEl && avatarEl.getAttribute('src') === DEFAULT_AVATAR) {
+            avatarEl.src = post.userImage;
+        }
+    }
+
+    const likes = post.likes || {};
+    const likeCount = Object.keys(likes).length;
+    const heartIcon = likes[currentUserId] ? '<i class="bi bi-heart-fill" style="color: #e42645;"></i>' : '<i class="bi bi-heart" style="color: #e42645;"></i>';
+    const likeText = likeCount > 0 ? `Inspire (${likeCount})` : 'Inspire';
+
+    const likeBtn = document.getElementById(`like-btn-${postKey}`);
+    if (likeBtn) {
+        const newLikeHTML = `${heartIcon} <span>${likeText}</span>`;
+        if (likeBtn.innerHTML !== newLikeHTML) {
+            likeBtn.innerHTML = newLikeHTML;
+        }
+    }
+
+    const commentCountEl = document.getElementById(`comment-count-${postKey}`);
+    const commentCount = Object.keys(post.comments || {}).length;
+    if (commentCountEl && commentCountEl.innerText !== String(commentCount)) {
+        commentCountEl.innerText = commentCount;
+    }
+
+    const commentListEl = document.getElementById(`comment-list-${postKey}`);
+    if (commentListEl) {
+        const newCommentsHTML = generateCommentsHTML(postKey, post.comments);
+        if (commentListEl.innerHTML !== newCommentsHTML) {
+            commentListEl.innerHTML = newCommentsHTML;
+        }
+    }
+}
+
+function applyCachedPayloadToScreen(parsed) {
+    if (!parsed) return false;
+    let postsToRender = [];
+    if (Array.isArray(parsed)) {
+        postsToRender = parsed;
+    } else if (parsed && Array.isArray(parsed.feedPosts)) {
+        postsToRender = parsed.feedPosts;
+    }
+    if (postsToRender.length === 0) return false;
+
+    allFetchedPosts = postsToRender;
+    globalPosts = {};
+    sortedVideoPosts = [];
+
+    allFetchedPosts.forEach(post => {
+        if (post && post.key) {
+            globalPosts[post.key] = post;
+            if (post.mediaType === 'video' && post.mediaUrl) {
+                post.likeCount = Object.keys(post.likes || {}).length;
+                sortedVideoPosts.push(post);
+            }
+        }
+    });
+    sortedVideoPosts.sort((a, b) => b.likeCount - a.likeCount);
+
+    // 1. முதலில் போஸ்ட்களைத் திரையில் உடனடியாகக் காட்டு!
+    renderFeedToDOM();
+
+    // 2. அதன் பிறகு Top Video-வை அமைக்கவும்
+    if (parsed.topVideo && parsed.topVideo.mediaUrl) {
+        setupTopVideo([parsed.topVideo]);
+    } else if (sortedVideoPosts.length > 0) {
+        setupTopVideo(sortedVideoPosts);
+    }
+    return true;
+}
+
+// 🚀 7. பக்கம் திறந்தவுடன் (0.01s) LocalStorage & IndexedDB-ல் இருந்து உடனடியாகக் காட்டுதல்!
+(function instantBootEngine() {
+    loadUserProfileUI();
+
+    // A. Colleagues Widget Cache
+    const cachedColleaguesHTML = localStorage.getItem('teacherApp_cachedColleaguesHTML');
+    if (cachedColleaguesHTML) {
+        const gridEl = document.getElementById('colleaguesGrid');
+        if (gridEl) gridEl.innerHTML = cachedColleaguesHTML;
+    }
+
+    // B. Step 1: 0.01 விநாடியில் LocalStorage-ல் இருந்து Synchronous ரெண்டர்
+    let renderedFromLS = false;
+    const cachedData = localStorage.getItem('teacherApp_cachedPosts');
+    if (cachedData) {
+        try {
+            const parsed = JSON.parse(cachedData);
+            renderedFromLS = applyCachedPayloadToScreen(parsed);
+        } catch (e) {
+            console.error("LS cache parse error:", e);
+        }
+    }
+
+    // C. Step 2: 0.04 விநாடியில் IndexedDB-ல் இருந்து முழு டேட்டாவை (Base64 படங்கள் உட்பட) எடுத்தல்
+    getFromIndexedDB('cachedFeedData').then(idbData => {
+        if (idbData && Array.isArray(idbData.feedPosts) && idbData.feedPosts.length > 0) {
+            if (!renderedFromLS) {
+                // ஒருவேளை LocalStorage காலியாக இருந்தால் IndexedDB உடனடியாக ரெண்டர் செய்யும்!
+                applyCachedPayloadToScreen(idbData);
+            } else {
+                // LocalStorage ஏற்கனவே ரெண்டர் செய்திருந்தால், அதில் சுருக்கப்பட்ட படங்களை மட்டும் IndexedDB-ல் இருந்து நிரப்பும்
+                idbData.feedPosts.forEach(fullPost => {
+                    if (fullPost && fullPost.key) {
+                        globalPosts[fullPost.key] = fullPost;
+                        updateSinglePostDOM(fullPost);
+                    }
+                });
+            }
+        }
+    });
+})();
+</script>
+<!-- ========================================================================= -->
+<!-- 🌐 STEP 2: NON-BLOCKING FIREBASE LOADER (திரையில் போஸ்ட்கள் வந்த பிறகே இயங்கும்) -->
+<!-- ========================================================================= -->
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+    authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+    projectId: "teacher-s-friend-3aca8",
+    storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+    messagingSenderId: "294698361211",
+    appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+    databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+};
+
+function loadScriptSequential(src) {
+    return new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.async = false;
+        s.onload = resolve;
+        s.onerror = reject;
+        document.body.appendChild(s);
+    });
+}
+
+// திரையில் LocalStorage போஸ்ட்கள் முழுமையாக வரையப்பட்ட (Paint) பிறகே Firebase-ஐ டவுன்லோட் செய்கிறோம்!
+window.requestAnimationFrame(() => {
+    setTimeout(async () => {
+        try {
+            await loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+            await Promise.all([
+                loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"),
+                loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"),
+                loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js")
+            ]);
+
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            database = firebase.database();
+            storage = firebase.storage();
+
+            // முதலில் போஸ்ட்களை மட்டும் Sync செய்கிறோம் (WebSocket முழு வேகத்தில் போஸ்ட்களைக் கொண்டுவர)
+            initFirebasePostsListener();
+        } catch (err) {
+            console.error("Background Firebase load error:", err);
+        }
+    }, 50);
+});
+
+// 🚀 FACEBOOK STYLE SMART DOM PATCHING (இருக்கும் போஸ்ட்களை அழிக்காமல் புதியதை மட்டும் மேலே சேர்க்கும்)
+function processAndRenderPosts(snapshot) {
+    let freshPosts = [];
+    let newGlobalPosts = {};
+    let newSortedVideoPosts = [];
+
+    snapshot.forEach((childSnapshot) => {
+        let postData = { key: childSnapshot.key, ...childSnapshot.val() };
+        freshPosts.push(postData);
+        newGlobalPosts[childSnapshot.key] = postData; 
+        
+        if (postData.mediaType === 'video' && postData.mediaUrl) {
+            postData.likeCount = Object.keys(postData.likes || {}).length;
+            newSortedVideoPosts.push(postData);
+        }
+    });
+
+    newSortedVideoPosts.sort((a, b) => b.likeCount - a.likeCount);
+
+    allFetchedPosts = freshPosts;
+    globalPosts = newGlobalPosts;
+    sortedVideoPosts = newSortedVideoPosts;
+
+    // LocalStorage + IndexedDB இரண்டிலும் புதிய டேட்டாவைச் சேமிக்கிறோம்
+    savePostsToCache();
+    setupTopVideo(sortedVideoPosts);
+
+    const feedContainer = document.getElementById('mainFeedContainer');
+    if (feedContainer) {
+        if (showOnlyMyPosts || feedContainer.children.length === 0) {
+            renderFeedToDOM();
+        } else {
+            // 1. ஏற்கனவே திரையில் உள்ள போஸ்ட்களில் Like / Comment மாறியிருந்தால் அதை மட்டும் அப்டேட் செய்தல்
+            freshPosts.forEach(post => {
+                const existingCard = document.getElementById(`post-${post.key}`);
+                if (existingCard) {
+                    updateSinglePostDOM(post);
+                }
+            });
+
+            // 2. புதிய போஸ்ட்கள் வந்திருந்தால் (DOM-ல் இல்லாதவை), ஏற்கனவே உள்ள போஸ்ட்களைத் தொடாமல் மேலே (Top-ல்) சேர்த்தல்!
+            let newPostsAdded = false;
+            freshPosts.forEach(post => {
+                if (!document.getElementById(`post-${post.key}`)) {
+                    const newCardHTML = buildPostCardHTML(post);
+                    feedContainer.insertAdjacentHTML('afterbegin', newCardHTML);
+                    newPostsAdded = true;
+                }
+            });
+
+            // 3. டெலீட் செய்யப்பட்ட அல்லது பழைய போஸ்ட்களை நீக்குதல்
+            const freshKeysSet = new Set(freshPosts.map(p => p.key));
+            document.querySelectorAll('#mainFeedContainer .post-card').forEach(card => {
+                const key = card.getAttribute('data-postkey');
+                if (key && !freshKeysSet.has(key)) {
+                    card.remove();
+                }
+            });
+
+            if (newPostsAdded) {
+                initFeedVideosObserver();
+            }
+        }
+    }
+
+    if (document.getElementById('fsModal').style.display === 'flex' && currentFsPostKey && globalPosts[currentFsPostKey]) {
+        updateFullScreenUI(globalPosts[currentFsPostKey]);
+    }
+
+    // போஸ்ட்கள் முழுமையாக வந்த பிறகே Colleagues (Users) டேட்டாவை பின்னணியில் எடுக்கிறோம்!
+    if (!isInitialPostsSynced) {
+        isInitialPostsSynced = true;
+        setTimeout(() => {
+            initNetworkAndColleaguesEngine();
+        }, 200);
+    }
+}
+
+function initFirebasePostsListener() {
+    if (!database) return;
+    const postsRef = database.ref('posts').orderByKey().limitToLast(10);
+    postsRef.on('value', (snapshot) => {
+        processAndRenderPosts(snapshot);
+    }, (error) => {
+        console.error("Firebase sync error:", error);
+    });
+}
+
+// --- Menu & UI Toggles ---
 function toggleMenu() {
     let menu = document.getElementById('sideMenu');
     let overlay = document.getElementById('menuOverlay');
-    if(menu.classList.contains('open')) {
+    if (menu.classList.contains('open')) {
         menu.classList.remove('open');
         overlay.style.display = 'none';
     } else {
@@ -907,20 +1159,20 @@ function toggleDrawerSection(elementId) {
 
 function showToast(message, bgColor = "#28a745") {
     let toast = document.getElementById('custom-toast');
-    if(!toast) return;
+    if (!toast) return;
     toast.innerText = message;
     toast.style.background = bgColor;
     toast.style.display = 'block';
     setTimeout(() => { toast.style.opacity = '1'; }, 10);
     setTimeout(() => { 
         toast.style.opacity = '0'; 
-        setTimeout(()=> toast.style.display='none', 500); 
+        setTimeout(() => toast.style.display = 'none', 500); 
     }, 3000);
 }
 
-// --- 5. Profile Management & Editing ---
+// --- Profile Management & Editing ---
 function openProfileEdit() {
-    if(document.getElementById('sideMenu').classList.contains('open')) {
+    if (document.getElementById('sideMenu').classList.contains('open')) {
         toggleMenu(); 
     }
     
@@ -931,7 +1183,7 @@ function openProfileEdit() {
     document.getElementById('editTaluk').value = localStorage.getItem('teacherApp_taluk') || '';
     document.getElementById('editDistrict').value = localStorage.getItem('teacherApp_district') || '';
     
-    tempProfilePicBase64 = localStorage.getItem('teacherApp_profilePic') || 'https://via.placeholder.com/80';
+    tempProfilePicBase64 = localStorage.getItem('teacherApp_profilePic') || DEFAULT_AVATAR;
     document.getElementById('profilePicPreview').src = tempProfilePicBase64;
 
     document.getElementById('profileEditModal').style.display = 'flex';
@@ -943,7 +1195,7 @@ function closeProfileEdit() {
 
 function previewProfileImage(event) {
     const file = event.target.files[0];
-    if(file) {
+    if (file) {
         tempProfileFileObj = file; 
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -955,6 +1207,7 @@ function previewProfileImage(event) {
 }
 
 async function saveProfile() {
+    if (!database) return alert("இணைய இணைப்பு தயாராகிறது, ஒரு நொடி கழித்து முயற்சிக்கவும்...");
     const name = document.getElementById('editProfileName').value.trim() || "ஆசிரியர்";
     const qual = document.getElementById('editQualification').value.trim();
     const school = document.getElementById('editSchoolType').value;
@@ -1007,9 +1260,9 @@ async function saveProfile() {
         });
 
         showToast("Profile Saved Successfully!");
-        loadUserProfileUI(); // UI-ஐ அப்டேட் செய்கிறோம்
+        loadUserProfileUI();
         initNetworkAndColleaguesEngine(); 
-        closeProfileEdit(); // Modal-ஐ மூடுகிறோம்
+        closeProfileEdit();
         
     } catch (error) {
         console.error(error);
@@ -1020,13 +1273,12 @@ async function saveProfile() {
         tempProfileFileObj = null; 
     }
 }
-
-// --- 6. Post Filtering ---
+  // --- Post Filtering ---
 function toggleMyPostsFilter() {
     showOnlyMyPosts = !showOnlyMyPosts;
     const profilePic = document.getElementById('mainProfilePic');
     
-    if(showOnlyMyPosts) {
+    if (showOnlyMyPosts) {
         profilePic.classList.add('filter-active');
         showToast("✅ உங்கள் பதிவுகள் மட்டுமே காட்டப்படுகிறது!");
     } else {
@@ -1036,234 +1288,7 @@ function toggleMyPostsFilter() {
     renderFeedToDOM(); 
 }
 
-// 1. முதலில் Local Storage-ல் உள்ள பழைய போஸ்ட்களை உடனடியாக காட்டுதல்
-function loadCachedPosts() {
-    const cachedData = localStorage.getItem('teacherApp_cachedPosts');
-    if (cachedData) {
-        try {
-            allFetchedPosts = JSON.parse(cachedData);
-            
-            // Global Posts Object-ஐ உருவாக்குதல் (Like/Comment வேலை செய்ய)
-            globalPosts = {};
-            sortedVideoPosts = [];
-            
-            allFetchedPosts.forEach(post => {
-                globalPosts[post.key] = post;
-                if (post.mediaType === 'video' && post.mediaUrl) {
-                    post.likeCount = Object.keys(post.likes || {}).length;
-                    sortedVideoPosts.push(post);
-                }
-            });
-
-            sortedVideoPosts.sort((a, b) => b.likeCount - a.likeCount);
-            
-            setupTopVideo(sortedVideoPosts);
-            renderFeedToDOM(); // Cache-ல் உள்ளதை உடனடியாக திரையில் காட்டு
-        } catch (e) {
-            console.error("Cache loading error:", e);
-        }
-    } else {
-        // முதல் முறை App-ஐ ஓபன் செய்யும் போது (அல்லது Cache இல்லையென்றால்) Loading காட்டுதல்
-        const feedContainer = document.querySelector('.feed-container');
-        if(feedContainer) {
-            feedContainer.innerHTML = `
-            <div style="text-align:center; padding:40px; color:#888;">
-                <div style="width:40px; height:40px; border:4px solid #f3e8fc; border-top:4px solid #8a2be2; border-radius:50%; animation:spin 1s linear infinite; margin:0 auto 10px;"></div>
-                <b>போஸ்ட்கள் லோடு ஆகின்றன...</b>
-            </div>
-            <style>@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }</style>`;
-        }
-    }
-}
-
-
-// 2. Top Video Setup செய்வதற்கான துணை ஃபங்ஷன்
-function setupTopVideo(videos) {
-    const topVideoEl = document.getElementById('topClipVideo');
-    if (topVideoEl && videos.length > 0) {
-        const topVideoUrl = videos[0].mediaUrl;
-        if (topVideoEl.src !== topVideoUrl) {
-            topVideoEl.src = topVideoUrl;
-            topVideoEl.muted = true;
-            topVideoEl.play().catch(e => console.log("Auto-play prevented by browser"));
-        }
-        topVideoEl.style.display = 'block';
-    } else if (topVideoEl) {
-        topVideoEl.style.display = 'none';
-    }
-}
-
-
-// 3. பின்னணியில் Firebase ரியல் டைம் டேட்டாவை எடுத்து அப்டேட் செய்தல்
-function initFirebasePostsListener() {
-    database.ref('posts').orderByKey().limitToLast(10).on('value', (snapshot) => {
-        let activeStates = {};
-        document.querySelectorAll('.comment-section').forEach(sec => {
-            let id = sec.id.split('comment-section-')[1];
-            let input = document.getElementById(`comment-input-${id}`);
-            if(sec.style.display === 'block') { activeStates[id] = input ? input.value : ''; }
-        });
-
-        let freshPosts = [];
-        globalPosts = {};
-        sortedVideoPosts = [];
-
-        snapshot.forEach((childSnapshot) => {
-            let postData = { key: childSnapshot.key, ...childSnapshot.val() };
-            freshPosts.push(postData);
-            globalPosts[childSnapshot.key] = postData; 
-            
-            if (postData.mediaType === 'video' && postData.mediaUrl) {
-                postData.likeCount = Object.keys(postData.likes || {}).length;
-                sortedVideoPosts.push(postData);
-            }
-        });
-
-        allFetchedPosts = freshPosts;
-        sortedVideoPosts.sort((a, b) => b.likeCount - a.likeCount);
-        
-        // --- புதிய அதிவேக Caching லாஜிக் தொடக்கம் ---
-        let topVideoToCache = null;
-        if (sortedVideoPosts.length > 0) {
-            topVideoToCache = sortedVideoPosts[0]; 
-        }
-
-        const textOnlyPosts = freshPosts.map(post => {
-            return {
-                ...post,
-                mediaType: null,
-                mediaUrl: null   
-            };
-        });
-
-        const cacheObject = {
-            topVideo: topVideoToCache,
-            feedPosts: textOnlyPosts
-        };
-
-        // பிழை சரிசெய்யப்பட்ட Try-Catch பகுதி
-        try {
-            localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(cacheObject));
-        } catch (e) {
-            console.warn("Local Storage நிறைந்துவிட்டது (Quota Exceeded). பழைய cache அழிக்கப்படுகிறது...");
-            localStorage.clear(); 
-            try {
-                localStorage.setItem('teacherApp_cachedPosts', JSON.stringify(cacheObject));
-            } catch (e2) {
-                console.error("Cache-ஐ சேமிக்க முடியவில்லை:", e2);
-            }
-        }
-        // --- புதிய அதிவேக Caching லாஜிக் முடிவு ---
-             setupTopVideo(sortedVideoPosts);
-        renderFeedToDOM(activeStates); 
-        
-        if (document.getElementById('fsModal').style.display === 'flex' && currentFsPostKey && globalPosts[currentFsPostKey]) {
-            updateFullScreenUI(globalPosts[currentFsPostKey]);
-        }
-        
-        // --- புதிய கோடு: URL மூலம் தானாக ஸ்க்ரோல் செய்தல் ---
-        const urlParams = new URLSearchParams(window.location.search);
-        const viewTarget = urlParams.get('view');
-        
-        if (viewTarget === 'top' && !window.hasAutoScrolled) {
-            const topClipSection = document.getElementById('topClipCard');
-            if (topClipSection) {
-                setTimeout(() => {
-                    topClipSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    window.hasAutoScrolled = true;
-                }, 500);
-            }
-        } else if (viewTarget === 'new' && !window.hasAutoScrolled) {
-            const firstPost = document.querySelector('.feed-container .post-card');
-            if (firstPost) {
-                setTimeout(() => {
-                    firstPost.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    window.hasAutoScrolled = true;
-                }, 500);
-            }
-        }
-    });
-}
-  
-  
-// 4. ஃபங்ஷன்களை இயக்குதல்
-
-function renderFeedToDOM(activeStates = {}) {
-    const feedContainer = document.querySelector('.feed-container');
-    feedContainer.innerHTML = ''; 
-    let displayArray = [...allFetchedPosts].reverse(); 
-
-    if (showOnlyMyPosts) {
-        displayArray = displayArray.filter(post => post.userName === currentUserName);
-        if(displayArray.length === 0) {
-            feedContainer.innerHTML = '<div style="text-align:center; padding:40px; color:#666;"><i class="bi bi-journal-x" style="font-size:40px; color:#ccc;"></i><br><br><b>நீங்கள் இன்னும் எந்தப் பதிவும் செய்யவில்லை!</b></div>';
-            return;
-        }
-    }
-
-    displayArray.forEach((post) => {
-        const postKey = post.key;
-        let mediaHTML = '';
-        if(post.mediaUrl) {
-            if(post.mediaType === 'image') {
-                // படங்களுக்கு பழைய Fullscreen முறை அப்படியே இருக்கும்
-                mediaHTML = `<div class="post-image" onclick="openFullScreen('${postKey}')"><img src="${post.mediaUrl}" loading="lazy"></div>`;
-                
-            } else if(post.mediaType === 'video') {
-                // வீடியோவை கிளிக் செய்யும் போது Custom Full Screen-ல் (fsModal) திறக்க மாற்றம் செய்யப்பட்டுள்ளது
-                mediaHTML = `<div class="post-video" onclick="openFullScreen('${postKey}')">
-                                <video src="${post.mediaUrl}" class="feed-video" autoplay muted loop playsinline preload="metadata" style="width:100%; cursor:pointer; pointer-events:none;"></video>
-                             </div>`;
-                             
-            } else if(post.mediaType === 'audio') {
-                // ஆடியோவிற்கு எந்த மாற்றமும் இல்லை
-                mediaHTML = `<div class="post-audio"><audio src="${post.mediaUrl}" controls style="width:100%;"></audio></div>`;
-            }
-        }
-        
-        
-        const likes = post.likes || {};
-        const likeCount = Object.keys(likes).length;
-        const heartIcon = likes[currentUserId] ? '<i class="bi bi-heart-fill" style="color: #e42645;"></i>' : '<i class="bi bi-heart" style="color: #e42645;"></i>';
-        const likeText = likeCount > 0 ? `Inspire (${likeCount})` : 'Inspire';
-        let commentsHTML = generateCommentsHTML(postKey, post.comments);
-        
-        const postHTML = `
-            <div class="post-card" id="post-${postKey}">
-                <div class="post-header">
-                    <div class="post-user-info">
-                        <img src="${post.userImage || 'https://via.placeholder.com/50'}" loading="lazy">
-                        <div><h4>${post.userName}</h4><p>${post.time || 'Just now'} • <i class="bi bi-globe"></i></p></div>
-                    </div>
-                </div>
-                <div class="post-content">${post.content}</div>
-                ${mediaHTML}
-                <div class="post-actions">
-                    <div class="action-btn" onclick="toggleLike('${postKey}')">${heartIcon} <span>${likeText}</span></div>
-                    <div class="action-btn" onclick="toggleCommentSection('${postKey}')">
-                     <i class="bi bi-chat-text-fill" style="color: #17a2b8;"></i> 
-                      Review (<span id="comment-count-${postKey}">${Object.keys(post.comments || {}).length}</span>)
-                    </div>
-                    <div class="action-btn" onclick="sharePost('${postKey}', 'Staff Room Post')"><i class="bi bi-share-fill" style="color: #28a745;"></i> Spread</div>
-                </div>
-                <div class="comment-section" id="comment-section-${postKey}">
-                    <div class="comment-list" id="comment-list-${postKey}">${commentsHTML || '<p style="text-align:center;">No reviews yet.</p>'}</div>
-                    <div class="comment-input-area"><input type="text" id="comment-input-${postKey}" placeholder="Write a review..."><button onclick="submitComment('${postKey}')"><i class="bi bi-send-fill"></i></button></div>
-                </div>
-            </div>
-        `;
-        feedContainer.insertAdjacentHTML('beforeend', postHTML);
-    });
-
-    Object.keys(activeStates).forEach(id => {
-        let sec = document.getElementById(`comment-section-${id}`);
-        let input = document.getElementById(`comment-input-${id}`);
-        if(sec) sec.style.display = 'block';
-        if(input) { input.value = activeStates[id]; input.focus(); }
-    });
-}
-
-// --- 8. Create Post & Upload Logic ---
+// --- Create Post & Upload Logic ---
 function updateFileStatus(type) {
     const inputMap = { 'image': 'imageInput', 'video': 'videoInput', 'audio': 'audioInput' };
     const file = document.getElementById(inputMap[type]).files[0];
@@ -1273,12 +1298,6 @@ function updateFileStatus(type) {
         statusDiv.innerText = `📎 Selected ${type}: ${file.name}`;
         selectedMedia.type = type;
         selectedMedia.fileObj = file;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            selectedMedia.base64 = e.target.result;
-        };
-        reader.readAsDataURL(file);
     }
 }
 
@@ -1293,9 +1312,10 @@ function closeModal() {
 }
 
 async function createPost() {
+    if (!database) return alert("இணைய இணைப்பு தயாராகிறது, ஒரு நொடி கழித்து முயற்சிக்கவும்...");
     let text = document.getElementById('postText').value;
     
-    if(text.trim() === "" && !selectedMedia.fileObj) {
+    if (text.trim() === "" && !selectedMedia.fileObj) {
         return alert("தயவுசெய்து ஏதேனும் எழுதவும் அல்லது கோப்பை இணைக்கவும்!");
     }
 
@@ -1316,6 +1336,7 @@ async function createPost() {
         const newPostKey = database.ref().child('posts').push().key;
 
         const postData = {
+            key: newPostKey,
             userName: currentUserName, 
             content: text,
             time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
@@ -1324,8 +1345,30 @@ async function createPost() {
             mediaUrl: finalMediaUrl 
         };
 
-        await database.ref('posts/' + newPostKey).set(postData);
+        // 1. உடனடியாகத் திரையில் (Top-ல்) சேர்த்தல் (Optimistic UI)
+        allFetchedPosts.push(postData);
+        globalPosts[newPostKey] = postData;
+        
+        if (postData.mediaType === 'video' && postData.mediaUrl) {
+            postData.likeCount = 0;
+            sortedVideoPosts.unshift(postData);
+            setupTopVideo(sortedVideoPosts);
+        }
+
+        savePostsToCache();
+
+        const feedContainer = document.getElementById('mainFeedContainer');
+        if (feedContainer && !document.getElementById(`post-${newPostKey}`)) {
+            feedContainer.insertAdjacentHTML('afterbegin', buildPostCardHTML(postData));
+            initFeedVideosObserver();
+        }
+
         closeModal();
+        showToast("Successfully Posted!");
+
+        // 2. Firebase-ல் சேமித்தல்
+        await database.ref('posts/' + newPostKey).set(postData);
+
     } catch (error) {
         console.error(error);
         alert("போஸ்ட் செய்வதில் பிழை: " + error.message);
@@ -1338,23 +1381,19 @@ async function createPost() {
 
 async function uploadFileToR2(file, folderName = "user-uploads") {
     try {
-        // ஃபைல் பெயரில் ஸ்பேஸ் இருந்தால் அதை நீக்க ஒரு பாதுகாப்பு சேர்க்கப்பட்டுள்ளது
         const safeFileName = file.name.replace(/\s+/g, '-');
         
         const response = await fetch("/.netlify/functions/get-upload-url", {
             method: "POST",
-            // "posts" என்பதற்குப் பதிலாக folderName என மாற்றப்பட்டுள்ளது
             body: JSON.stringify({ fileName: safeFileName, fileType: file.type, folder: folderName })
         });
 
-
-// பிழை எதனால் வந்தது என்பதைத் துல்லியமாகக் கண்டுபிடிக்க புதிய குறியீடு
-if (!response.ok) {
-    const errorDetails = await response.text();
-    console.error("Netlify Backend Error:", errorDetails);
-    alert("Backend Error: " + response.status + " - " + errorDetails); // திரையிலேயே காரணத்தைக் காட்டும்
-    throw new Error("Failed to get upload URL. Status: " + response.status);
-}
+        if (!response.ok) {
+            const errorDetails = await response.text();
+            console.error("Netlify Backend Error:", errorDetails);
+            alert("Backend Error: " + response.status + " - " + errorDetails);
+            throw new Error("Failed to get upload URL. Status: " + response.status);
+        }
 
         const data = await response.json();
         const { uploadUrl, fileKey } = data;
@@ -1370,15 +1409,30 @@ if (!response.ok) {
         } else {
             throw new Error("R2-விற்கு அப்லோடு செய்வதில் பிழை!");
         }
-
     } catch (error) {
         console.error("Error uploading file:", error);
         return null;
     }
 }
 
-// --- 9. Interactions (Likes & Comments) ---
+// --- Interactions (Optimistic Likes & Comments) ---
 function toggleLike(postId) {
+    const post = globalPosts[postId];
+    if (post) {
+        if (!post.likes) post.likes = {};
+        if (post.likes[currentUserId]) {
+            delete post.likes[currentUserId];
+        } else {
+            post.likes[currentUserId] = true;
+        }
+        updateSinglePostDOM(post);
+        savePostsToCache();
+        if (document.getElementById('fsModal').style.display === 'flex' && currentFsPostKey === postId) {
+            updateFullScreenUI(post);
+        }
+    }
+
+    if (!database) return;
     const postRef = database.ref(`posts/${postId}/likes/${currentUserId}`);
     postRef.once('value').then(snapshot => {
         if (snapshot.exists()) postRef.remove(); 
@@ -1388,56 +1442,16 @@ function toggleLike(postId) {
 
 function toggleCommentSection(postId) {
     const section = document.getElementById(`comment-section-${postId}`);
-    section.style.display = (section.style.display === 'block') ? 'none' : 'block';
-}
-
-function generateCommentsHTML(postId, comments) {
-    if (!comments) return '<p style="text-align:center;">No reviews yet.</p>';
-    
-    let html = '';
-    const allKeys = Object.keys(comments);
-    const parents = allKeys.filter(k => !comments[k].replyTo);
-    const children = allKeys.filter(k => comments[k].replyTo);
-
-    parents.forEach(pKey => {
-        html += renderSingleComment(postId, pKey, comments[pKey], false, pKey);
-        const replies = children.filter(cKey => comments[cKey].replyTo === pKey);
-        if (replies.length > 0) {
-            html += `<div class="sub-comments-list">`;
-            replies.forEach(cKey => {
-                html += renderSingleComment(postId, cKey, comments[cKey], true, pKey);
-            });
-            html += `</div>`;
-        }
-    });
-    return html || '<p style="text-align:center;">No reviews yet.</p>';
-}
-
-function renderSingleComment(postId, commentId, c, isReply, parentId) {
-    let inspireCount = c.likes ? Object.keys(c.likes).length : 0;
-    let isLiked = c.likes && c.likes[currentUserId] ? true : false;
-    let heartColor = isLiked ? '#e42645' : '#888';
-    let heartIcon = isLiked ? 'bi-heart-fill' : 'bi-heart';
-
-    return `
-        <div class="comment-item" id="comment-${commentId}">
-            <strong>${c.userName}</strong>: ${c.text}
-            <div style="display:flex; gap:15px; font-size:12px; margin-top:5px; color:#555;">
-                <span class="comment-action-btn" onclick="inspireComment('${postId}', '${commentId}')" style="color:${heartColor};">
-                    <i class="bi ${heartIcon}"></i> Inspire ${inspireCount > 0 ? `(${inspireCount})` : ''}
-                </span>
-                <span class="comment-action-btn" onclick="setReply('${postId}', '${c.userName}', '${parentId}')" style="color:#8a2be2;">
-                    <i class="bi bi-reply-fill"></i> Interact
-                </span>
-            </div>
-        </div>
-    `;
+    if (section) {
+        section.style.display = (section.style.display === 'block') ? 'none' : 'block';
+    }
 }
 
 function inspireComment(postId, commentId) {
+    if (!database) return;
     const likeRef = database.ref(`posts/${postId}/comments/${commentId}/likes/${currentUserId}`);
     likeRef.once('value').then(snap => {
-        if(snap.exists()) likeRef.remove(); 
+        if (snap.exists()) likeRef.remove(); 
         else likeRef.set(true); 
     });
 }
@@ -1455,11 +1469,12 @@ function setReply(postId, userName, targetReplyId) {
 }
 
 function submitComment(postId) {
+    if (!database) return;
     const input = document.getElementById(`comment-input-${postId}`);
     const text = input.value.trim();
     const replyTo = input.getAttribute('data-reply-to');
     
-    if(!text) return;
+    if (!text) return;
 
     const commentData = {
         userId: currentUserId,
@@ -1469,10 +1484,10 @@ function submitComment(postId) {
     };
     if (replyTo) commentData.replyTo = replyTo; 
 
-    database.ref(`posts/${postId}/comments`).push(commentData).then(() => {
-        input.value = '';
-        input.removeAttribute('data-reply-to');
-    });
+    input.value = '';
+    input.removeAttribute('data-reply-to');
+
+    database.ref(`posts/${postId}/comments`).push(commentData);
 }
 
 function sharePost(postId, text) {
@@ -1488,7 +1503,7 @@ function sharePost(postId, text) {
     }
 }
 
-// --- 10. Top Clips & Reels ---
+// --- Top Clips & Reels ---
 function openTopClipsModal() {
     if (sortedVideoPosts.length === 0) return alert("வீடியோக்கள் எதுவும் இல்லை!");
     const container = document.getElementById('topClipsContainer');
@@ -1505,7 +1520,7 @@ function openTopClipsModal() {
         const reelHTML = `
             <div class="reel-item">
                 <div class="reel-header">
-                    <img src="${post.userImage || 'https://via.placeholder.com/50'}">
+                    <img src="${post.userImage || DEFAULT_AVATAR}">
                     <span>${post.userName}</span>
                 </div>
                 <video src="${post.mediaUrl}" class="reel-video" data-postkey="${post.key}" loop playsinline></video>
@@ -1539,7 +1554,7 @@ function openTopClipsModal() {
             const vid = entry.target;
             if (entry.isIntersecting) {
                 vid.muted = false; 
-                vid.play().catch(e=>console.log(e));
+                vid.play().catch(e => console.log(e));
                 currentFsPostKey = vid.getAttribute('data-postkey'); 
             } else {
                 vid.pause();
@@ -1573,7 +1588,7 @@ function reelToggleLike(postKey, element) {
     } else {
         icon.classList.replace('bi-heart-fill', 'bi-heart');
         icon.style.color = 'white';
-        countSpan.innerText = currentCount > 0 ? currentCount - 1 : '';
+        countSpan.innerText = currentCount > 1 ? currentCount - 1 : '';
     }
 }
 
@@ -1584,11 +1599,11 @@ function openReelComments(postKey) {
     document.getElementById('fsCommentOverlay').classList.add('show');
 }
 
-// --- 11. Network Engine ---
+// --- Network & Colleagues Engine ---
 function toggleSeeMore() {
     const wrapper = document.getElementById('seeMoreWrapper');
     const textEl = document.getElementById('seeMoreText');
-    if(wrapper.classList.contains('show')) {
+    if (wrapper.classList.contains('show')) {
         wrapper.classList.remove('show');
         textEl.innerHTML = 'See More <i class="bi bi-chevron-down"></i>';
     } else {
@@ -1598,6 +1613,7 @@ function toggleSeeMore() {
 }
 
 function initNetworkAndColleaguesEngine() {
+    if (!database) return;
     const myVillage = (localStorage.getItem('teacherApp_village') || '').trim().toLowerCase();
     const myTaluk = (localStorage.getItem('teacherApp_taluk') || '').trim().toLowerCase();
     const myDistrict = (localStorage.getItem('teacherApp_district') || '').trim().toLowerCase();
@@ -1605,7 +1621,7 @@ function initNetworkAndColleaguesEngine() {
     database.ref('users').limitToLast(25).once('value', (usersSnapshot) => {
         const allUsers = [];
         usersSnapshot.forEach((child) => {
-            if(child.key !== currentUserId) {
+            if (child.key !== currentUserId) {
                 allUsers.push({ uid: child.key, ...child.val() });
             }
         });
@@ -1625,24 +1641,21 @@ function initNetworkAndColleaguesEngine() {
             });
         });
     });
-}
-
-function renderColleaguesGridAndHorizontalBox(allUsers, connectedIds, incomingInviteIds, myVillage, myTaluk, myDistrict) {
+          }
+  function renderColleaguesGridAndHorizontalBox(allUsers, connectedIds, incomingInviteIds, myVillage, myTaluk, myDistrict) {
     const gridContainer = document.getElementById('colleaguesGrid');
     const horizontalContainer = document.getElementById('suggestedHorizontalBox');
     
-    if(!gridContainer || !horizontalContainer) return;
+    if (!gridContainer || !horizontalContainer) return;
 
     gridContainer.innerHTML = '';
     horizontalContainer.innerHTML = '';
 
     let colleagueMatches = [];
     
-    // பயனரின் ஊர் விபரங்கள் காலியாக உள்ளதா என சரிபார்த்தல்
     if (!myVillage && !myTaluk && !myDistrict) {
-        colleagueMatches = allUsers; // காலியாக இருந்தால் அனைவரையும் காட்டு
+        colleagueMatches = allUsers;
     } else {
-        // ஊர் விபரம் இருந்தால், அதை வைத்து ஃபில்டர் செய்
         colleagueMatches = allUsers.filter(user => {
             const uVillage = (user.village || '').trim().toLowerCase();
             const uTaluk = (user.taluk || '').trim().toLowerCase();
@@ -1651,8 +1664,6 @@ function renderColleaguesGridAndHorizontalBox(allUsers, connectedIds, incomingIn
                    (myTaluk && uTaluk === myTaluk) || 
                    (myDistrict && uDistrict === myDistrict);
         });
-        
-        // ஒருவேளை அந்த ஊரில் யாரும் இல்லை என்றாலும், காலியாக காட்டாமல் அனைவரையும் காட்ட
         if (colleagueMatches.length === 0) {
             colleagueMatches = allUsers;
         }
@@ -1660,11 +1671,12 @@ function renderColleaguesGridAndHorizontalBox(allUsers, connectedIds, incomingIn
 
     const gridDisplayList = colleagueMatches.slice(0, 4);
 
-    if(gridDisplayList.length === 0) {
+    if (gridDisplayList.length === 0) {
         gridContainer.innerHTML = '<p style="grid-column: span 2; text-align:center; font-size:12px; color:gray; padding:10px;">No regional colleagues found yet.</p>';
     } else {
+        let lightColleaguesHTML = '';
         gridDisplayList.forEach(user => {
-            let avatarHTML = (user.profilePic && user.profilePic.trim() !== '') ? `<img src="${user.profilePic}" class="colleague-avatar">` : `<div class="colleague-fallback">user</div>`;
+            let avatarHTML = (user.profilePic && user.profilePic.trim() !== '') ? `<img src="${user.profilePic}" class="colleague-avatar" loading="lazy" onerror="this.src=DEFAULT_AVATAR">` : `<div class="colleague-fallback">user</div>`;
             let locText = user.village || user.taluk || user.district || 'Tamil Nadu';
             let itemHTML = `
                 <div class="colleague-item">
@@ -1675,20 +1687,34 @@ function renderColleaguesGridAndHorizontalBox(allUsers, connectedIds, incomingIn
                     </div>
                 </div>`;
             gridContainer.insertAdjacentHTML('beforeend', itemHTML);
+
+            // LocalStorage-ல் சேமிக்கும்போது Base64 படங்கள் 5MB-ஐத் தாண்டாமல் இருக்க
+            let cachedPic = (user.profilePic && !user.profilePic.startsWith('data:')) ? user.profilePic : DEFAULT_AVATAR;
+            lightColleaguesHTML += `
+                <div class="colleague-item">
+                    <img src="${cachedPic}" class="colleague-avatar">
+                    <div class="colleague-info">
+                        <div class="colleague-name">${user.name || 'ஆசிரியர்'}</div>
+                        <div class="colleague-loc">${locText}</div>
+                    </div>
+                </div>`;
         });
+        try {
+            localStorage.setItem('teacherApp_cachedColleaguesHTML', lightColleaguesHTML);
+        } catch (e) {}
     }
 
     let suggestedProfiles = allUsers.filter(user => !connectedIds.includes(user.uid) && !incomingInviteIds.includes(user.uid));
 
-    if(suggestedProfiles.length === 0) {
+    if (suggestedProfiles.length === 0) {
         horizontalContainer.innerHTML = '<p style="font-size:12px; color:gray; padding:10px; width:100%; text-align:center;">No new suggestions available.</p>';
     } else {
         suggestedProfiles.forEach(user => {
-            let picUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : 'https://via.placeholder.com/50';
+            let picUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : DEFAULT_AVATAR;
             let cardHTML = `
                 <div class="suggest-profile-card">
                     <div class="connect-plus-btn" onclick="sendConnectRequest('${user.uid}')"><i class="bi bi-plus"></i></div>
-                    <img src="${picUrl}" class="suggest-avatar">
+                    <img src="${picUrl}" class="suggest-avatar" loading="lazy" onerror="this.src=DEFAULT_AVATAR">
                     <div class="suggest-name">${user.name || 'User'}</div>
                 </div>`;
             horizontalContainer.insertAdjacentHTML('beforeend', cardHTML);
@@ -1700,21 +1726,21 @@ function renderDrawerVerticalLists(allUsers, connectedIds, incomingInviteIds) {
     const connectsContainer = document.getElementById('drawerConnectsList');
     const invitesContainer = document.getElementById('drawerInvitesList');
     
-    if(!connectsContainer || !invitesContainer) return;
+    if (!connectsContainer || !invitesContainer) return;
 
     connectsContainer.innerHTML = '';
     invitesContainer.innerHTML = '';
 
     const connectedUsers = allUsers.filter(u => connectedIds.includes(u.uid));
-    if(connectedUsers.length === 0) {
+    if (connectedUsers.length === 0) {
         connectsContainer.innerHTML = '<span style="font-size:11px; color:gray; text-align:center; padding:5px 0;">No active connects.</span>';
     } else {
         connectedUsers.forEach(user => {
-            let imgUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : 'https://via.placeholder.com/50';
+            let imgUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : DEFAULT_AVATAR;
             let rowHTML = `
                 <div class="vertical-user-line">
                     <div class="v-user-left">
-                        <img src="${imgUrl}" class="v-avatar">
+                        <img src="${imgUrl}" class="v-avatar" onerror="this.src=DEFAULT_AVATAR">
                         <span class="v-name">${user.name || 'User'}</span>
                     </div>
                 </div>`;
@@ -1723,15 +1749,15 @@ function renderDrawerVerticalLists(allUsers, connectedIds, incomingInviteIds) {
     }
 
     const invitingUsers = allUsers.filter(u => incomingInviteIds.includes(u.uid));
-    if(invitingUsers.length === 0) {
+    if (invitingUsers.length === 0) {
         invitesContainer.innerHTML = '<span style="font-size:11px; color:gray; text-align:center; padding:5px 0;">No pending invites.</span>';
     } else {
         invitingUsers.forEach(user => {
-            let imgUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : 'https://via.placeholder.com/50';
+            let imgUrl = (user.profilePic && user.profilePic.trim() !== '') ? user.profilePic : DEFAULT_AVATAR;
             let rowHTML = `
                 <div class="vertical-user-line">
                     <div class="v-user-left">
-                        <img src="${imgUrl}" class="v-avatar">
+                        <img src="${imgUrl}" class="v-avatar" onerror="this.src=DEFAULT_AVATAR">
                         <span class="v-name">${user.name || 'User'}</span>
                     </div>
                     <div class="v-actions">
@@ -1745,12 +1771,14 @@ function renderDrawerVerticalLists(allUsers, connectedIds, incomingInviteIds) {
 }
 
 function sendConnectRequest(targetUserId) {
+    if (!database) return;
     database.ref(`invites/${targetUserId}/${currentUserId}`).set(true)
     .then(() => showToast("Connect request transmitted successfully!"))
     .catch(() => alert("Transmission failed."));
 }
 
 function acceptInvite(senderId) {
+    if (!database) return;
     database.ref(`connections/${currentUserId}/${senderId}`).set(true).then(() => {
         database.ref(`connections/${senderId}/${currentUserId}`).set(true).then(() => {
             database.ref(`invites/${currentUserId}/${senderId}`).remove().then(() => {
@@ -1761,34 +1789,32 @@ function acceptInvite(senderId) {
 }
 
 function rejectInvite(senderId) {
+    if (!database) return;
     database.ref(`invites/${currentUserId}/${senderId}`).remove().then(() => {
         showToast("Invite declined & removed.");
     });
 }
 
-// --- 12. Full Screen Image/Video View ---
+// --- Full Screen Image/Video View ---
 function openFullScreen(postKey) {
     currentFsPostKey = postKey;
     const post = globalPosts[postKey];
-    if(!post) return;
+    if (!post) return;
 
     document.getElementById('fsModal').style.display = 'flex';
     document.body.style.overflow = 'hidden'; 
     document.getElementById('fsUserName').innerText = post.userName;
-    document.getElementById('fsUserProfilePic').src = (post.userImage && post.userImage.trim() !== '') ? post.userImage : 'https://via.placeholder.com/50';
+    document.getElementById('fsUserProfilePic').src = (post.userImage && post.userImage.trim() !== '') ? post.userImage : DEFAULT_AVATAR;
 
     const mediaContainer = document.getElementById('fsMediaContainer');
-    if(post.mediaType === 'image') {
+    if (post.mediaType === 'image') {
         mediaContainer.innerHTML = `<img src="${post.mediaUrl}">`;
-    } else if(post.mediaType === 'video') {
-        // Full screen-ல் வீடியோ சீராக பிளே ஆக தேவையான Attributes சேர்க்கப்பட்டுள்ளது
+    } else if (post.mediaType === 'video') {
         mediaContainer.innerHTML = `<video src="${post.mediaUrl}" controls autoplay playsinline preload="auto" style="width:100%; max-height:100vh; background:#000;"></video>`;
-        
-        // வீடியோ லோட் ஆனதும் தானாக பிளே ஆக
         setTimeout(() => {
             const fsVideo = mediaContainer.querySelector('video');
-            if(fsVideo) {
-                fsVideo.muted = false; // ஆடியோ ஆன் செய்ய
+            if (fsVideo) {
+                fsVideo.muted = false;
                 fsVideo.play().catch(e => console.log("Click to play needed", e));
             }
         }, 100);
@@ -1822,19 +1848,19 @@ function updateFullScreenUI(post) {
 
 function toggleFsComments() { document.getElementById('fsCommentOverlay').classList.toggle('show'); }
 function closeFsCommentsIfOpen() { document.getElementById('fsCommentOverlay').classList.remove('show'); }
-function fsToggleLike() { if(currentFsPostKey) toggleLike(currentFsPostKey); }
+function fsToggleLike() { if (currentFsPostKey) toggleLike(currentFsPostKey); }
 function fsSharePost() {
-    if(!currentFsPostKey) return;
+    if (!currentFsPostKey) return;
     const post = globalPosts[currentFsPostKey];
     sharePost(currentFsPostKey, post.content || "Staff Room Post");
 }
 function submitFsComment() {
-    if(!currentFsPostKey) return;
+    if (!currentFsPostKey || !database) return;
     const input = document.getElementById('fsCommentInput');
     const text = input.value.trim();
     const replyTo = input.getAttribute('data-reply-to');
 
-    if(!text) return;
+    if (!text) return;
 
     const commentData = {
         userId: currentUserId, 
@@ -1855,76 +1881,17 @@ function submitFsComment() {
 }
 
 function logoutUser() {
-    firebase.auth().signOut().then(() => {
-        localStorage.clear(); 
-        window.location.replace("index.html"); 
-    }).catch((error) => {
-        console.error("Logout பிழை: ", error);
-        alert("Logout செய்வதில் பிழை ஏற்பட்டது!");
-    });
-}
-
-// --- App Initialization (பக்கம் லோட் ஆகும் போது நடப்பவை) ---
-document.addEventListener("DOMContentLoaded", function() {
-    // 1. பயனர் விவரங்களை (UI) கிளிக் செய்த மறுகணமே காட்ட
-    loadUserProfileUI();
-    
-    // 2. Offline-First: உடனடியாக லோக்கல் ஸ்டோரேஜில் இருந்து போஸ்ட்களை காட்ட
-    loadCachedPosts();          
-    
-    // 3. பின்னணியில் Firebase டேட்டாவை கொண்டு வந்து அப்டேட் செய்ய
-    initFirebasePostsListener(); 
-    
-    // 4. கனமான நெட்வொர்க் செயல்பாடுகளை பக்கம் வந்த பிறகு பொறுமையாக லோட் செய்ய
-    setTimeout(() => {
-        initNetworkAndColleaguesEngine();
-    }, 1000); // 1 நொடி தாமதம் (இதனால் பேஜ் லோடிங் முடங்காது)
-});
-// --- 8. Video Post Fullscreen & Audio Engine ---
-
-// --- 8. Video Post Fullscreen & Audio Engine (All Device Compatible) ---
-
-// வீடியோவைக் கிளிக் செய்யும்போது ஆடியோவுடன் ஃபுல் ஸ்கிரீனில் இயக்கும் ஃபங்ஷன்
-function openVideoFullScreen(videoElement, event) {
-    // 1. மற்ற கிளிக்குகளுடன் முரண்படுவதைத் தவிர்க்க (Event Bubbling Prevention)
-    if (event) event.stopPropagation();
-    
-    // 2. ஆடியோவை ஆன் செய்தல் (Unmute)
-    videoElement.muted = false;
-    
-    // 3. வீடியோ பிளே ஆவதை உறுதி செய்தல்
-    videoElement.play().catch(e => console.log("Playback interaction error:", e));
-
-    // 4. பிரவுசர் மற்றும் மொபைல் வகைக்கு தகுந்தபடி ஃபுல் ஸ்கிரீன் மோடுக்கு மாற்றுதல்
-    if (videoElement.requestFullscreen) {
-        // Android, Chrome, Windows, Mac பிரவுசர்களுக்கானது
-        videoElement.requestFullscreen();
-    } else if (videoElement.webkitEnterFullscreen) { 
-        // 🔴 இது iPhone / iOS Safari சாதனங்களுக்கான மிக முக்கியமான கோடு
-        videoElement.webkitEnterFullscreen();
-    } else if (videoElement.webkitRequestFullscreen) { 
-        // iPad மற்றும் பழைய Safari-க்கான கோடு
-        videoElement.webkitRequestFullscreen();
-    } else if (videoElement.msRequestFullscreen) { 
-        // பழைய Edge / IE-க்கான கோடு
-        videoElement.msRequestFullscreen();
-    }
-}
-
-// பயனர் ஃபுல் ஸ்கிரீனை விட்டு வெளியேறும்போது, வீடியோ மீண்டும் தானாகவே மியூட் ஆக (விருப்பப்பட்டால் பயன்படுத்தலாம்)
-document.addEventListener('fullscreenchange', function() {
-    // பயனர் ஃபுல் ஸ்கிரீனை மூடிவிட்டால் (Exit Fullscreen)
-    if (!document.fullscreenElement) {
-        // ஃபீடில் உள்ள போஸ்ட் வீடியோக்களை மட்டும் மீண்டும் மியூட் செய்ய
-        const allFeedVideos = document.querySelectorAll('.feed-container video');
-        allFeedVideos.forEach(vid => {
-            // டாப் கிளிப் வீடியோவைத் தவிர மற்ற வீடியோக்களை மியூட் செய்கிறோம்
-            if (vid.id !== 'topClipVideo') {
-                vid.muted = true;
-            }
+    if (window.firebase && firebase.auth) {
+        firebase.auth().signOut().then(() => {
+            localStorage.clear(); 
+            window.location.replace("index.html"); 
         });
+    } else {
+        localStorage.clear();
+        window.location.replace("index.html");
     }
-});
+}
 </script>
 </body>
 </html>
+     
