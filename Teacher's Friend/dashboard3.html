@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <link rel="prefetch" href="dashboard.html">
+    <link rel="prefetch" href="dashboard2.html">
+    <link rel="prefetch" href="data-input.html">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Teacher's Friend - Office Room (Dashboard 3)</title>
+
+    <!-- 🚀 0.01s அதிவேக Non-blocking Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    </noscript>
+
+    <style>
+        /* --- பொதுவான வடிவமைப்பு & வண்ணமயமான Background --- */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', 'Latha', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body { 
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 25%, #a1c4fd 50%, #c2e9fb 75%, #ffeaa7 100%);
+            background-attachment: fixed;
+            background-size: cover; 
+            color: #333; 
+            min-height: 100vh;
+        }
+        
+        a { 
+            text-decoration: none; 
+            color: inherit; 
+        }
+
+        /* --- Header பகுதி (Time, Signal, Battery மறைக்காமல் கீழே இருக்க Safe-Area Padding) --- */
+        header {
+            background: linear-gradient(90deg, #ffffff 0%, #f3e8ff 50%, #e0f2fe 100%);
+            padding: calc(env(safe-area-inset-top, 28px) + 12px) 3% 10px 3%;
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between; 
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 6000;
+            width: 100%;
+            border-bottom: 2px solid #8a2be2;
+        }
+
+        .logo-area { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+        }
+        
+        .office-logo-img { 
+            height: 46px; 
+            width: 46px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2.5px solid #8a2be2;
+            box-shadow: 0 2px 6px rgba(138, 43, 226, 0.25);
+            flex-shrink: 0;
+        }
+        
+        .main-title { 
+            font-size: 28px; 
+            font-weight: 700; 
+            color: #6b21a8; 
+            text-shadow: 1px 1px 0px #fff, 2px 2px 4px rgba(0, 0, 0, 0.12);
+            white-space: nowrap;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* --- வலதுபுறம் உள்ள 3 Icon-களும் (Classroom, Staffroom, User) ஒரே அளவில் --- */
+        .nav-logo-link, .user-profile-wrapper {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            padding: 2px;
+        }
+
+        .nav-logo-link {
+            border: 2px solid #1a73e8;
+        }
+
+        .user-profile-wrapper {
+            border: 2px solid #8a2be2;
+        }
+
+        .nav-logo-link:hover, .user-profile-wrapper:hover {
+            transform: scale(1.08);
+        }
+
+        .nav-logo-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-icon { 
+            font-size: 26px; 
+            color: #8a2be2; 
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #user-dropdown {
+            display: none;
+            position: absolute;
+            top: 52px;
+            right: 0;
+            background: #ffffff;
+            min-width: 230px;
+            border: 1px solid #d8b4f8;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            z-index: 99999;
+            padding: 14px;
+            text-align: left;
+        }
+
+        /* --- அறிவிப்பு (Running News Ticker) --- */
+        .news-ticker-bar {
+            background: linear-gradient(90deg, #1a73e8, #6b21a8);
+            color: white;
+            display: flex;
+            align-items: center;
+            padding: 6px 3%;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .ticker-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .ticker-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #ffc107;
+            background: #fff;
+        }
+
+        .ticker-label {
+            background: #ffc107;
+            color: #000;
+            padding: 2px 10px;
+            font-weight: 700;
+            border-radius: 6px;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+
+        /* --- Today & Videos Side-Scroll Section --- */
+        .stories-section {
+            padding: 10px 3%;
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(6px);
+        }
+
+        .story-scroll-wrapper {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .story-scroll-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .today-card, .post-card {
+            min-width: 120px;
+            max-width: 120px;
+            height: 175px;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: #1e1e2f;
+        }
+
+        .today-card {
+            border: 2.5px solid #ffb300;
+        }
+
+        .post-card {
+            border: 2.5px solid #ff4b4b;
+        }
+
+        .today-card:hover, .post-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .post-badge {
+            background: #ff4b4b;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 6px;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Hero Section (School Name, UDISE & Staff Details Table) --- */
+        .hero {
+            padding: 12px 3%;
+        }
+
+        .hero-container {
+            background: rgba(255, 255, 255, 0.94);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            border: 2px solid #8a2be2;
+        }
+
+        .school-header-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 10px;
+            background: linear-gradient(90deg, #ede9fe, #dbeafe);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border-left: 5px solid #6b21a8;
+            border-right: 5px solid #1a73e8;
+            margin-bottom: 16px;
+        }
+
+        .school-name-box {
+            font-size: 18px;
+            font-weight: 700;
+            color: #4a0e78;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .udise-badge-box {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            background: #1a73e8;
+            padding: 5px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(26, 115, 232, 0.3);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .staff-details-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .staff-details-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a73e8;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-teacher-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 7px 16px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 3px 10px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Side-Scrollable Table */
+        .table-side-scroll {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .staff-list-table {
+            width: 100%;
+            min-width: 620px;
+            border-collapse: collapse;
+            background: #fff;
+        }
+
+        .staff-list-table th, .staff-list-table td {
+            padding: 10px 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .staff-list-table th {
+            background: #6b21a8;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .staff-list-table tr:hover {
+            background: #f8f5ff;
+        }
+
+        .action-edit-btn, .action-delete-btn {
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-edit-btn { background: #e8f0fe; color: #1a73e8; }
+        .action-delete-btn { background: #fdecea; color: #d32f2f; }
+
+        /* --- Teacher Data Entry Form Section (Data Input) --- */
+        #teacher-data-entry-modal {
+            display: none;
+            background: #ffffff;
+            border: 2px solid #1a73e8;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 3%;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 14px;
+        }
+
+        .field-group { margin-bottom: 10px; }
+        .field-group label { display: block; margin-bottom: 4px; font-weight: 600; font-size: 13px; color: #333; }
+        .field-group input, .field-group select {
+            width: 100%; padding: 9px 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 14px; outline: none;
+        }
+        .field-group input:focus, .field-group select:focus { border-color: #8a2be2; }
+
+        .form-btn-area { display: flex; gap: 12px; margin-top: 18px; }
+        .save-btn {
+            background: #28a745; color: white; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 14px;
+        }
+        .cancel-btn {
+            background: #6c757d; color: white; border: none; padding: 11px 20px; border-radius: 8px; cursor: pointer; flex: 1; font-weight: bold; font-size: 14px;
+        }
+
+        /* --- Main Layout: 5 Menu Buttons, YouTube Videos & Guidelines --- */
+        .desktop-layout-wrapper {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 15px 3%;
+        }
+
+        .left-column {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .menu-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fff0f5 100%);
+            padding: 14px 8px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 2px solid #ff813d;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100px;
+        }
+
+        .menu-card i { font-size: 26px; color: #6b21a8; margin-bottom: 5px; }
+        .menu-card h3 { font-size: 13px; font-weight: 700; color: #333; }
+        .menu-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(107, 33, 168, 0.2);
+            border-color: #6b21a8;
+            background: #ffffff;
+        }
+
+        /* YouTube Videos Grid */
+        .youtube-box {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 14px;
+            padding: 15px;
+            border: 2px solid #ff0000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .youtube-box h4 {
+            color: #ff0000; font-size: 15px; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+        }
+
+        .yt-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .yt-frame-wrap {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            height: 120px;
+            background: #000;
+        }
+
+        /* Guidelines Aside */
+        .guidelines-aside {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #1a73e8;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        .instruction-content {
+            height: 340px;
+            overflow-y: auto;
+            text-align: justify;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #333;
+            padding-right: 8px;
+        }
+
+        .instruction-content::-webkit-scrollbar { width: 6px; }
+        .instruction-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+        .instruction-content::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
+
+        /* --- Full Screen Vertical Scroll Video Reels Modal --- */
+        #videoReelsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 999999;
+            flex-direction: column;
+        }
+
+        .reels-close-btn {
+            position: absolute;
+            top: calc(env(safe-area-inset-top, 28px) + 15px);
+            left: 16px;
+            z-index: 1000001;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
+            border: 1.5px solid #fff;
+            padding: 7px 15px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reels-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .reels-container::-webkit-scrollbar { display: none; }
+
+        .reel-item {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .reel-info-overlay {
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            right: 20px;
+            color: #fff;
+            z-index: 10;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+
+        /* --- Footer பகுதி --- */
+        .main-footer {
+            background: #1e1e2f;
+            color: #ffffff;
+            padding: 35px 5% 20px;
+            margin-top: 35px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #ffffff;
+            border-bottom: 2px solid #ffc107;
+            display: inline-block;
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+        }
+
+        .footer-section p, .footer-section a {
+            font-size: 14px;
+            color: #cccccc;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .footer-section a:hover { color: #ffc107; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a { color: #ffffff; }
+        .footer-bottom { text-align: center; padding-top: 18px; font-size: 13px; color: #999; }
+
+        /* --- மொபைல் திரைக்கான பிரத்யேக வடிவமைப்பு --- */
+        @media (max-width: 768px) {
+            header {
+                padding: calc(env(safe-area-inset-top, 28px) + 10px) 12px 10px 12px;
+            }
+            .office-logo-img {
+                width: 40px;
+                height: 40px;
+            }
+            .main-title {
+                font-size: 20px;
+            }
+            .header-right {
+                gap: 8px;
+            }
+            /* மொபைலில் மூன்று ஐகான்களும் துல்லியமாக 40px x 40px ஒரே அளவில் இருக்கும் */
+            .nav-logo-link, .user-profile-wrapper {
+                width: 40px;
+                height: 40px;
+                padding: 2px;
+            }
+            .profile-icon {
+                font-size: 23px;
+            }
+            .desktop-layout-wrapper {
+                flex-direction: column;
+            }
+            .school-header-banner {
+                padding: 10px 12px;
+            }
+            .school-name-box {
+                font-size: 14px;
+            }
+            .udise-badge-box {
+                font-size: 11px;
+                padding: 4px 9px;
+            }
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 1. HEADER பகுதி ================= -->
+    <header>
+        <!-- இடது புறம்: வட்ட வடிவ office.png Logo மற்றும் Office Room தலைப்பு -->
+        <div class="logo-area">
+            <img src="office.png" alt="Office Logo" class="office-logo-img" onerror="this.src='image_0.png'">
+            <h1 class="main-title">Office Room</h1>
+        </div>
+
+        <!-- வலது புறம்: Classroom Logo, Staff Room Logo மற்றும் User Icon (மூன்றும் ஒரே அளவு) -->
+        <div class="header-right">
+            <a href="dashboard.html" class="nav-logo-link" title="Class Room-க்குச் செல்">
+                <img src="class.png" alt="Class Room" class="nav-logo-img" onerror="this.src='image_0.png'">
+            </a>
+
+            <a href="dashboard2.html" class="nav-logo-link" title="Staff Room-க்குச் செல்" style="border-color: #d32f2f;">
+                <img src="staff.png" alt="Staff Room" class="nav-logo-img" onerror="this.src='1000015786.png'">
+            </a>
+
+            <!-- User Icon & Logout Dropdown (Logout -> dashboard2.html) -->
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)" title="பயனர் விவரம் & வெளியேறு">
+                <i class="bi bi-person-fill profile-icon"></i>
+
+                <div id="user-dropdown">
+                    <p style="margin: 0 0 6px 0; font-size: 13px; color: #6b21a8; font-weight: 700;">
+                        <i class="bi bi-building"></i> <span id="dropdown-school-name">பள்ளி</span>
+                    </p>
+                    <p style="margin: 0 0 10px 0; font-size: 12px; color: #1a73e8; font-weight: 600; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                        UDISE: <span id="dropdown-udise">N/A</span>
+                    </p>
+                    <a href="dashboard2.html" onclick="handleOfficeLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+                        <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ================= 2. அறிவிப்புப் பகுதி ================= -->
+    <div class="news-ticker-bar">
+        <div class="ticker-brand">
+            <img src="image_0.png" alt="Teacher's Friend" class="ticker-logo">
+            <span class="ticker-label">அறிவிப்பு</span>
+        </div>
+        <marquee behavior="scroll" direction="left" id="web-ticker">Teacher's Friend - Office Room பக்கத்திற்கு உங்களை அன்புடன் வரவேற்கிறோம்!</marquee>
+    </div>
+
+    <!-- ================= 3. TODAY & LATEST VIDEOS SIDE-SCROLL பகுதி ================= -->
+    <section class="stories-section">
+        <div class="story-scroll-wrapper">
+            <!-- Today Card -->
+            <a id="dashboard-daily-link" href="#" target="_blank" class="today-card">
+                <img id="dashboard-daily-img" src="image_0.png" alt="இன்றைய செய்தி" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='image_0.png'">
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 35px 10px 10px;">
+                    <span style="color: #fff; font-size: 13px; font-weight: bold;"><i class="bi bi-calendar-check-fill" style="color: #ffc107;"></i> Today</span>
+                </div>
+            </a>
+
+            <!-- Latest Videos (Top Card இல்லாமல் வீடியோக்கள் மட்டும்) -->
+            <div id="sideScrollVideos" style="display: contents;"></div>
+        </div>
+    </section>
+
+    <!-- ================= 4. HERO பகுதி (School Name, UDISE & Staff Details) ================= -->
+    <section class="hero">
+        <div class="hero-container">
+            <!-- இடது புறம் School Name, வலது புறம் UDISE எண் -->
+            <div class="school-header-banner">
+                <div class="school-name-box">
+                    <i class="bi bi-bank2"></i>
+                    <span id="hero-school-name">பள்ளி...</span>
+                </div>
+                <div class="udise-badge-box">
+                    UDISE: <span id="hero-udise-display">N/A</span>
+                </div>
+            </div>
+
+            <!-- Staff Details பகுதி -->
+            <div class="staff-details-header">
+                <div class="staff-details-title">
+                    <i class="bi bi-people-fill"></i> Staff Details (ஆசிரியர் பட்டியல்)
+                </div>
+                <button type="button" class="add-teacher-btn" onclick="openTeacherEntryForm()">
+                    <i class="bi bi-person-plus-fill"></i> + Add Teacher
+                </button>
+            </div>
+
+            <!-- Side Scroll செய்யும் ஆசிரியர் பெயர் பட்டியல் அட்டவணை -->
+            <div class="table-side-scroll">
+                <table class="staff-list-table">
+                    <thead>
+                        <tr>
+                            <th>வரிசை எண்</th>
+                            <th>பெயர்</th>
+                            <th>பதவி</th>
+                            <th>பணியில் சேர்ந்த நாள்</th>
+                            <th>Edit & Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody id="heroTeacherTableBody">
+                        <tr>
+                            <td colspan="5" style="color: #777; padding: 20px;">ஆசிரியர் விவரங்கள் ஏற்றப்படுகின்றன...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= 5. DATA INPUT - TEACHER DATA ENTRY படிவம் ================= -->
+    <section id="teacher-data-entry-modal">
+        <h3 id="teacher-form-heading" style="color: #1a73e8; border-bottom: 2px solid #e8f0fe; padding-bottom: 10px; margin-bottom: 18px; font-size: 16px;">
+            <i class="bi bi-person-badge-fill"></i> Data Input - ஆசிரியர் விவரம் உள்ளீடு செய்யும் படிவம்
+        </h3>
+        <form id="officeTeacherForm">
+            <input type="hidden" id="editTeacherId" value="">
+
+            <!-- ஆசிரியர் புகைப்படம் -->
+            <div class="field-group" style="text-align: center; margin-bottom: 18px;">
+                <div style="width: 90px; height: 90px; margin: 0 auto 10px; border-radius: 50%; border: 3px solid #8a2be2; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #f8f9fa;">
+                    <img id="tPhotoPreview" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                    <i id="tPhotoIcon" class="bi bi-person-bounding-box" style="font-size: 38px; color: #adb5bd;"></i>
+                </div>
+                <input type="file" id="tPhotoInput" accept="image/*" style="display: none;" onchange="handleTeacherPhoto(event)">
+                <button type="button" onclick="document.getElementById('tPhotoInput').click()" style="background: #8a2be2; color: white; border: none; padding: 6px 16px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                    <i class="bi bi-camera-fill"></i> புகைப்படம் தேர்வு செய்க
+                </button>
+            </div>
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label>1. ஆசிரியர் பெயர் *</label>
+                    <input type="text" id="tName" placeholder="பெயரை உள்ளிடவும்" required>
+                </div>
+                <div class="field-group">
+                    <label>2. பதவி *</label>
+                    <select id="tDesignation">
+                        <option value="இடைநிலை ஆசிரியர்">இடைநிலை ஆசிரியர்</option>
+                        <option value="பட்டதாரி ஆசிரியர்">பட்டதாரி ஆசிரியர்</option>
+                        <option value="தொடக்கப்பள்ளி தலைமை ஆசிரியர்">தொடக்கப்பள்ளி தலைமை ஆசிரியர்</option>
+                        <option value="நடுநிலைப்பள்ளி தலைமை ஆசிரியர்">நடுநிலைப்பள்ளி தலைமை ஆசிரியர்</option>
+                        <option value="உயர்நிலைப்பள்ளி தலைமை ஆசிரியர்">உயர்நிலைப்பள்ளி தலைமை ஆசிரியர்</option>
+                        <option value="மேல்நிலைப்பள்ளி தலைமை ஆசிரியர்">மேல்நிலைப்பள்ளி தலைமை ஆசிரியர்</option>
+                        <option value="முதுகலை ஆசிரியர்">முதுகலை ஆசிரியர்</option>
+                        <option value="உடற்கல்வி ஆசிரியர்">உடற்கல்வி ஆசிரியர்</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>3. பிறந்த தேதி</label>
+                    <input type="date" id="tDob">
+                </div>
+                <div class="field-group">
+                    <label>4. பணியில் சேர்ந்த நாள் *</label>
+                    <input type="date" id="tDojOffice" required>
+                </div>
+                <div class="field-group">
+                    <label>5. தற்போதைய பதவியில் சேர்ந்த நாள்</label>
+                    <input type="date" id="tDojCurrentPost">
+                </div>
+                <div class="field-group">
+                    <label>6. இப்பள்ளியில் சேர்ந்த நாள்</label>
+                    <input type="date" id="tDojSchool">
+                </div>
+                <div class="field-group">
+                    <label>7. ஊதியத் தொடர்</label>
+                    <select id="tPayScale">
+                        <option value="20600 - 65500">20600 - 65500</option>
+                        <option value="35600 - 112800">35600 - 112800</option>
+                        <option value="36200 - 114800">36200 - 114800</option>
+                        <option value="36400 - 115700">36400 - 115700</option>
+                        <option value="36700 - 116200">36700 - 116200</option>
+                        <option value="36900 - 116600">36900 - 116600</option>
+                        <option value="56100 - 177500">56100 - 177500</option>
+                        <option value="56900 - 180500">56900 - 180500</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>8. தற்போதைய ஊதியம் (₹)</label>
+                    <input type="number" id="tCurrentPay" placeholder="எ.கா: 45000">
+                </div>
+                <div class="field-group">
+                    <label>9. ஊதிய உயர்வு நாள்</label>
+                    <input type="date" id="tIncrementDate">
+                </div>
+                <div class="field-group">
+                    <label>10. இனம் (Community)</label>
+                    <select id="tCommunity">
+                        <option value="BC">BC</option>
+                        <option value="BCM">BCM</option>
+                        <option value="MBC">MBC</option>
+                        <option value="SC">SC</option>
+                        <option value="SC(A)">SC(A)</option>
+                        <option value="ST">ST</option>
+                        <option value="OC">OC</option>
+                    </select>
+                </div>
+                <div class="field-group">
+                    <label>11. சாதி</label>
+                    <input type="text" id="tCaste">
+                </div>
+                <div class="field-group">
+                    <label>12. பொதுக்கல்வித் தகுதி</label>
+                    <input type="text" id="tGeneralEdu" placeholder="எ.கா: B.Sc., M.A.">
+                </div>
+                <div class="field-group">
+                    <label>13. தொழிற்கல்வித் தகுதி</label>
+                    <input type="text" id="tProfessionalEdu" placeholder="எ.கா: D.T.Ed., B.Ed.">
+                </div>
+                <div class="field-group">
+                    <label>14. கைபேசி எண்</label>
+                    <input type="tel" id="tMobile" maxlength="10" placeholder="10 இலக்க எண்">
+                </div>
+                <div class="field-group">
+                    <label>15. குடியிருக்கும் முகவரி</label>
+                    <input type="text" id="tAddress">
+                </div>
+                <div class="field-group">
+                    <label>16. கணவர் / மனைவி விவரம்</label>
+                    <input type="text" id="tSpouseInfo">
+                </div>
+            </div>
+
+            <div class="field-group" style="margin-top: 8px;">
+                <label>17. வகுப்பாசிரியர் (வகுப்புகள்):</label>
+                <div id="tClassCheckboxes" style="display: flex; flex-wrap: wrap; gap: 12px; padding-top: 5px;">
+                    <label><input type="checkbox" value="1"> 1</label>
+                    <label><input type="checkbox" value="2"> 2</label>
+                    <label><input type="checkbox" value="3"> 3</label>
+                    <label><input type="checkbox" value="4"> 4</label>
+                    <label><input type="checkbox" value="5"> 5</label>
+                    <label><input type="checkbox" value="6"> 6</label>
+                    <label><input type="checkbox" value="7"> 7</label>
+                    <label><input type="checkbox" value="8"> 8</label>
+                    <label><input type="checkbox" value="9"> 9</label>
+                    <label><input type="checkbox" value="10"> 10</label>
+                    <label><input type="checkbox" value="11"> 11</label>
+                    <label><input type="checkbox" value="12"> 12</label>
+                </div>
+            </div>
+
+            <div class="form-btn-area">
+                <button type="button" class="save-btn" onclick="saveTeacherUnderUdise()">
+                    <i class="bi bi-check-circle-fill"></i> Save Teacher (UDISE-ல் சேமி)
+                </button>
+                <button type="button" class="cancel-btn" onclick="closeTeacherEntryForm()">
+                    <i class="bi bi-x-circle-fill"></i> Close
+                </button>
+            </div>
+        </form>
+    </section>
+
+    <!-- ================= 6. பட்டன்கள், YOUTUBE வீடியோக்கள் & வழிகாட்டுதல் பகுதி ================= -->
+    <div class="desktop-layout-wrapper">
+        
+        <div class="left-column">
+            <!-- 5 முதன்மை பட்டன்கள்: Data Input, Registers, Notice Board, GO's, Clubs -->
+            <main class="main-content">
+                <div class="grid-container">
+                    <a href="data-input.html">
+                        <div class="menu-card">
+                            <i class="bi bi-database-fill-gear"></i>
+                            <h3>Data Input</h3>
+                        </div>
+                    </a>
+                    <a href="registers.html">
+                        <div class="menu-card">
+                            <i class="bi bi-journal-check"></i>
+                            <h3>Registers</h3>
+                        </div>
+                    </a>
+                    <a href="notice-board.html">
+                        <div class="menu-card">
+                            <i class="bi bi-megaphone-fill"></i>
+                            <h3>Notice Board</h3>
+                        </div>
+                    </a>
+                    <a href="gos.html">
+                        <div class="menu-card">
+                            <i class="bi bi-file-earmark-pdf-fill"></i>
+                            <h3>GO's</h3>
+                        </div>
+                    </a>
+                    <a href="clubs.html">
+                        <div class="menu-card">
+                            <i class="bi bi-award-fill"></i>
+                            <h3>Clubs</h3>
+                        </div>
+                    </a>
+                </div>
+            </main>
+
+            <!-- YouTube வீடியோக்கள் பகுதி -->
+            <div class="youtube-box">
+                <h4><i class="bi bi-youtube"></i> YouTube வீடியோக்கள்</h4>
+                <div class="yt-grid">
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/foyY26eGylE" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/MSR7f29HmLk" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- வழிகாட்டுதல் பகுதி -->
+        <aside class="guidelines-aside">
+            <h4 style="color: #d32f2f; font-size: 16px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-weight: bold;">
+                <i class="bi bi-info-circle-fill"></i> வழிகாட்டுதல்கள் (Office Room)
+            </h4>
+            <div class="instruction-content">
+                <p><strong>பள்ளி அலுவலகப் பகுதியை (Office Room) சிறப்பாக மேலாண்மை செய்ய பின்வரும் வழிகாட்டுதல்களைக் கடைபிடிக்கவும்:</strong></p><br>
+                <p>1. இப்பக்கத்தில் உள்ளீடு செய்யப்படும் அனைத்து விவரங்களும் உங்கள் பள்ளியின் <strong>UDISE எண்ணை</strong> அடிப்படையாகக் கொண்டே சேமிக்கப்படும்.</p><br>
+                <p>2. மேலே உள்ள <strong>+ Add Teacher</strong> என்ற பட்டனைக் கிளிக் செய்து உங்கள் பள்ளியில் பணிபுரியும் ஆசிரியர்களின் விவரங்களை உள்ளீடு செய்து சேமித்துக் கொள்ளலாம். அட்டவணையில் உள்ள <strong>Edit</strong> மற்றும் <strong>Delete</strong> பட்டன்கள் மூலம் எப்போது வேண்டுமானாலும் மாற்றங்கள் செய்யலாம்.</p><br>
+                <p>3. <strong>Data Input</strong> பட்டனைக் கிளிக் செய்து பள்ளி விவரங்கள் (School Data), ஆசிரியர் விவரங்கள் (Teacher's Data), மாணவர் விவரங்கள் (Students Data), மதிப்பெண்கள் (Marks Data), வேலை நாட்கள் (Working Days) மற்றும் மக்கள் தொகைக் கணக்கெடுப்பு (Census Data) ஆகியவற்றைப் பதிவு செய்யலாம்.</p><br>
+                <p>4. <strong>Registers</strong> பகுதியில் பள்ளிக்குத் தேவையான அனைத்து பதிவேடுகளையும் (Attendance, Admission, CCE, Stock Registers) பதிவிறக்கம் செய்து கொள்ளலாம்.</p><br>
+                <p>5. <strong>Notice Board</strong> பகுதியில் பள்ளி தொடர்பான சுற்றறிக்கைகள் மற்றும் முக்கியத் தகவல்களைப் பராமரிக்கலாம்.</p><br>
+                <p>6. <strong>GO's</strong> பகுதியில் பள்ளிக்கல்வித் துறையின் சமீபத்திய அரசாணைகளைப் பார்வையிடவும் பதிவிறக்கம் செய்யவும் முடியும்.</p><br>
+                <p>7. <strong>Clubs</strong> பகுதியில் பள்ளியில் செயல்படும் மன்றங்களின் (Eco Club, JRC, Scouts, Literary Club) செயல்பாடுகளைப் பதிவு செய்யலாம்.</p><br>
+                <p style="color: #6b21a8; font-weight: bold; text-align: center;">கல்விச் சேவையை எளிமையாக்கும் Teacher's Friend தளத்தைப் பயன்படுத்தி உங்கள் பள்ளி நிர்வாகத்தைச் சிறப்பாக வழிநடத்திட வாழ்த்துக்கள்!</p>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- ================= 7. FULL SCREEN VERTICAL SCROLL VIDEOS MODAL ================= -->
+    <div id="videoReelsModal">
+        <button class="reels-close-btn" onclick="closeFullScreenVideoReels()">
+            <i class="bi bi-arrow-left"></i> Back
+        </button>
+        <div id="videoReelsContainer" class="reels-container"></div>
+    </div>
+
+    <!-- ================= 8. FOOTER பகுதி ================= -->
+    <footer class="main-footer">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>தொடர்புக்கு</h4>
+                <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
+                <p>தமிழ்நாடு, இந்தியா.</p>
+            </div>
+            <!-- உதவி மன்றம் என்பதற்கு பதில் 'உதவி' மட்டும்; Forum நீக்கப்பட்டு About Us, Contact சேர்க்கப்பட்டுள்ளது -->
+            <div class="footer-section">
+                <h4>உதவி</h4>
+                <p><a href="about.html"><i class="bi bi-info-circle"></i> About Us / எங்களைப் பற்றி</a></p>
+                <p><a href="contact.html"><i class="bi bi-envelope"></i> Contact / தொடர்புக்கு</a></p>
+                <p><a href="help-center.html"><i class="bi bi-question-circle"></i> Help Center / உதவி மையம்</a></p>
+                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy & Terms / விதிமுறைகள்</a></p>
+            </div>
+            <div class="footer-section">
+                <h4>பின் தொடர</h4>
+                <div class="social-icons">
+                    <a href="https://www.facebook.com/share/18Z5eobDmT/" target="_blank" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="https://x.com/TnTeacherFriend" target="_blank" title="X (Twitter)"><i class="bi bi-twitter-x"></i></a>
+                    <a href="https://youtube.com/@tnteachersfriend?si=3cNg_jEno8je7It7" target="_blank" title="YouTube"><i class="bi bi-youtube"></i></a>
+                    <a href="https://t.me/+VvYNqgx676RmZDZl" target="_blank" title="Telegram"><i class="bi bi-telegram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+        <!-- ========================================================================= -->
+    <!-- 🚀 STEP 1: 0.01s INSTANT BOOT ENGINE (Today, Videos & School Info Cache) -->
+    <!-- ========================================================================= -->
+    <script>
+        let database = null;
+        const IDB_NAME = 'TeacherFriendCacheDB';
+        const IDB_STORE = 'feedStore';
+
+        let currentUdise = localStorage.getItem('officeApp_loggedInUdise') || localStorage.getItem('teacherApp_udise') || "";
+        let currentSchoolName = localStorage.getItem('officeApp_schoolName') || "";
+
+        if (currentUdise) {
+            localStorage.setItem('teacherApp_udise', currentUdise);
+            localStorage.setItem('officeApp_loggedInUdise', currentUdise);
+        } else {
+            alert("UDISE எண் கண்டறியப்படவில்லை! தயவுசெய்து Staff Room (dashboard2.html) வழியாக பள்ளி UDISE எண்ணை உள்ளிட்டு உள்நுழையவும்.");
+            window.location.href = "dashboard2.html";
+        }
+
+        let teachersMap = {};
+        let latestVideoPosts = [];
+        let reelsObserver = null;
+        let sideScrollObserver = null;
+        let currentTeacherPhotoBase64 = "";
+
+        // --- IndexedDB Helper ---
+        function openCacheDB() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) return reject("No IDB");
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE);
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        async function saveToIndexedDB(key, val) {
+            try {
+                const db = await openCacheDB();
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put(val, key);
+            } catch (e) {}
+        }
+
+        async function getFromIndexedDB(key) {
+            try {
+                const db = await openCacheDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const req = tx.objectStore(IDB_STORE).get(key);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // --- Today தேதி தலைப்பை ("October 22" போன்ற வடிவத்தில்) உருவாக்கும் ஃபங்ஷன் ---
+        function getTodayTitleString() {
+            const today = new Date();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return {
+                monthName: monthNames[today.getMonth()],
+                day: today.getDate(),
+                todayTitle: `${monthNames[today.getMonth()]} ${today.getDate()}`
+            };
+        }
+
+        // --- Today கார்டை திரையில் உடனடியாக அப்டேட் செய்யும் ஃபங்ஷன் ---
+        function applyDailyMessageToDOM(url, title) {
+            const imgElement = document.getElementById('dashboard-daily-img');
+            const linkElement = document.getElementById('dashboard-daily-link');
+            if (!imgElement || !linkElement) return;
+
+            const finalUrl = url || "image_0.png";
+            if (imgElement.getAttribute('src') !== finalUrl) {
+                imgElement.src = finalUrl;
+            }
+            imgElement.alt = title || "இன்றைய செய்தி";
+            linkElement.href = url ? url : "#";
+        }
+
+        // --- Side-Scroll வீடியோ கார்டுகளை அதிவேகமாக ரெண்டர் செய்யும் ஃபங்ஷன் ---
+        let renderedVideoSignature = "";
+
+        function renderSideScrollVideoCards(videoList) {
+            const container = document.getElementById('sideScrollVideos');
+            if (!container) return;
+
+            if (!videoList || videoList.length === 0) {
+                if (container.children.length === 0) {
+                    container.innerHTML = `<div style="color:#555; font-size:13px; align-self:center; padding-left:10px;">வீடியோக்கள் ஏற்றப்படுகின்றன...</div>`;
+                }
+                return;
+            }
+
+            const sig = videoList.map(v => v.key || v.id || v.mediaUrl).join('|');
+            if (renderedVideoSignature === sig && container.children.length > 0) return;
+            renderedVideoSignature = sig;
+
+            let html = '';
+            videoList.forEach((video, index) => {
+                const author = video.userName || 'ஆசிரியர்';
+                const caption = video.content || video.text || '';
+                // #t=0.1 சேர்க்கப்பட்டுள்ளதால் வீடியோவின் முதல் பிரேம் உடனடியாகத் தம்ப்நெய்லாகத் தெரியும்
+                const videoSrcWithThumb = video.mediaUrl.includes('#') ? video.mediaUrl : `${video.mediaUrl}#t=0.1`;
+
+                html += `
+                    <div class="post-card" onclick="openFullScreenVideoReels(${index})">
+                        <video src="${videoSrcWithThumb}" class="side-preview-video" loop muted playsinline preload="metadata" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; pointer-events:none;"></video>
+                        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05)); z-index:2;"></div>
+                        <span class="post-badge"><i class="bi bi-play-circle-fill"></i> Video</span>
+                        <div style="position:absolute; bottom:8px; left:8px; right:8px; z-index:10; color:white;">
+                            <div style="font-size:11px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                <i class="bi bi-person-circle"></i> ${author}
+                            </div>
+                            <div style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.9;">
+                                ${caption}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            // திரையில் தெரியும் வீடியோக்களை மட்டும் பிளே செய்யும் IntersectionObserver (Bandwidth சேமிப்பு & அதிவேகம்)
+            if (sideScrollObserver) sideScrollObserver.disconnect();
+            sideScrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting) {
+                        vid.play().catch(() => {});
+                    } else {
+                        vid.pause();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.side-preview-video').forEach(v => sideScrollObserver.observe(v));
+        }
+
+        // 🚀 0.01 விநாடியில் பக்கம் திறந்தவுடன் Cache-ல் இருந்து அனைத்தையும் காட்டும் IIFE!
+        (function instantOfficeBoot() {
+            // 1. பள்ளி பெயர் & UDISE உடனடியாகக் காட்டுதல்
+            document.getElementById('hero-udise-display').innerText = currentUdise;
+            document.getElementById('dropdown-udise').innerText = currentUdise;
+            if (currentSchoolName) {
+                document.getElementById('hero-school-name').innerText = currentSchoolName;
+                document.getElementById('dropdown-school-name').innerText = currentSchoolName;
+            }
+
+            // 2. Ticker உடனடியாகக் காட்டுதல்
+            const cachedTicker = localStorage.getItem('teacherApp_ticker');
+            if (cachedTicker) {
+                document.getElementById('web-ticker').innerText = cachedTicker;
+            }
+
+            // 3. Today கார்டை 0.01 விநாடியில் காட்டுதல்
+            try {
+                const dailyCacheRaw = localStorage.getItem('teacherApp_dailyMsgCache');
+                if (dailyCacheRaw) {
+                    const dailyCache = JSON.parse(dailyCacheRaw);
+                    if (dailyCache && dailyCache.url) {
+                        applyDailyMessageToDOM(dailyCache.url, dailyCache.title);
+                    }
+                }
+            } catch (e) {}
+
+            // 4. Videos கார்டுகளை 0.01 விநாடியில் LocalStorage / IndexedDB-ல் இருந்து காட்டுதல்
+            let videosLoadedFromCache = false;
+            try {
+                const officeVidCache = localStorage.getItem('teacherApp_officeVideosCache');
+                if (officeVidCache) {
+                    const parsedVids = JSON.parse(officeVidCache);
+                    if (Array.isArray(parsedVids) && parsedVids.length > 0) {
+                        latestVideoPosts = parsedVids;
+                        renderSideScrollVideoCards(latestVideoPosts);
+                        videosLoadedFromCache = true;
+                    }
+                }
+
+                if (!videosLoadedFromCache) {
+                    const staffCacheRaw = localStorage.getItem('teacherApp_cachedPosts');
+                    if (staffCacheRaw) {
+                        const parsedStaff = JSON.parse(staffCacheRaw);
+                        const postsList = Array.isArray(parsedStaff) ? parsedStaff : (parsedStaff && parsedStaff.feedPosts ? parsedStaff.feedPosts : []);
+                        const vids = postsList.filter(p => p && p.mediaType === 'video' && p.mediaUrl);
+                        if (vids.length > 0) {
+                            vids.sort((a, b) => String(b.key || b.id || '').localeCompare(String(a.key || a.id || '')));
+                            latestVideoPosts = vids;
+                            renderSideScrollVideoCards(latestVideoPosts);
+                            videosLoadedFromCache = true;
+                        }
+                    }
+                }
+            } catch (e) {}
+
+            getFromIndexedDB('officeVideosFull').then(idbVids => {
+                if (Array.isArray(idbVids) && idbVids.length > 0 && latestVideoPosts.length === 0) {
+                    latestVideoPosts = idbVids;
+                    renderSideScrollVideoCards(latestVideoPosts);
+                }
+            });
+        })();
+    </script>
+
+    <!-- ========================================================================= -->
+    <!-- 🌐 STEP 2: UI HELPERS & NON-BLOCKING FIREBASE BACKGROUND SYNC -->
+    <!-- ========================================================================= -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+            messagingSenderId: "294698361211",
+            appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+        };
+
+        function loadScriptSequential(src) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.async = false;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.body.appendChild(s);
+            });
+        }
+
+        // --- User Dropdown & Logout (dashboard2.html-க்குச் செல்லும்) ---
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const drop = document.getElementById('user-dropdown');
+            drop.style.display = (drop.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.addEventListener('click', function(e) {
+            const drop = document.getElementById('user-dropdown');
+            const wrapper = document.querySelector('.user-profile-wrapper');
+            if (drop && drop.style.display === 'block' && !wrapper.contains(e.target)) {
+                drop.style.display = 'none';
+            }
+        });
+
+        function handleOfficeLogout(event) {
+            event.preventDefault();
+            localStorage.removeItem('officeApp_loggedInUdise');
+            localStorage.removeItem('officeApp_schoolName');
+            window.location.href = "dashboard2.html";
+        }
+
+        // --- Today கார்டை பின்னணியில் ஒத்திசைக்கும் ஆழமான தேடல் ஃபங்ஷன் (dashboard.html முறை) ---
+        function extractMatchingDailyItem(snapshotObj, targetLower) {
+            let matchedItem = null;
+            if (!snapshotObj || typeof snapshotObj !== 'object') return null;
+
+            Object.values(snapshotObj).forEach(dayOrMonthVal => {
+                if (!dayOrMonthVal || typeof dayOrMonthVal !== 'object') return;
+                if (dayOrMonthVal.url && dayOrMonthVal.title) {
+                    if (dayOrMonthVal.title.trim().toLowerCase() === targetLower) {
+                        matchedItem = dayOrMonthVal;
+                    }
+                } else {
+                    Object.values(dayOrMonthVal).forEach(subItem => {
+                        if (!subItem || typeof subItem !== 'object') return;
+                        if (subItem.url && subItem.title) {
+                            if (subItem.title.trim().toLowerCase() === targetLower) {
+                                matchedItem = subItem;
+                            }
+                        } else {
+                            Object.values(subItem).forEach(deepItem => {
+                                if (deepItem && deepItem.url && deepItem.title && deepItem.title.trim().toLowerCase() === targetLower) {
+                                    matchedItem = deepItem;
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+            return matchedItem;
+        }
+
+        function loadDashboardDailyMessage() {
+            if (!database) return;
+            const { monthName, todayTitle } = getTodayTitleString();
+            const targetLower = todayTitle.toLowerCase();
+
+            database.ref('uploads/DailyMessages/' + monthName).once('value').then(monthSnap => {
+                let foundItem = monthSnap.exists() ? extractMatchingDailyItem(monthSnap.val(), targetLower) : null;
+                if (foundItem) {
+                    applyDailyMessageToDOM(foundItem.url, foundItem.title);
+                    try {
+                        localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: foundItem.url, title: foundItem.title }));
+                    } catch (e) {}
+                    return;
+                }
+
+                // Fallback: முழு DailyMessages-ல் தேடுதல்
+                return database.ref('uploads/DailyMessages').once('value').then(allSnap => {
+                    let fallbackItem = allSnap.exists() ? extractMatchingDailyItem(allSnap.val(), targetLower) : null;
+                    if (fallbackItem) {
+                        applyDailyMessageToDOM(fallbackItem.url, fallbackItem.title);
+                        try {
+                            localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: fallbackItem.url, title: fallbackItem.title }));
+                        } catch (e) {}
+                    }
+                });
+            }).catch(err => console.error("Daily message sync error:", err));
+        }
+
+        // --- Latest Videos பின்னணி ஒத்திசைப்பு & Cache சேமிப்பு ---
+        function loadLatestVideosFromFirebase() {
+            if (!database) return;
+            database.ref('posts').orderByKey().limitToLast(20).on('value', (snapshot) => {
+                const videos = [];
+                snapshot.forEach(child => {
+                    const val = child.val();
+                    if (val && val.mediaType === 'video' && val.mediaUrl) {
+                        videos.push({
+                            key: child.key,
+                            userName: val.userName || 'ஆசிரியர்',
+                            content: val.content || val.text || '',
+                            mediaType: 'video',
+                            mediaUrl: val.mediaUrl
+                        });
+                    }
+                });
+
+                videos.sort((a, b) => String(b.key).localeCompare(String(a.key)));
+                latestVideoPosts = videos;
+                renderSideScrollVideoCards(latestVideoPosts);
+
+                // அடுத்த முறை 0.01 விநாடியில் திறக்க சேமிப்பு
+                saveToIndexedDB('officeVideosFull', videos);
+                try {
+                    localStorage.setItem('teacherApp_officeVideosCache', JSON.stringify(videos.slice(0, 10)));
+                } catch (e) {}
+            });
+        }
+
+        // --- Full Screen Vertical Scroll Video Reels ---
+        function openFullScreenVideoReels(startIndex = 0) {
+            if (latestVideoPosts.length === 0) return;
+            const modal = document.getElementById('videoReelsModal');
+            const container = document.getElementById('videoReelsContainer');
+            container.innerHTML = '';
+
+            latestVideoPosts.forEach((post, idx) => {
+                const reelHTML = `
+                    <div class="reel-item" id="reel-item-${idx}">
+                        <video src="${post.mediaUrl}" class="reel-video" loop playsinline preload="metadata"></video>
+                        <div class="reel-info-overlay">
+                            <h4 style="font-size:16px; margin-bottom:4px;"><i class="bi bi-person-circle"></i> ${post.userName || 'ஆசிரியர்'}</h4>
+                            <p style="font-size:13px; opacity:0.9;">${post.content || ''}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', reelHTML);
+            });
+
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            const targetReel = document.getElementById(`reel-item-${startIndex}`);
+            if (targetReel) targetReel.scrollIntoView();
+
+            if (reelsObserver) reelsObserver.disconnect();
+            reelsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting) {
+                        vid.muted = false;
+                        vid.play().catch(() => {});
+                    } else {
+                        vid.pause();
+                        vid.currentTime = 0;
+                    }
+                });
+            }, { threshold: 0.65 });
+
+            document.querySelectorAll('.reel-video').forEach(vid => reelsObserver.observe(vid));
+        }
+
+        function closeFullScreenVideoReels() {
+            const modal = document.getElementById('videoReelsModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if (reelsObserver) reelsObserver.disconnect();
+            document.querySelectorAll('.reel-video').forEach(vid => vid.pause());
+        }
+
+        // --- School Info, Ticker & Teachers Table Sync ---
+        function initSchoolAndTeachersSync() {
+            if (!database) return;
+
+            // School Name Sync
+            database.ref(`schools/${currentUdise}`).once('value').then(snapshot => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    const fetchedName = data.schoolName || (data.school_profile && data.school_profile.info && data.school_profile.info.schoolName) || currentSchoolName || "பள்ளி அலுவலகம்";
+                    currentSchoolName = fetchedName;
+                    localStorage.setItem('officeApp_schoolName', fetchedName);
+                    document.getElementById('hero-school-name').innerText = fetchedName;
+                    document.getElementById('dropdown-school-name').innerText = fetchedName;
+                }
+            });
+
+            // Running News Ticker Sync
+            database.ref('site_updates').on('value', (snapshot) => {
+                if (snapshot.exists() && snapshot.val().ticker) {
+                    const tText = snapshot.val().ticker;
+                    document.getElementById('web-ticker').innerText = tText;
+                    try { localStorage.setItem('teacherApp_ticker', tText); } catch (e) {}
+                }
+            });
+
+            // Teachers List Sync under UDISE
+            database.ref(`schools/${currentUdise}/teachers`).on('value', (snapshot) => {
+                const tbody = document.getElementById('heroTeacherTableBody');
+                teachersMap = snapshot.val() || {};
+                const teacherList = Object.values(teachersMap);
+
+                if (teacherList.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="color:#777; padding:18px;">இப்பள்ளியின் UDISE எண்ணில் இன்னும் ஆசிரியர்கள் சேர்க்கப்படவில்லை. மேலே உள்ள <b>+ Add Teacher</b> பட்டனைக் கிளிக் செய்து சேர்க்கவும்.</td></tr>`;
+                    return;
+                }
+
+                let rowsHtml = '';
+                teacherList.forEach((t, index) => {
+                    const joinDate = t.dojOffice || t.dojSchool || '-';
+                    rowsHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td style="text-align:left; font-weight:600; color:#222;">${t.name || '-'}</td>
+                            <td>${t.designation || '-'}</td>
+                            <td>${joinDate}</td>
+                            <td>
+                                <button type="button" class="action-edit-btn" onclick="editTeacher('${t.id}')">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </button>
+                                <button type="button" class="action-delete-btn" onclick="deleteTeacher('${t.id}')">
+                                    <i class="bi bi-trash-fill"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = rowsHtml;
+            });
+        }
+
+        // --- Teacher Data Entry Form Functions ---
+        function openTeacherEntryForm() {
+            document.getElementById('officeTeacherForm').reset();
+            document.getElementById('editTeacherId').value = "";
+            currentTeacherPhotoBase64 = "";
+            document.getElementById('tPhotoPreview').style.display = 'none';
+            document.getElementById('tPhotoIcon').style.display = 'block';
+            document.getElementById('teacher-form-heading').innerHTML = `<i class="bi bi-person-plus-fill"></i> Data Input - புதிய ஆசிரியர் விவரம் சேர்ப்பு (UDISE: ${currentUdise})`;
+
+            const formSection = document.getElementById('teacher-data-entry-modal');
+            formSection.style.display = 'block';
+            formSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function closeTeacherEntryForm() {
+            document.getElementById('teacher-data-entry-modal').style.display = 'none';
+        }
+
+        function handleTeacherPhoto(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const maxSize = 220;
+                    let w = img.width, h = img.height;
+                    if (w > h && w > maxSize) { h *= maxSize / w; w = maxSize; }
+                    else if (h > maxSize) { w *= maxSize / h; h = maxSize; }
+                    canvas.width = w; canvas.height = h;
+                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                    currentTeacherPhotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+
+                    const preview = document.getElementById('tPhotoPreview');
+                    preview.src = currentTeacherPhotoBase64;
+                    preview.style.display = 'block';
+                    document.getElementById('tPhotoIcon').style.display = 'none';
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function saveTeacherUnderUdise() {
+            if (!database) return alert("இணைய இணைப்பு தயாராகிறது, ஒரு நொடி கழித்து முயற்சிக்கவும்...");
+            const name = document.getElementById('tName').value.trim();
+            const desig = document.getElementById('tDesignation').value;
+            const dojOffice = document.getElementById('tDojOffice').value;
+
+            if (!name || !desig) {
+                alert("தயவுசெய்து ஆசிரியர் பெயர் மற்றும் பதவியை உள்ளிடவும்!");
+                return;
+            }
+
+            const existingId = document.getElementById('editTeacherId').value;
+            const teacherId = existingId ? existingId : String(Date.now());
+
+            const assignedClasses = [];
+            document.querySelectorAll('#tClassCheckboxes input[type="checkbox"]:checked').forEach(cb => {
+                assignedClasses.push(cb.value);
+            });
+
+            const teacherData = {
+                id: teacherId,
+                udise: currentUdise,
+                photo: currentTeacherPhotoBase64 || "",
+                name: name,
+                designation: desig,
+                dob: document.getElementById('tDob').value,
+                dojOffice: dojOffice,
+                dojCurrentPost: document.getElementById('tDojCurrentPost').value,
+                dojSchool: document.getElementById('tDojSchool').value,
+                payScale: document.getElementById('tPayScale').value,
+                currentPay: document.getElementById('tCurrentPay').value,
+                incrementDate: document.getElementById('tIncrementDate').value,
+                community: document.getElementById('tCommunity').value,
+                caste: document.getElementById('tCaste').value,
+                generalEdu: document.getElementById('tGeneralEdu').value,
+                professionalEdu: document.getElementById('tProfessionalEdu').value,
+                classTeacher: assignedClasses,
+                address: document.getElementById('tAddress').value,
+                spouseInfo: document.getElementById('tSpouseInfo').value,
+                mobile: document.getElementById('tMobile').value,
+                updatedAt: new Date().toISOString()
+            };
+
+            database.ref(`schools/${currentUdise}/teachers/${teacherId}`).set(teacherData)
+                .then(() => {
+                    alert(existingId ? "ஆசிரியர் விவரம் வெற்றிகரமாகப் புதுப்பிக்கப்பட்டது!" : "ஆசிரியர் விவரம் வெற்றிகரமாகச் சேமிக்கப்பட்டது!");
+                    closeTeacherEntryForm();
+                })
+                .catch(err => alert("சேமிப்பதில் பிழை: " + err.message));
+        }
+
+        function editTeacher(id) {
+            const t = teachersMap[id];
+            if (!t) return;
+
+            document.getElementById('officeTeacherForm').reset();
+            document.getElementById('editTeacherId').value = t.id;
+            document.getElementById('tName').value = t.name || "";
+            document.getElementById('tDesignation').value = t.designation || "இடைநிலை ஆசிரியர்";
+            document.getElementById('tDob').value = t.dob || "";
+            document.getElementById('tDojOffice').value = t.dojOffice || "";
+            document.getElementById('tDojCurrentPost').value = t.dojCurrentPost || "";
+            document.getElementById('tDojSchool').value = t.dojSchool || "";
+            document.getElementById('tPayScale').value = t.payScale || "20600 - 65500";
+            document.getElementById('tCurrentPay').value = t.currentPay || "";
+            document.getElementById('tIncrementDate').value = t.incrementDate || "";
+            document.getElementById('tCommunity').value = t.community || "BC";
+            document.getElementById('tCaste').value = t.caste || "";
+            document.getElementById('tGeneralEdu').value = t.generalEdu || "";
+            document.getElementById('tProfessionalEdu').value = t.professionalEdu || "";
+            document.getElementById('tAddress').value = t.address || "";
+            document.getElementById('tSpouseInfo').value = t.spouseInfo || "";
+            document.getElementById('tMobile').value = t.mobile || "";
+
+            currentTeacherPhotoBase64 = t.photo || "";
+            if (currentTeacherPhotoBase64) {
+                document.getElementById('tPhotoPreview').src = currentTeacherPhotoBase64;
+                document.getElementById('tPhotoPreview').style.display = 'block';
+                document.getElementById('tPhotoIcon').style.display = 'none';
+            } else {
+                document.getElementById('tPhotoPreview').style.display = 'none';
+                document.getElementById('tPhotoIcon').style.display = 'block';
+            }
+
+            const classes = Array.isArray(t.classTeacher) ? t.classTeacher : [];
+            document.querySelectorAll('#tClassCheckboxes input[type="checkbox"]').forEach(cb => {
+                cb.checked = classes.includes(cb.value);
+            });
+
+            document.getElementById('teacher-form-heading').innerHTML = `<i class="bi bi-pencil-square"></i> Data Input - ஆசிரியர் விவரம் திருத்தம் (Edit: ${t.name})`;
+            const formSection = document.getElementById('teacher-data-entry-modal');
+            formSection.style.display = 'block';
+            formSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteTeacher(id) {
+            if (!database) return;
+            const t = teachersMap[id];
+            const tName = t ? t.name : "";
+            if (confirm(`"${tName}" ஆசிரியர் விவரத்தை நிச்சயமாக நீக்க விரும்புகிறீர்களா?`)) {
+                database.ref(`schools/${currentUdise}/teachers/${id}`).remove();
+            }
+              }
+      // --- பக்கம் திரையில் வரையப்பட்ட உடன் பின்னணியில் Firebase-ஐ ஏற்றுதல் ---
+        window.requestAnimationFrame(() => {
+            setTimeout(async () => {
+                try {
+                    await loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+                    await Promise.all([
+                        loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"),
+                        loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js")
+                    ]);
+
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    database = firebase.database();
+
+                    // 1. முதலில் Today மற்றும் Latest Videos ஒத்திசைப்பு
+                    loadDashboardDailyMessage();
+                    loadLatestVideosFromFirebase();
+
+                    // 2. அடுத்து பள்ளி பெயர், Ticker மற்றும் ஆசிரியர் பட்டியல் ஒத்திசைப்பு
+                    initSchoolAndTeachersSync();
+                } catch (e) {
+                    console.error("Firebase background init error:", e);
+                }
+            }, 30);
+        });
+    </script>
+</body>
+</html>
+                    

@@ -2,33 +2,36 @@
 <html lang="ta">
 <head>
     <link rel="prefetch" href="dashboard2.html">
+    <link rel="prefetch" href="dashboard3.html">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher's Friend - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Teacher's Friend - Class Room (Dashboard)</title>
 
-    <!-- 🚀 அதிவேக Preconnect & Non-blocking CSS (பக்கம் 0.01 விநாடியில் திறக்க) -->
+    <!-- 🚀 0.01s அதிவேக Preconnect & Non-blocking CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" media="print" onload="this.media='all'">
     <noscript>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     </noscript>
 
     <style>
-        /* --- General Styles (பொதுவான வடிவமைப்பு) --- */
+        /* --- பொதுவான வடிவமைப்பு --- */
         * { 
             margin: 0; 
             padding: 0; 
             box-sizing: border-box; 
             font-family: 'Poppins', 'Latha', sans-serif; 
+            -webkit-tap-highlight-color: transparent;
         }
         
         body { 
-            background: url('yellow-bg.png') no-repeat center center fixed; 
+            background: url('yellow-bg.png') no-repeat center center fixed, linear-gradient(135deg, #fff9c4 0%, #ffecb3 50%, #ffe0b2 100%); 
             background-size: cover; 
             color: #333; 
+            min-height: 100vh;
         }
         
         a { 
@@ -36,413 +39,252 @@
             color: inherit; 
         }
 
-        /* --- Header & Navigation (மேல் பகுதி) --- */
+        /* --- Header பகுதி (Time, Signal, Battery மறைக்காமல் கீழே இருக்க Safe-Area Padding) --- */
         header {
-            background: url('header-bg.png') no-repeat center center !important;
-            background-size: 100% 100% !important;
-            padding: 10px 2%;
+            background: url('header-bg.png') no-repeat center center, linear-gradient(90deg, #ffffff 0%, #e8f0fe 100%);
+            background-size: 100% 100%;
+            padding: calc(env(safe-area-inset-top, 28px) + 12px) 3% 10px 3%;
             display: flex; 
             flex-direction: row;
             justify-content: space-between; 
             align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
             position: sticky; 
             top: 0; 
             z-index: 6000;
             width: 100%;
+            border-bottom: 2px solid #1a73e8;
         }
 
         .logo-area { 
             display: flex; 
             align-items: center; 
-            gap: 15px;
+            gap: 10px;
         }
         
-        .logo-img { 
-            height: 70px; 
-            width: 70px;
+        .class-logo-img { 
+            height: 46px; 
+            width: 46px;
             border-radius: 50%;
             object-fit: cover;
+            border: 2.5px solid #1a73e8;
+            box-shadow: 0 2px 6px rgba(26, 115, 232, 0.25);
+            flex-shrink: 0;
         }
         
         .main-title { 
-            font-size: 48px; 
+            font-size: 28px; 
             font-weight: 700; 
             color: #1a73e8; 
-            text-shadow: 
-                1px 1px 0px #fff, 
-                2px 2px 0px #fff, 
-                3px 3px 4px rgba(0, 0, 0, 0.15), 
-                -1px -1px 1px rgba(0, 0, 0, 0.05);
-        }
-
-        .staff-logo-link {
-            display: inline-flex;
-            flex-direction: row;
-            align-items: center;
-            margin-left: 8vw;
-            gap: 10px;
-            text-decoration: none;
-        }
-
-        .staff-logo-img {
-            height: 70px;
-            width: 70px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #1a73e8;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .staff-text-indicator {
-            font-size: 20px;
-            font-weight: bold;
-            color: #d32f2f;
-            background: #fff;
-            padding: 4px 10px;
-            border-radius: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-        }
-        .staff-logo-img:hover {
-            transform: scale(1.1);
+            text-shadow: 1px 1px 0px #fff, 2px 2px 4px rgba(0, 0, 0, 0.15);
+            white-space: nowrap;
         }
 
         .header-right {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 12px;
         }
 
-        /* --- Search & User Profile Area --- */
-        .search-wrapper {
+        /* --- வலதுபுறம் உள்ள 3 Icon-களும் (Office Room, Staff Room, User) ஒரே அளவில் --- */
+        .nav-logo-link, .user-profile-wrapper {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: #ffffff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
             position: relative;
-            background: #f0f2f5;
-            padding: 5px 15px;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
+            flex-shrink: 0;
+            padding: 2px;
         }
 
-        .search-wrapper input {
-            border: none;
-            background: transparent;
-            outline: none;
-            padding-left: 10px;
-            width: 100%;
+        .nav-logo-link.office-link {
+            border: 2px solid #8a2be2;
         }
 
-        .user-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            justify-content: flex-end;
-        }
-
-        .profile-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: #e8f0fe;
-            padding: 5px 12px;
-            border-radius: 20px;
-            color: #1a73e8;
-            font-weight: 600;
+        .nav-logo-link.staff-link {
+            border: 2px solid #d32f2f;
         }
 
         .user-profile-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f1f8e9;
-            padding: 5px 12px;
-            border-radius: 20px;
-            border: 1px solid #c8e6c9;
-            position: relative;
+            border: 2px solid #1a73e8;
+        }
+
+        .nav-logo-link:hover, .user-profile-wrapper:hover {
+            transform: scale(1.08);
+        }
+
+        .nav-logo-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
         }
 
         .profile-icon { 
-            font-size: 30px; 
+            font-size: 26px; 
             color: #1a73e8; 
-        }
-
-        .user-details {
+            line-height: 1;
             display: flex;
-            flex-direction: column; 
-            line-height: 1.2;
-        }
-
-        .user-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .user-email {
-            font-size: 11px;
-            color: #666;
-            font-weight: 400;
-        }
-
-        /* --- Logout & Notification Boxes --- */
-        .logout-wrapper a {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            color: #dc3545;
-            transition: 0.3s;
-            text-decoration: none;
+            justify-content: center;
         }
 
-        .logout-btn i {
-            font-size: 20px;
-        }
-
-        .logout-text {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .logout-wrapper a:hover {
-            color: #a71d2a;
-            transform: translateY(-2px);
-        }
-
-        .notification-container {
-            position: relative;
-            cursor: pointer;
-        }
-
-        #noti-box {
+        #user-dropdown {
             display: none;
             position: absolute;
-            top: 40px;
+            top: 52px;
             right: 0;
-            background: white;
-            width: 300px;
-            max-width: 95vw;
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid #ce93d8;
+            background: #ffffff;
+            min-width: 230px;
+            border: 1px solid #ccc;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            z-index: 2000;
-            padding: 10px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            z-index: 99999;
+            padding: 14px;
+            text-align: left;
         }
 
-        .noti-item {
-            background: #f3e5f5;
-            border-left: 4px solid #7b1fa2;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .noti-item .noti-time {
-            font-size: 10px;
-            color: #777;
-            display: block;
-            margin-top: 3px;
-            text-align: right;
-        }
-
-        /* --- News Ticker & Navigation Links --- */
+        /* --- அறிவிப்புப் பட்டை (Running News Ticker) --- */
         .news-ticker-bar {
-            background: #1a73e8;
+            background: linear-gradient(90deg, #1a73e8, #0d47a1);
             color: white;
             display: flex;
             align-items: center;
-            padding: 5px 5%;
+            padding: 6px 3%;
             font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+
+        .ticker-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .ticker-logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1.5px solid #ffc107;
+            background: #fff;
         }
 
         .ticker-label {
             background: #ffc107;
             color: #000;
             padding: 2px 10px;
-            font-weight: bold;
-            border-radius: 4px;
-            margin-right: 15px;
+            font-weight: 700;
+            border-radius: 6px;
             white-space: nowrap;
+            font-size: 12px;
         }
 
-        .sub-nav {
-            background: linear-gradient(120deg, #ff6b8b 0%, #ffb3b3 40%, #ffe5b4 75%, #d8b4f8 100%) !important;
-            padding: 10px 5%;
+        /* --- Today & Latest Videos Side-Scroll Section --- */
+        .stories-section {
+            padding: 10px 3%;
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(6px);
+        }
+
+        .story-scroll-wrapper {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .story-scroll-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .today-card, .post-card {
+            min-width: 120px;
+            max-width: 120px;
+            height: 175px;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: #222;
+        }
+
+        .today-card {
+            border: 2.5px solid #ffb300;
+        }
+
+        .post-card {
+            border: 2.5px solid #ff4b4b;
+        }
+
+        .today-card:hover, .post-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .post-badge {
+            background: #ff4b4b;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 7px;
+            border-radius: 6px;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- Hero & Main Layout: 7 Buttons, YouTube Videos & Guidelines --- */
+        .desktop-layout-wrapper {
+            display: flex;
+            gap: 22px;
+            align-items: flex-start;
+            padding: 18px 3%;
+        }
+
+        .left-column {
+            flex: 1.25;
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            align-items: center;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 5000;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap; 
-            justify-content: center;
-            align-items: center;
-            gap: 10px; 
+            gap: 22px;
             width: 100%;
         }
 
-        .nav-links a, .dropdown-btn {
-            font-weight: 600;
-            color: #333;
-            font-size: 14px;
-            cursor: pointer;
-            background: none;
-            border: none;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-        }
-
-        /* --- Dropdown Styles --- */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background-color: #ffffff !important;
-            min-width: 260px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2) !important;
-            z-index: 99999 !important;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            padding: 6px 0;
-            top: 100%;
-            left: 0;
-        }
-
-        .dropdown-content.show-dropdown {
-            display: block !important;
-        }
-
-        .dropdown-content a {
-            color: #333 !important;
-            padding: 10px 18px !important;
-            text-decoration: none !important;
-            display: flex !important;
-            align-items: center;
-            gap: 10px;
-            text-align: left;
-            font-size: 14px !important;
-            border-bottom: 1px solid #f5f5f5;
-            transition: background 0.2s;
-        }
-
-        .dropdown-content a:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-content a:hover {
-            background-color: #f1f1f1 !important;
-            color: #1a73e8 !important;
-        }
-
-        .search-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-container input {
-            padding: 8px 15px;
-            border-radius: 20px;
-            border: 1px solid #ccc;
-            outline: none;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        /* --- Hero & Latest News Section --- */
-        .hero {
-            background: linear-gradient(rgba(230, 230, 250, 0.85), rgba(255, 228, 225, 0.85)), url('image_1.png');
-            background-size: cover; 
-            background-position: center;
-            color: #333; 
-            padding: 25px 10%; 
-            text-align: center;
-            display: block !important;
-        }
-
-        .hero h2 {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 15px;
-            color: #0d47a1; 
-            text-shadow: 
-                1px 1px 0px #fff, 
-                2px 2px 0px #fff, 
-                3px 3px 5px rgba(0, 0, 0, 0.25), 
-                -1px -1px 1px rgba(0, 0, 0, 0.1); 
-            display: inline-block;
-        }
-
-        .latest-news-box {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #1a73e8;
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-top: 15px;
-            text-align: left;
-            max-width: 800px;
-            margin-left: auto; 
-            margin-right: auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        .latest-news-box h3 {
-            font-size: 16px; 
-            color: #0d47a1; 
-            margin-bottom: 10px;
-            display: flex; 
-            align-items: center; 
-            gap: 6px;
-            border-bottom: 2px solid #e8f0fe; 
-            padding-bottom: 6px;
-        }
-
-        @keyframes blinkEffect {
-            0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; }
-        }
-
-        .blink-new {
-            background-color: #dc3545; 
-            color: white; 
-            font-size: 11px;
-            font-weight: bold; 
-            padding: 1px 6px; 
-            border-radius: 4px;
-            animation: blinkEffect 1s infinite; 
-            text-transform: uppercase;
-        }
-
-        /* --- Main Content Cards Grid --- */
-        .main-content { 
-            padding: 40px 5%; 
+        .hero-buttons-box {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #ff813d;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         }
 
         .grid-container {
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 14px;
         }
 
         .menu-card {
             background: #fcae82;
-            padding: 10px 5px;
+            padding: 14px 8px;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             border: 2px solid #ff813d;
             text-align: center;
             transition: all 0.3s ease;
@@ -451,406 +293,270 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 90px;
-            backdrop-filter: blur(5px);
+            height: 95px;
         }
-        .menu-card i { font-size: 24px; color: #1a73e8; margin-bottom: 5px; }
-        .menu-card h3 { font-size: 12px; font-weight: bold !important; color: #333; }
+
+        .menu-card i {
+            font-size: 26px;
+            color: #1a73e8;
+            margin-bottom: 6px;
+        }
+
+        .menu-card h3 {
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+        }
 
         .menu-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 8px 25px rgba(26, 115, 232, 0.2);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 22px rgba(26, 115, 232, 0.22);
             border-color: #1a73e8;
-            background: white;
+            background: #ffffff;
         }
 
-        /* --- Footer (அடிக்குறிப்பு பகுதி) --- */
-        .main-footer {
-            background: #222222 !important; 
-            color: #ffffff !important; 
-            padding: 40px 5% 20px !important;
-            margin-top: 50px !important;
-            position: relative !important;
-            z-index: 10 !important; 
+        /* --- YouTube Videos Section --- */
+        .youtube-box {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            padding: 16px;
+            border: 2px solid #ff0000;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
         }
 
-        .footer-grid {
+        .youtube-box h4 {
+            color: #ff0000;
+            font-size: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+        }
+
+        .yt-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            border-bottom: 1px solid #444;
-            padding-bottom: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
 
-        .footer-section h4 {
-            color: #ffffff !important; 
-            border-bottom: 2px solid #1a73e8 !important;
-            display: inline-block !important;
-            margin-bottom: 15px !important;
-            padding-bottom: 5px !important;
-        }
-
-        .footer-section p, .footer-section a {
-            font-size: 14px !important;
-            color: #cccccc !important; 
-            margin-bottom: 8px !important;
-            display: block !important;
-        }
-
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            font-size: 22px;
-        }
-
-        .social-icons a {
-            color: #ffffff !important;
-        }
-
-        .social-icons a:hover { 
-            color: #1a73e8 !important; 
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 20px;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .footer-bottom p {
-            color: #888888 !important;
-        }
-
-        /* =========================================================
-           --- கணினித் திரைக்கான பிரத்யேக வடிவமைப்பு (Desktop Mode) ---
-           ========================================================= */
-        @media (min-width: 769px) {
-            .sub-nav {
-                flex-direction: row;
-                justify-content: space-between;
-                padding: 5px 5%;
-            }
-            .main-title { 
-                display: flex !important;
-                flex-direction: row;
-                font-size: 48px; 
-            }
-            .nav-links a, .dropdown-btn {
-                padding: 3px 10px;
-            }
-            .hero {
-                padding: 10px 2% !important;
-            }
-            .side-scroll-container {
-                gap: 15px;
-                padding-bottom: 5px;
-            }
-            .side-scroll-container .post-card {
-                min-width: calc(25% - 12px);
-                max-width: calc(25% - 12px);
-            }
-            .nav-links {
-                width: auto;
-                gap: 15px;
-            }
-            .search-container {
-                width: auto;
-            }
-            .dropdown:hover .dropdown-content {
-                display: block !important;
-            }
-            .desktop-layout-wrapper {
-                display: flex;
-                justify-content: space-between;
-                align-items: flex-start;
-                padding: 40px 5%;
-                gap: 30px;
-                min-height: calc(100vh - 450px); 
-            }
-            .main-content {
-                flex: 1; 
-                padding: 0 !important; 
-            }
-            .grid-container {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr) !important; 
-                gap: 20px;
-            }
-        }
-          
-        /* =========================================
-           FB Story / Portrait Card Styles
-           ========================================= */
-        .story-scroll-wrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        .post-card {
-            min-width: 150px !important;
-            max-width: 150px !important;
-            height: 250px !important;
-            background: #333;
-            border-radius: 12px;
-            padding: 0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
-            scroll-snap-align: start;
-            flex-shrink: 0;
-            border: 2px solid #1a73e8;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
+        .yt-frame-wrap {
+            border-radius: 10px;
             overflow: hidden;
-            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            height: 115px;
+            background: #000;
         }
 
-        .post-card.latest-post {
-            border: 2px solid #ff4b4b;
+        /* --- வழிகாட்டுதல் பெட்டி (Guidelines Aside) --- */
+        .guidelines-aside {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.96);
+            border: 2px solid #1a73e8;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
         }
 
-        .post-badge, .inspire-badge {
-            font-size: 9px;
-            padding: 2px 5px;
-            border-radius: 4px;
-        }
-        
-        .post-badge { background: #ff4b4b; color: white; font-weight: bold; }
-        .inspire-badge { background: #ffb300; color: #fff; font-weight: bold; }
-
-        /* --- வழிகாட்டுதல் பெட்டி மேனுவல் ஸ்க்ரோல் --- */
         .instruction-content {
-            height: 320px;
+            height: 360px;
             overflow-y: auto;
             text-align: justify;
             font-size: 13px;
             line-height: 1.8;
             color: #333;
-            padding-right: 10px;
+            padding-right: 8px;
         }
+
         .instruction-content::-webkit-scrollbar { width: 6px; }
         .instruction-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
         .instruction-content::-webkit-scrollbar-thumb { background: #1a73e8; border-radius: 10px; }
 
-        /* --- Staff Room முழுத்திரை பார்வை (Modal) --- */
-        .post-modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #f9f9f9; z-index: 9999999; flex-direction: column;
-        }
-        .post-modal-header {
-            background: #1a73e8; color: white; padding: 15px 20px; display: flex; align-items: center; gap: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
-        .modal-back-btn {
-            background: white; border: none; color: #1a73e8; font-size: 14px; font-weight: bold; cursor: pointer;
-            display: flex; align-items: center; gap: 5px; padding: 6px 15px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .post-modal-body {
-            padding: 25px 10%; overflow-y: auto; flex: 1; font-size: 16px; line-height: 1.8; color: #333;
+        /* --- Full Screen Vertical Scroll Video Reels Modal --- */
+        #videoReelsModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 999999;
+            flex-direction: column;
         }
 
-        /* =========================================================
-           --- மொபைல் திரைக்கான பிரத்யேக வடிவமைப்பு (Mobile View) ---
-           ========================================================= */
+        .reels-close-btn {
+            position: absolute;
+            top: calc(env(safe-area-inset-top, 28px) + 15px);
+            left: 16px;
+            z-index: 1000001;
+            background: rgba(0,0,0,0.65);
+            color: #fff;
+            border: 1.5px solid #fff;
+            padding: 7px 15px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .reels-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .reels-container::-webkit-scrollbar { display: none; }
+
+        .reel-item {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .reel-info-overlay {
+            position: absolute;
+            bottom: 35px;
+            left: 20px;
+            right: 20px;
+            color: #fff;
+            z-index: 10;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
+            pointer-events: none;
+        }
+
+        /* --- Footer (அடிக்குறிப்பு பகுதி) --- */
+        .main-footer {
+            background: #222222;
+            color: #ffffff;
+            padding: 35px 5% 20px;
+            margin-top: 40px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 20px;
+        }
+
+        .footer-section h4 {
+            color: #ffffff;
+            border-bottom: 2px solid #1a73e8;
+            display: inline-block;
+            margin-bottom: 12px;
+            padding-bottom: 4px;
+        }
+
+        .footer-section p, .footer-section a {
+            font-size: 14px;
+            color: #cccccc;
+            margin-bottom: 8px;
+            display: block;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover { color: #1a73e8; }
+        .social-icons { display: flex; gap: 15px; font-size: 22px; }
+        .social-icons a { color: #ffffff; }
+        .social-icons a:hover { color: #1a73e8; }
+        .footer-bottom { text-align: center; padding-top: 18px; font-size: 13px; color: #888; }
+
+        /* --- மொபைல் திரைக்கான பிரத்யேக வடிவமைப்பு --- */
         @media (max-width: 768px) {
-            .staff-text-indicator,
-            .search-container,
-            .udise-area,
-            .user-name, 
-            .user-email, 
-            .logout-text,
-            .search-container-header,
-            .hero h2 {
-                display: none !important;
-            }
-
             header {
-                display: flex !important;
-                flex-direction: row !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                flex-wrap: nowrap !important;
-                padding: 10px 15px !important;
-                gap: 5px !important; 
+                padding: calc(env(safe-area-inset-top, 28px) + 10px) 12px 10px 12px;
             }
-
-            .logo-area {
-                display: flex !important;
-                align-items: center !important;
-                gap: 8px !important;
-                flex: 1;
+            .class-logo-img {
+                width: 40px;
+                height: 40px;
             }
-            
-            .logo-img {
-                width: 40px !important;
-                height: 40px !important;
-                border-radius: 50% !important;
-                object-fit: cover !important;
-            }
-
             .main-title {
-                font-size: 23px !important;
-                white-space: nowrap !important;
-                margin: 0 !important;
+                font-size: 21px;
             }
-
-            .staff-logo-link {
-                margin-left: auto !important; 
-                margin-right: 8px !important;
-            }
-
-            .staff-logo-img {
-                width: 40px !important; 
-                height: 40px !important;
-            }
-
             .header-right {
-                display: flex !important;
-                align-items: center !important;
-                justify-content: flex-end !important;
-                gap: 15px !important;
-                margin: 0 !important;
-                padding: 0 !important;
+                gap: 8px;
             }
-
-            .user-area {
-                gap: 15px !important;
+            /* மொபைலில் மூன்று ஐகான்களும் துல்லியமாக 40px x 40px ஒரே அளவில் இருக்கும் */
+            .nav-logo-link, .user-profile-wrapper {
+                width: 40px;
+                height: 40px;
+                padding: 2px;
             }
-
-            #bell-icon, .profile-icon {
-                font-size: 28px !important; 
-                margin: 0 !important;
+            .profile-icon {
+                font-size: 23px;
             }
-
-            #user-dropdown {
-                right: -10px !important;
-                min-width: 240px !important;
-            }
-
-            #noti-box {
-                width: 260px;
-                right: -20px;
-                top: 38px;
-            }
-
-            .main-content { 
-                padding: 15px 5% !important; 
-            }
-            
-            .grid-container { 
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 12px !important; 
-            }
-            
-            .menu-card { 
-                height: 95px !important;
-                padding: 10px 5px !important; 
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-            }
-
-            .menu-card i { 
-                font-size: 26px !important; 
-                margin-bottom: 6px;
-            }
-            
-            .menu-card h3 { 
-                font-size: 13px !important; 
-            }
-
-            .nav-links {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr); 
-                gap: 5px; 
-                justify-items: center;
-            }
-            
-            .nav-links a, .dropdown-btn {
-                font-size: 12px; 
-                flex-direction: column; 
-            }
-
             .desktop-layout-wrapper {
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 10px 5% !important;
+                flex-direction: column;
+                padding: 12px 3%;
             }
-
-            .latest-news-box {
-                margin: 10px 0 !important; 
-                width: 100% !important;  
-                box-sizing: border-box;
-            }
-
-            .ad-sidebar {
-                display: none; 
-            }
-
-            .post-card {
-                min-width: 115px !important;
-                max-width: 115px !important;
-                height: 170px !important;
+            .grid-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
         }
     </style>
 </head>
 <body>
-  <header>
+
+    <!-- ================= 1. HEADER பகுதி ================= -->
+    <header>
+        <!-- இடது புறம்: வட்ட வடிவ class.png Logo மற்றும் Class Room தலைப்பு -->
         <div class="logo-area">
-            <img src="image_0.png" alt="Logo" class="logo-img">
+            <img src="class.png" alt="Class Room Logo" class="class-logo-img" onerror="this.src='image_0.png'">
             <h1 class="main-title">Class Room</h1>
-            <a href="dashboard2.html" class="staff-logo-link" title="Staff Room-க்குச் செல்">
-                <img src="1000015786.png" alt="Staff Logo" class="staff-logo-img" onerror="this.src='staff.png'">
-                <span class="staff-text-indicator">Staff Room</span>
+        </div>
+
+        <!-- வலது புறம்: Office Room Logo, Staff Room Logo மற்றும் User Icon (மூன்றும் ஒரே அளவு) -->
+        <div class="header-right">
+            <a href="dashboard3.html" class="nav-logo-link office-link" title="Office Room-க்குச் செல்">
+                <img src="office.png" alt="Office Room" class="nav-logo-img" onerror="this.src='image_0.png'">
             </a>
-        </div>
-        <div class="udise-area" style="margin-left: 20px; font-size: 16px; font-weight: bold; color: #1a73e8; background: #e8f0fe; padding: 5px 15px; border-radius: 20px; border: 1px solid #1a73e8;">
-            UDISE: <span id="udise-display">N/A</span>
-        </div>
-        <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
-            
-            <div class="notification-container" style="position: relative; cursor: pointer;">
-                <i class="bi bi-bell-fill" id="bell-icon" style="font-size: 32px; color: #ff0000;" onclick="toggleNotificationBox()"></i>
 
-                <span id="noti-badge" style="display: none; position: absolute; top: -2px; right: -2px; background: red; color: white; border-radius: 50%; padding: 2px 6px; font-size: 10px; font-weight: bold;">0</span>
+            <a href="dashboard2.html" class="nav-logo-link staff-link" title="Staff Room-க்குச் செல்">
+                <img src="staff.png" alt="Staff Room" class="nav-logo-img" onerror="this.src='1000015786.png'">
+            </a>
 
-                <div id="noti-box">
-                    <h4 style="font-size: 14px; color: #4a148c; border-bottom: 2px solid #f3e5f5; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between;">
-                        <span>அறிவிப்புகள் (Notifications)</span>
-                        <span style="font-size: 11px; color: #666; cursor: pointer;" onclick="clearNotifications()">Clear All</span>
-                    </h4>
-                    <div id="noti-list" style="font-size: 13px; color: #333;">
-                        <p style="text-align: center; color: #888; padding: 10px;">புதிய அறிவிப்புகள் ஏதுமில்லை!</p>
-                    </div>
-                </div>
-            </div>
+            <!-- User Icon & Dropdown -->
+            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)" title="பயனர் கணக்கு">
+                <i class="bi bi-person-fill profile-icon"></i>
 
-            <div class="user-profile-wrapper" onclick="toggleUserDropdown(event)" style="cursor: pointer; position: relative;">
-                <i class="bi bi-person-circle profile-icon" style="font-size: 32px; color: #ffb300;"></i>
-
-                <div class="user-details">
-                    <span class="user-name" id="top-user-name">ஆசிரியர்</span>
-                    <span class="user-email" id="user-email-top">ஆசிரியர் கணக்கு</span> 
-                </div>
-
-                <div id="user-dropdown" style="display: none; position: absolute; top: 48px; right: 0; background: #ffffff !important; min-width: 220px; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important; z-index: 99999999 !important; padding: 12px; text-align: left;">
-                    <p style="margin: 0; font-size: 13px; color: #1a73e8; font-weight: 600; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                <div id="user-dropdown">
+                    <p style="margin: 0 0 8px 0; font-size: 13px; color: #1a73e8; font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 6px;">
                         <i class="bi bi-building"></i> UDISE: <span id="dropdown-udise-display">N/A</span>
                     </p>
-
-                    <p style="margin: 0; font-size: 11px; color: #666; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+                    <p style="margin: 0 0 4px 0; font-size: 11px; color: #666; font-weight: 600;">
                         <i class="bi bi-person-fill-check"></i> Log in மின்னஞ்சல்:
                     </p>
-                    <p id="user-email-dropdown" style="margin: 0; font-size: 13px; color: #1a73e8; font-weight: 600; word-break: break-all; margin-bottom: 10px;">ஆசிரியர் கணக்கு</p>
+                    <p id="user-email-dropdown" style="margin: 0 0 10px 0; font-size: 12px; color: #1a73e8; font-weight: 600; word-break: break-all;">ஆசிரியர் கணக்கு</p>
+                    
                     <div id="admin-btn-wrapper" style="display: none; margin-bottom: 10px;">
-                        <a href="admin.html" style="color: #1a73e8; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px; background: #e8f0fe; padding: 8px 12px; border-radius: 6px;">
+                        <a href="admin.html" style="color: #1a73e8; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; background: #e8f0fe; padding: 7px 10px; border-radius: 6px;">
                             <i class="bi bi-shield-lock-fill"></i> Admin Panel (அட்மின்)
                         </a>
                     </div>
+
                     <div style="height: 1px; background: #eee; margin-bottom: 8px;"></div>
-                    
-                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 8px;">
+                    <a href="index.html" onclick="handleLogout(event)" style="color: #d32f2f; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
                         <i class="bi bi-box-arrow-right"></i> வெளியேறு (Logout)
                     </a>
                 </div>
@@ -858,131 +564,137 @@
         </div>
     </header>
 
+    <!-- ================= 2. அறிவிப்புப் பகுதி (Navigation நீக்கப்பட்டுள்ளது) ================= -->
     <div class="news-ticker-bar">
-        <div class="ticker-label">முக்கிய அறிவிப்பு:</div>
+        <div class="ticker-brand">
+            <img src="image_0.png" alt="Teacher's Friend" class="ticker-logo">
+            <span class="ticker-label">அறிவிப்பு</span>
+        </div>
         <marquee behavior="scroll" direction="left" id="web-ticker">Teacher's Friend தளத்திற்கு உங்களை அன்புடன் வரவேற்கிறோம்!</marquee>
     </div>
 
-    <nav class="sub-nav">
-        <div class="nav-links">
-            <a href="dashboard.html"><i class="bi bi-house-door-fill"></i><span>Home</span></a>
-            
-            <div class="dropdown">
-                <button class="dropdown-btn" onclick="toggleServicesMenu(event)">
-                    <i class="bi bi-grid-fill"></i> <span>Services</span>
-                </button>
-                <div class="dropdown-content" id="servicesDropdown">
-                    <a href="data-input.html"><i class="bi bi-database-fill"></i> Data Input</a>
-                    <a href="applications.html"><i class="bi bi-file-earmark-text"></i> Forms (படிவங்கள்)</a>
-                    <a href="registers.html"><i class="bi bi-journal-check"></i> Registers (பதிவேடுகள்)</a>
-                    <a href="daily.html"><i class="bi bi-chat-left-text"></i> Daily Messages</a>
-                    <a href="tlm.html"><i class="bi bi-book"></i> TLMs (கற்றல் கருவிகள்)</a>
-                    <a href="homework.html"><i class="bi bi-pencil-square"></i> Daily Homework</a>
-                    <a href="exam.html"><i class="bi bi-pen"></i> Exam (தேர்வுகள்)</a>
-                    <a href="gos.html"><i class="bi bi-file-earmark-pdf-fill"></i> GO's (அரசாணைகள்)</a>
-                    <a href="lesson-plan.html"><i class="bi bi-journal-text"></i> Lesson Plan (பாடக்குறிப்பு)</a>
-                    <a href="others.html"><i class="bi bi-briefcase"></i> Other Resources</a>
-                </div>
-            </div>
-
-            <a href="about.html"><i class="bi bi-info-circle-fill"></i><span>About Us</span></a>
-            <a href="contact.html"><i class="bi bi-envelope-fill"></i><span>Contact</span></a>
-        </div>
-        <div class="search-container">
-            <div style="position: relative; width: 100%; max-width: 300px;">
-                <input type="text" id="dashboard-search" placeholder="வலைத்தளத்தில் தேடுக..." oninput="globalSearch()" autocomplete="off">
-                <div id="search-suggestions" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #ffffff; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0px 8px 16px rgba(0,0,0,0.15); z-index: 100000; max-height: 350px; overflow-y: auto; margin-top: 5px; text-align: left;"></div>
-            </div>
-        </div>
-    </nav>
-
-    <!-- 🚀 TODAY, NEW & TOP CARDS SECTION -->
-    <section class="hero" style="padding: 5px 5%;">
-        <div class="story-scroll-wrapper" style="display: flex; gap: 5px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; -ms-overflow-style: none;">
-            
-            <a id="dashboard-daily-link" href="#" target="_blank" style="flex-shrink: 0; width: 115px; height: 170px; border-radius: 12px; overflow: hidden; position: relative; box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #ffb300; display: block; background: #fff;">
+    <!-- ================= 3. TODAY & LATEST VIDEOS SIDE-SCROLL பகுதி ================= -->
+    <section class="stories-section">
+        <div class="story-scroll-wrapper">
+            <!-- Today Card -->
+            <a id="dashboard-daily-link" href="#" target="_blank" class="today-card">
                 <img id="dashboard-daily-img" src="image_0.png" alt="இன்றைய செய்தி" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='image_0.png'">
-                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 40px 10px 12px;">
-                    <span style="color: #fff; font-size: 14px; font-weight: bold;"><i class="bi bi-calendar-check-fill" style="color: #ffc107;"></i> Today</span>
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); padding: 35px 10px 10px;">
+                    <span style="color: #fff; font-size: 13px; font-weight: bold;"><i class="bi bi-calendar-check-fill" style="color: #ffc107;"></i> Today</span>
                 </div>
             </a>
 
-            <div id="sideScrollPosts" style="display: contents;"></div>
-
+            <!-- Latest Videos (கிளிக் செய்தால் Full Screen-ல் ஓடும்) -->
+            <div id="sideScrollVideos" style="display: contents;"></div>
         </div>
     </section>
 
-    <div class="desktop-layout-wrapper" style="display: flex; gap: 20px; align-items: flex-start; padding: 20px 5%;">
-    
-        <main class="main-content" style="flex: 1.2; padding: 0 !important;">
-            <div class="grid-container" style="grid-template-columns: repeat(3, 1fr) !important; gap: 12px;">
-                <a href="data-input.html"><div class="menu-card"><i class="bi bi-database-fill"></i><h3>Data Input</h3></div></a>
-                <a href="applications.html"><div class="menu-card"><i class="bi bi-file-earmark-text"></i><h3>Forms</h3></div></a>
-                <a href="registers.html"><div class="menu-card"><i class="bi bi-journal-check"></i><h3>Registers</h3></div></a>
-                <a href="daily.html"><div class="menu-card"><i class="bi bi-chat-left-text"></i><h3>Daily Messages</h3></div></a>
-                <a href="tlm.html"><div class="menu-card"><i class="bi bi-book"></i><h3>TLMs</h3></div></a>
-                <a href="homework.html"><div class="menu-card"><i class="bi bi-pencil-square"></i><h3>Daily Homework</h3></div></a>
-                <a href="bookback.html"><div class="menu-card"><i class="bi bi-book-half"></i><h3>Book Back Q&A</h3></div></a>
-                <a href="exam.html"><div class="menu-card"><i class="bi bi-pen"></i><h3>Exam</h3></div></a>
-                <a href="others.html"><div class="menu-card"><i class="bi bi-briefcase"></i><h3>Other Resources</h3></div></a>
-                <a href="gos.html"><div class="menu-card"><i class="bi bi-file-earmark-pdf-fill"></i><h3>GO's</h3></div></a>
-                <a href="games.html"><div class="menu-card"><i class="bi bi-trophy"></i><h3>Games</h3></div></a>
-                <a href="lesson-plan.html"><div class="menu-card"><i class="bi bi-journal-text"></i><h3>Lesson Plan</h3></div></a>
-            </div>
-        </main>
+    <!-- ================= 4. HERO பட்டன்கள், YOUTUBE வீடியோக்கள் & வழிகாட்டுதல் பகுதி ================= -->
+    <div class="desktop-layout-wrapper">
+        
+        <div class="left-column">
+            <!-- Hero பகுதி: 7 முதன்மை பட்டன்கள் -->
+            <section class="hero-buttons-box">
+                <div class="grid-container">
+                    <a href="applications.html">
+                        <div class="menu-card">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                            <h3>Forms</h3>
+                        </div>
+                    </a>
+                    <a href="bookback.html">
+                        <div class="menu-card">
+                            <i class="bi bi-book-half"></i>
+                            <h3>Book Back Q&amp;A</h3>
+                        </div>
+                    </a>
+                    <a href="lesson-plan.html">
+                        <div class="menu-card">
+                            <i class="bi bi-journal-text"></i>
+                            <h3>Lesson Plan</h3>
+                        </div>
+                    </a>
+                    <a href="homework.html">
+                        <div class="menu-card">
+                            <i class="bi bi-pencil-square"></i>
+                            <h3>Daily Homework</h3>
+                        </div>
+                    </a>
+                    <a href="exam.html">
+                        <div class="menu-card">
+                            <i class="bi bi-pen-fill"></i>
+                            <h3>Exam</h3>
+                        </div>
+                    </a>
+                    <a href="daily.html">
+                        <div class="menu-card">
+                            <i class="bi bi-chat-left-text-fill"></i>
+                            <h3>Daily Message</h3>
+                        </div>
+                    </a>
+                    <a href="games.html">
+                        <div class="menu-card">
+                            <i class="bi bi-trophy-fill"></i>
+                            <h3>Games</h3>
+                        </div>
+                    </a>
+                </div>
+            </section>
 
-        <!-- YouTube Iframes: loading="lazy" சேர்க்கப்பட்டுள்ளதால் Today/New/Top கார்டுகளைத் தடுக்காது -->
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 20px;">
-            <div style="display: flex; flex-direction: row; gap: 15px;">
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
+            <!-- YouTube வீடியோக்கள் பகுதி -->
+            <section class="youtube-box">
+                <h4><i class="bi bi-youtube"></i> YouTube வீடியோக்கள்</h4>
+                <div class="yt-grid">
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                    <div class="yt-frame-wrap">
+                        <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
+                    </div>
                 </div>
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row; gap: 15px;">
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
-            <div style="display: flex; flex-direction: row; gap: 15px;">
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/b9xsSj-P0dM" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div style="border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); height: 100px;">
-                    <iframe loading="lazy" width="100%" height="100%" src="https://www.youtube.com/embed/WNfTMaCiTt8" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
+            </section>
         </div>
 
-        <aside style="flex: 1; background: #fff; border: 2px solid #1a73e8; border-radius: 12px; padding: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
-            <h4 style="color: #d32f2f; font-size: 15px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-weight: bold;"><i class="bi bi-info-circle-fill"></i> வழிகாட்டுதல்கள்</h4>
+        <!-- வழிகாட்டுதல் பகுதி -->
+        <aside class="guidelines-aside">
+            <h4 style="color: #d32f2f; font-size: 15px; text-align: center; border-bottom: 2px solid #eee; padding-bottom: 8px; margin-bottom: 12px; font-weight: bold;">
+                <i class="bi bi-info-circle-fill"></i> வழிகாட்டுதல்கள்
+            </h4>
             
             <div class="instruction-content">
                 <p><strong>வகுப்பறை பகுதியை சிறப்பாக மேலாண்மை செய்ய பின்வரும் வழிகாட்டுதல்களை கடைபிடிக்கவும்:</strong></p><br>
-                <p>1. <strong>Data input</strong> button யை கிளிக் செய்து அதில் உள்ள School data, Teachers data, students data, census data ஆகிய நான்கையும் முழுவதுமாக பூர்த்தி செய்து Save செய்து கொள்ளவும்.</p><br>
+                <p>1. <strong>Office Room</strong> பகுதியில் உள்ள Data input button யை கிளிக் செய்து அதில் உள்ள School data, Teachers data, students data, census data ஆகிய நான்கையும் முழுவதுமாக பூர்த்தி செய்து Save செய்து கொள்ளவும்.</p><br>
                 <p>2. working day's data ஒவ்வொரு மாத முடிவிலும் update செய்யவும்.</p><br>
                 <p>3. Marks data ஒவ்வொரு பருவத்தின் முடிவிலோ அல்லது அவ்வப்போதோ Update செய்து கொள்ளலாம்.</p><br>
-                <p>4. ஒவ்வொரு மாதமும் working day's data Update செய்த பிறகு <strong>forms</strong> button கிளிக் செய்து மாதாந்திர அறிக்கை download செய்து கொள்ளலாம். Admission form, Study certificate, Leave forms, Loan forms, என அனைத்து வகை படிவங்களையும் இப்பகுதியில் download செய்து கொள்ளலாம்.</p><br>
-                <p>5. <strong>Register</strong> பகுதியில் Marks data update செய்த பிறகு ஒவ்வொரு பருவத்திற்கும் CCE பதிவேடுகள் download செய்து கொள்ளலாம் தேவைப்படும் பொழுது இதர பதிவேடுகளையும் download செய்து கொள்ளலாம்.</p><br>
-                <p>6. <strong>Daily Homework</strong> பகுதியில் நாள் தேர்வு செய்து வகுப்பை தேர்வு செய்து Send கிளிக் செய்தால் மாணவர்களுக்கு அன்றைய நாளுக்கான வீட்டுப்பாடம் தானாக சென்று விடும். மாணவர்கள் அவர்களது login ல் நுழைந்த உடன் அன்றைய வீட்டுப்பாடம் திரையில் தெரியும். ஆசிரியர் பள்ளி நேரத்தில் வீட்டுப்பாடம் வழங்க முடியாமல் போனால், பேருந்தில் செல்லும்போது அல்லது வீட்டிற்கு சென்ற பிறகு கூட மாணவர்களுக்கு வீட்டுப் பாடத்தை அனுப்பி விட முடியும். இப்பகுதியில் ஒவ்வொரு நாளுக்கான வீட்டுப்பாட குறிப்புகள் ஏற்கனவே பதிவு செய்யப்பட்டிருக்கும். ஆசிரியர் விருப்பப்பட்டால் அதில் மாற்றம் செய்தும் மாணவர்களுக்கு அனுப்பி விடலாம்.</p><br>
-                <p>7. <strong>Daily messages</strong> பகுதியில் அந்த நாளுக்கான சிறப்புகள் பற்றிய குறிப்புகள் ஒவ்வொரு நாளுக்கும் இருக்கும். ஆசிரியர் காலை வழிபாட்டுக் கூட்டத்திலோ அல்லது வகுப்பறையின் போது கூடுதல் தகவல்களாக சொல்வதற்கு பயன்படுத்திக் கொள்ளலாம்.</p><br>
-                <p>8. <strong>Book back Q&A</strong> பகுதியில் ஒவ்வொரு வகுப்பிற்கும் ஒவ்வொரு பாடத்திற்கும் புத்தக கேள்விகளுக்கான விடைகள் இருக்கும். ஆசிரியர் Screen Cast செய்வதன் மூலம் Smart board அல்லது TV யில் பார்த்து மாணவர்கள் விடைகளை குறிப்பேட்டில் எழுதிக் கொள்ள பயன்படுத்திக் கொள்ளலாம்.</p><br>
+                <p>4. ஒவ்வொரு மாதமும் working day's data Update செய்த பிறகு <strong>Forms</strong> button கிளிக் செய்து மாதாந்திர அறிக்கை download செய்து கொள்ளலாம். Admission form, Study certificate, Leave forms, Loan forms, என அனைத்து வகை படிவங்களையும் இப்பகுதியில் download செய்து கொள்ளலாம்.</p><br>
+                <p>5. <strong>Registers</strong> பகுதியில் Marks data update செய்த பிறகு ஒவ்வொரு பருவத்திற்கும் CCE பதிவேடுகள் download செய்து கொள்ளலாம் தேவைப்படும் பொழுது இதர பதிவேடுகளையும் download செய்து கொள்ளலாம்.</p><br>
+                <p>6. <strong>Daily Homework</strong> பகுதியில் நாள் தேர்வு செய்து வகுப்பை தேர்வு செய்து Send கிளிக் செய்தால் மாணவர்களுக்கு அன்றைய நாளுக்கான வீட்டுப்பாடம் தானாக சென்று விடும். மாணவர்கள் அவர்களது login ல் நுழைந்த உடன் அன்றைய வீட்டுப்பாடம் திரையில் தெரியும். ஆசிரியர் பள்ளி நேரத்தில் வீட்டுப்பாடம் வழங்க முடியாமல் போனால், பேருந்தில் செல்லும்போது அல்லது வீட்டிற்கு சென்ற பிறகு கூட மாணவர்களுக்கு வீட்டுப் பாடத்தை அனுப்பி விட முடியும்.</p><br>
+                <p>7. <strong>Daily Message</strong> பகுதியில் அந்த நாளுக்கான சிறப்புகள் பற்றிய குறிப்புகள் ஒவ்வொரு நாளுக்கும் இருக்கும். ஆசிரியர் காலை வழிபாட்டுக் கூட்டத்திலோ அல்லது வகுப்பறையின் போது கூடுதல் தகவல்களாக சொல்வதற்கு பயன்படுத்திக் கொள்ளலாம்.</p><br>
+                <p>8. <strong>Book Back Q&amp;A</strong> பகுதியில் ஒவ்வொரு வகுப்பிற்கும் ஒவ்வொரு பாடத்திற்கும் புத்தக கேள்விகளுக்கான விடைகள் இருக்கும். ஆசிரியர் Screen Cast செய்வதன் மூலம் Smart board அல்லது TV யில் பார்த்து மாணவர்கள் விடைகளை குறிப்பேட்டில் எழுதிக் கொள்ள பயன்படுத்திக் கொள்ளலாம்.</p><br>
                 <p>9. <strong>Lesson Plan</strong> பகுதியில் ஒவ்வொரு பாடத்திற்கான பாட குறிப்பினை பார்த்து பயன்படுத்திக் கொள்ளலாம்.</p><br>
-                <p>10. <strong>Exam</strong> பகுதியில் ஒவ்வொரு வாரத்திற்கான வாராந்திர தேர்வுகள் மற்றும் மாதாந்திர தேர்வு ஆகியவை கொடுக்கப்பட்டுள்ளது. இது மீத்திறன் மாணவர்களுக்கு அவர்களுடைய அறிவுத்திறனை அதிகரிக்க உதவும். Games பகுதியில் தமிழ், ஆங்கிலம், கணிதம் பகுதிகளில் அறிவுத்திறன் மற்றும் மொழித்திறனை வளர்க்கும் வகையிலான விளையாட்டுகள் நிறைந்த பகுதி இதை Screen Cast மூலம் அனைத்து மாணவர்களும் பங்கேற்று ஆர்வமுடன் விளையாட செய்வதன் மூலம் கற்றலில் ஆர்வத்தை ஏற்படுத்தலாம்.</p><br>
-                <p>11. <strong>G.Os</strong> பகுதியில் ஆசிரியர்களுக்கான சமீபத்திய அரசு ஆணைகள் Download செய்து கொள்ளலாம்.</p><br>
-                <p>12. Class Room என்ற தலைப்பின் அருகே வலது புறம் உள்ள <strong>Staff Room icon</strong> ஐ கிளிக் செய்வதன் மூலம் ஆசிரியர்கள் Social Media பகுதிக்கு செல்லலாம். இதில் தமிழகத்தில் உள்ள பெரும்பாலான ஆசிரியர்கள் அவர்களது கருத்துக்களை பதிவு செய்யும் வகையில் அமைக்கப்பட்டுள்ளது. மீண்டும் மேலே உள்ள Class room ஐகானை கிளிக் செய்தால் இதே பக்கத்திற்கு திரும்பி விடலாம்.</p><br>
-                <p>13. மாணவர்கள் login செய்யும்பொழுது login பக்கத்தில் student login என்ற Tab ஐ கிளிக் செய்து பள்ளியின் UDISE நம்பரை உள்ளீடு செய்து Search கொடுத்தால் பள்ளியின் பெயர் காட்டும் அதை சரி பார்த்த பிறகு அவர்களது சேர்க்கை எண்ணை User Name ஆகவும் பிறந்த நாளை Password ஆகவும் கொடுத்து login செய்தால் மாணவர்களுக்கான Dashboard பகுதியில் அன்றைய வீட்டுப்பாடம் இருக்கும் அதற்கு கீழ் தேர்வுகள், quiz, Games போன்ற option கள் இருக்கும். மாணவர்கள் வீட்டுப்பாடத்தினை தவறாமல் செய்யவும், ஓய்வு நேரத்தை பயனுள்ள வகையில் அறிவுத்திறனை வளர்க்கும்படி அமைத்துக் கொள்ளவும் இது பயன்படும்.</p><br>
-                <p>இது போன்ற அதிநவீன வசதிகளுடன் கூடிய மேம்பட்ட Software ஐ நீங்கள் பயன்படுத்த, பல ஆயிரங்கள் செலவு செய்ய வேண்டியிருக்கும். ஆனால் கல்விச் சேவையை முதன்மை நோக்கமாக கொண்ட நமது தளத்தில் அனைத்து வசதிகளையும் இலவசமாக பெற்று உங்கள் பணியினை மிகச் சிறப்பாக செய்து மாணவர்களின் கல்வித் திறனை வளர்த்திடுங்கள்.</p><br>
+                <p>10. <strong>Exam</strong> பகுதியில் ஒவ்வொரு வாரத்திற்கான வாராந்திர தேர்வுகள் மற்றும் மாதாந்திர தேர்வு ஆகியவை கொடுக்கப்பட்டுள்ளது. <strong>Games</strong> பகுதியில் தமிழ், ஆங்கிலம், கணிதம் பகுதிகளில் அறிவுத்திறன் மற்றும் மொழித்திறனை வளர்க்கும் வகையிலான விளையாட்டுகள் நிறைந்த பகுதி. இதை Screen Cast மூலம் அனைத்து மாணவர்களும் பங்கேற்று ஆர்வமுடன் விளையாட செய்வதன் மூலம் கற்றலில் ஆர்வத்தை ஏற்படுத்தலாம்.</p><br>
+                <p>11. மேலே வலது புறம் உள்ள <strong>Office Room icon</strong> ஐ கிளிக் செய்து பள்ளி அலுவலகப் பகுதிக்கும், <strong>Staff Room icon</strong> ஐ கிளிக் செய்து ஆசிரியர்கள் Social Media பகுதிக்கும் செல்லலாம்.</p><br>
                 <p style="color: #d32f2f; font-weight: bold; text-align: center;">நீங்கள் Best Teacher ஆக இருந்திருக்கலாம். ஆனால் நமது வலைதளம் உங்களை Smart Teacher ஆக ஆக்கிவிடும். பணியினை சிறப்பாக செய்திட வாழ்த்துக்கள்.</p>
             </div>
         </aside>
+
     </div>
 
+    <!-- ================= 5. FULL SCREEN VERTICAL SCROLL VIDEOS MODAL ================= -->
+    <div id="videoReelsModal">
+        <button class="reels-close-btn" onclick="closeFullScreenVideoReels()">
+            <i class="bi bi-arrow-left"></i> Back
+        </button>
+        <div id="videoReelsContainer" class="reels-container"></div>
+    </div>
+
+    <!-- ================= 6. FOOTER பகுதி ================= -->
     <footer class="main-footer">
         <div class="footer-grid">
             <div class="footer-section">
@@ -990,11 +702,13 @@
                 <p>மின்னஞ்சல்: tnteachersfriend@gmail.com</p>
                 <p>தமிழ்நாடு, இந்தியா.</p>
             </div>
+            <!-- உதவி மன்றம் என்பதற்கு பதில் 'உதவி' மட்டும்; Forum நீக்கப்பட்டு About Us, Contact சேர்க்கப்பட்டுள்ளது -->
             <div class="footer-section">
-                <h4>உதவி & மன்றம்</h4>
-                <p><a href="forum.html">Forum / கலந்துரையாடல்</a></p>
-                <p><a href="help-center.html">Help Center / உதவி</a></p>
-                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy & Terms / விதிமுறைகள்</a></p>
+                <h4>உதவி</h4>
+                <p><a href="about.html"><i class="bi bi-info-circle"></i> About Us / எங்களைப் பற்றி</a></p>
+                <p><a href="contact.html"><i class="bi bi-envelope"></i> Contact / தொடர்புக்கு</a></p>
+                <p><a href="help-center.html"><i class="bi bi-question-circle"></i> Help Center / உதவி மையம்</a></p>
+                <p><a href="privacy_policy_terms.html"><i class="bi bi-shield-lock-fill"></i> Privacy &amp; Terms / விதிமுறைகள்</a></p>
             </div>
             <div class="footer-section">
                 <h4>பின் தொடர</h4>
@@ -1010,658 +724,477 @@
             <p>&copy; 2026 Teacher's Friend. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
         </div>
     </footer>
-
-    <div id="postFullScreenModal" class="post-modal-overlay">
-        <div class="post-modal-header">
-            <button class="modal-back-btn" onclick="closeFullScreenPost()"><i class="bi bi-arrow-left"></i> BACK</button>
-            <h3 style="margin: 0; font-size: 18px;">Staff Room Update - முழு விவரம்</h3>
-        </div>
-        <div class="post-modal-body">
-            <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 18px;">
-                <span id="modal-post-author" style="font-weight: bold; color: #1a73e8; font-size: 18px;"></span>
-                <span id="modal-post-time" style="color: #666; font-size: 14px;"></span>
-            </div>
-            <div id="modal-post-content" style="font-size: 16px;"></div>
-        </div>
-    </div>
     <!-- ========================================================================= -->
-<!-- 🚀 STEP 1: 0.01s INSTANT BOOT ENGINE (Today, New, Top Cards From Cache) -->
-<!-- ========================================================================= -->
-<script>
-let database = null;
-const IDB_NAME = 'TeacherFriendCacheDB';
-const IDB_STORE = 'feedStore';
+    <!-- 🚀 STEP 1: 0.01s INSTANT BOOT ENGINE (Today, Videos & User Info From Cache) -->
+    <!-- ========================================================================= -->
+    <script>
+        let database = null;
+        const IDB_NAME = 'TeacherFriendCacheDB';
+        const IDB_STORE = 'feedStore';
 
-// --- IndexedDB Helper (பெரிய படங்கள்/டேட்டாவிற்கு 500MB+ கொள்ளளவு) ---
-function openCacheDB() {
-    return new Promise((resolve, reject) => {
-        if (!window.indexedDB) return reject("No IDB");
-        const req = indexedDB.open(IDB_NAME, 1);
-        req.onupgradeneeded = (e) => {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains(IDB_STORE)) {
-                db.createObjectStore(IDB_STORE);
-            }
-        };
-        req.onsuccess = (e) => resolve(e.target.result);
-        req.onerror = (e) => reject(e.target.error);
-    });
-}
+        let latestVideoPosts = [];
+        let reelsObserver = null;
+        let sideScrollObserver = null;
 
-async function saveToIndexedDB(key, val) {
-    try {
-        const db = await openCacheDB();
-        const tx = db.transaction(IDB_STORE, 'readwrite');
-        tx.objectStore(IDB_STORE).put(val, key);
-    } catch (e) {}
-}
-
-async function getFromIndexedDB(key) {
-    try {
-        const db = await openCacheDB();
-        return new Promise((resolve) => {
-            const tx = db.transaction(IDB_STORE, 'readonly');
-            const req = tx.objectStore(IDB_STORE).get(key);
-            req.onsuccess = () => resolve(req.result || null);
-            req.onerror = () => resolve(null);
-        });
-    } catch (e) {
-        return null;
-    }
-}
-
-// --- இன்றைய தேதி தலைப்பை ("October 16" போன்ற வடிவத்தில்) உருவாக்கும் ஃபங்ஷன் ---
-function getTodayTitleString() {
-    const today = new Date();
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-    return {
-        monthName: monthNames[today.getMonth()],
-        day: today.getDate(),
-        todayTitle: `${monthNames[today.getMonth()]} ${today.getDate()}`
-    };
-}
-
-// --- Today கார்டை திரையில் உடனடியாக அப்டேட் செய்யும் ஃபங்ஷன் ---
-function applyDailyMessageToDOM(url, title) {
-    const imgElement = document.getElementById('dashboard-daily-img');
-    const linkElement = document.getElementById('dashboard-daily-link');
-    if (!imgElement || !linkElement) return;
-
-    const finalUrl = url || "image_0.png";
-    if (imgElement.getAttribute('src') !== finalUrl) {
-        imgElement.src = finalUrl;
-    }
-    imgElement.alt = title || "இன்றைய செய்தி";
-    linkElement.href = url ? url : "#";
-}
-
-// --- New & Top போஸ்ட்களை வரிசைப்படுத்தி முதல் 6 கார்டுகளைத் தரும் ஃபங்ஷன் ---
-function computeSortedClassroomCards(postsArrayOrMap) {
-    let rawList = [];
-    if (Array.isArray(postsArrayOrMap)) {
-        rawList = postsArrayOrMap.map(p => ({ ...p, id: p.id || p.key }));
-    } else if (postsArrayOrMap && typeof postsArrayOrMap === 'object') {
-        Object.keys(postsArrayOrMap).forEach(k => {
-            rawList.push({ ...postsArrayOrMap[k], id: k, key: k });
-        });
-    }
-
-    if (rawList.length === 0) return [];
-
-    // 1. Newest First வரிசைப்படுத்துதல்
-    rawList.sort((a, b) => String(b.id || '').localeCompare(String(a.id || '')));
-
-    const latestPost = { ...rawList[0], isLatest: true };
-
-    // 2. மற்ற பதிவுகளை Inspire/Likes அடிப்படையில் வரிசைப்படுத்துதல்
-    let otherPosts = [];
-    for (let i = 1; i < rawList.length; i++) {
-        let post = { ...rawList[i], isLatest: false };
-        let count = 0;
-        if (post.inspires) {
-            count = typeof post.inspires === 'object' ? Object.keys(post.inspires).length : Number(post.inspires) || 0;
-        } else if (post.likes) {
-            count = typeof post.likes === 'object' ? Object.keys(post.likes).length : Number(post.likes) || 0;
-        }
-        post.inspiresCount = count;
-        otherPosts.push(post);
-    }
-
-    otherPosts.sort((a, b) => b.inspiresCount - a.inspiresCount);
-
-    return [latestPost, ...otherPosts].slice(0, 6);
-}
-
-// --- ஒரு New / Top கார்டின் HTML-ஐ உருவாக்கும் ஃபங்ஷன் ---
-function buildStoryCardHTML(post) {
-    const postKey = post.id || post.key || '';
-    const cardClass = post.isLatest ? 'post-card latest-post' : 'post-card';
-    const targetUrl = post.isLatest ? 'dashboard2.html?view=new' : 'dashboard2.html?view=top';
-
-    const badgeHtml = post.isLatest 
-        ? `<span class="post-badge" style="position:absolute; top:8px; left:8px; z-index:10;">New</span>` 
-        : `<span class="inspire-badge" style="position:absolute; top:8px; left:8px; z-index:10;"><i class="bi bi-star-fill"></i> Top</span>`;
-
-    let mediaHTML = '';
-    if (post.mediaType === 'video' && post.mediaUrl) {
-        mediaHTML = `<video src="${post.mediaUrl}" autoplay loop muted playsinline preload="metadata" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;"></video>
-                     <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); z-index:2;"></div>`;
-    } else if (post.mediaType === 'image' && post.mediaUrl) {
-        mediaHTML = `<img src="${post.mediaUrl}" loading="eager" decoding="async" style="width: 100%; height: 100%; object-fit: cover; position: absolute; top:0; left:0; z-index:1;">
-                     <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2;"></div>`;
-    } else {
-        mediaHTML = `<div style="width: 100%; height: 100%; background:#333; position: absolute; top:0; left:0; z-index:1;"></div>`;
-    }
-
-    const authorName = post.userName || 'ஆசிரியர்';
-    const postText = post.text || post.content || '';
-
-    return `
-        <div class="${cardClass}" id="story-card-${postKey}" data-cardkey="${postKey}" data-media="${post.mediaUrl || ''}" onclick="window.location.href='${targetUrl}'">
-            ${mediaHTML}
-            ${badgeHtml}
-            <div style="position:absolute; bottom:8px; left:8px; right:8px; z-index:10; color:white; text-shadow: 1px 1px 3px rgba(0,0,0,0.9);">
-                <div style="font-size:12px; font-weight:bold; margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><i class="bi bi-person-circle"></i> ${authorName}</div>
-                <div style="font-size:10px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height:1.4;">${postText}</div>
-            </div>
-        </div>
-    `;
-}
-
-// --- Smart Diff Render: இருக்கும் கார்டுகளை அழிக்காமல் மாறியதை மட்டுமே அப்டேட் செய்யும் ஃபங்ஷன் ---
-let currentRenderedSignature = "";
-
-function renderStoryCardsToDOM(cardsList) {
-    const container = document.getElementById('sideScrollPosts');
-    if (!container) return;
-
-    if (!cardsList || cardsList.length === 0) {
-        if (container.children.length === 0) {
-            container.innerHTML = "<p style='text-align:center; color:#999; align-self:center; margin-left:10px; font-size:14px; width:100%;'>பதிவுகள் ஏதும் இல்லை!</p>";
-        }
-        return;
-    }
-
-    // ஏற்கனவே திரையில் உள்ள கார்டுகளும் புதிய கார்டுகளும் ஒன்றாக இருந்தால் ரீ-லோட் செய்ய வேண்டாம் (Zero Flicker!)
-    const newSignature = cardsList.map(c => `${c.id || c.key}_${c.isLatest}_${c.mediaUrl || ''}_${c.userName || ''}_${c.text || c.content || ''}`).join('|');
-    if (currentRenderedSignature === newSignature && container.children.length > 0) {
-        return;
-    }
-    currentRenderedSignature = newSignature;
-
-    let html = '';
-    cardsList.forEach(post => {
-        html += buildStoryCardHTML(post);
-    });
-    container.innerHTML = html;
-}
-
-// --- LocalStorage Quota Sanitizer (5MB தாண்டாமல் பாதுகாப்பாகச் சேமிக்க) ---
-function saveClassroomCardsCache(cardsList) {
-    if (!cardsList || cardsList.length === 0) return;
-
-    // 1. முழு டேட்டாவையும் IndexedDB-ல் சேமித்தல்
-    saveToIndexedDB('classroomTopCardsFull', cardsList);
-
-    // 2. LocalStorage-ல் 0.01 விநாடியில் எடுக்க சுருக்கப்பட்ட வடிவத்தில் சேமித்தல்
-    const lightCards = cardsList.map(c => {
-        const copy = {
-            id: c.id || c.key,
-            key: c.key || c.id,
-            isLatest: c.isLatest,
-            userName: c.userName,
-            text: c.text || c.content || '',
-            content: c.content || c.text || '',
-            mediaType: c.mediaType,
-            mediaUrl: c.mediaUrl,
-            inspiresCount: c.inspiresCount || 0
-        };
-        if (copy.mediaUrl && copy.mediaUrl.startsWith('data:') && copy.mediaUrl.length > 60000) {
-            copy.mediaUrl = null;
-        }
-        return copy;
-    });
-
-    try {
-        localStorage.setItem('teacherApp_classroomTopCards', JSON.stringify(lightCards));
-    } catch (e) {}
-}
-
-// 🚀 0.01 விநாடியில் பக்கம் திறந்தவுடன் அனைத்தையும் திரையில் காட்டும் IIFE!
-(function instantClassroomBoot() {
-    // 1. பயனர் விவரங்கள், UDISE & Ticker-ஐ உடனடியாகக் காட்டுதல்
-    const cachedName = localStorage.getItem('teacherApp_userName');
-    if (cachedName) {
-        const nameEl = document.getElementById('top-user-name');
-        if (nameEl) nameEl.innerText = cachedName;
-    }
-
-    const cachedEmail = localStorage.getItem('teacherApp_userEmail');
-    if (cachedEmail) {
-        const emailTop = document.getElementById('user-email-top');
-        const emailDrop = document.getElementById('user-email-dropdown');
-        if (emailTop) emailTop.innerText = cachedEmail;
-        if (emailDrop) emailDrop.innerText = cachedEmail;
-        if (cachedEmail === "tnteachersfriend@gmail.com") {
-            const adminBtn = document.getElementById('admin-btn-wrapper');
-            if (adminBtn) adminBtn.style.display = "block";
-        }
-    }
-
-    const cachedUdise = localStorage.getItem('teacherApp_udise');
-    if (cachedUdise) {
-        const u1 = document.getElementById('udise-display');
-        const u2 = document.getElementById('dropdown-udise-display');
-        if (u1) u1.innerText = cachedUdise;
-        if (u2) u2.innerText = cachedUdise;
-    }
-
-    const cachedTicker = localStorage.getItem('teacherApp_ticker');
-    if (cachedTicker) {
-        const tickerEl = document.getElementById('web-ticker');
-        if (tickerEl) tickerEl.innerText = cachedTicker;
-    }
-
-    // 2. TODAY கார்டை உடனடியாக (0.01s) LocalStorage-ல் இருந்து காட்டுதல்
-    try {
-        const dailyCacheRaw = localStorage.getItem('teacherApp_dailyMsgCache');
-        if (dailyCacheRaw) {
-            const dailyCache = JSON.parse(dailyCacheRaw);
-            if (dailyCache && dailyCache.url) {
-                applyDailyMessageToDOM(dailyCache.url, dailyCache.title);
-            }
-        }
-    } catch (e) {}
-
-    // 3. NEW & TOP கார்டுகளை உடனடியாக (0.01s) LocalStorage-ல் இருந்து காட்டுதல்
-    let renderedCards = false;
-    try {
-        const topCardsRaw = localStorage.getItem('teacherApp_classroomTopCards');
-        if (topCardsRaw) {
-            const parsedCards = JSON.parse(topCardsRaw);
-            if (Array.isArray(parsedCards) && parsedCards.length > 0) {
-                renderStoryCardsToDOM(parsedCards);
-                renderedCards = true;
-            }
-        }
-
-        // ஒருவேளை `teacherApp_classroomTopCards` இல்லையென்றால், Staff Room (`dashboard2.html`) சேமித்த `teacherApp_cachedPosts`-ல் இருந்து உடனடியாகக் காட்டு!
-        if (!renderedCards) {
-            const staffRoomCacheRaw = localStorage.getItem('teacherApp_cachedPosts');
-            if (staffRoomCacheRaw) {
-                const parsedStaff = JSON.parse(staffRoomCacheRaw);
-                const postsList = Array.isArray(parsedStaff) ? parsedStaff : (parsedStaff && parsedStaff.feedPosts ? parsedStaff.feedPosts : []);
-                if (postsList.length > 0) {
-                    const computed = computeSortedClassroomCards(postsList);
-                    renderStoryCardsToDOM(computed);
-                    renderedCards = true;
-                }
-            }
-        }
-    } catch (e) {}
-  // 4. IndexedDB-ல் இருந்து முழுத் தரவை (0.04s) எடுத்தல்
-    getFromIndexedDB('classroomTopCardsFull').then(idbCards => {
-        if (Array.isArray(idbCards) && idbCards.length > 0) {
-            renderStoryCardsToDOM(idbCards);
-        } else if (!renderedCards) {
-            getFromIndexedDB('cachedFeedData').then(staffIdb => {
-                if (staffIdb && Array.isArray(staffIdb.feedPosts) && staffIdb.feedPosts.length > 0) {
-                    const computed = computeSortedClassroomCards(staffIdb.feedPosts);
-                    renderStoryCardsToDOM(computed);
-                }
+        // --- IndexedDB Helper ---
+        function openCacheDB() {
+            return new Promise((resolve, reject) => {
+                if (!window.indexedDB) return reject("No IDB");
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(IDB_STORE)) {
+                        db.createObjectStore(IDB_STORE);
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = (e) => reject(e.target.error);
             });
         }
-    });
-})();
-</script>
 
-<!-- ========================================================================= -->
-<!-- 🌐 STEP 2: UI HELPERS & NON-BLOCKING FIREBASE BACKGROUND SYNC -->
-<!-- ========================================================================= -->
-<script>
-// நோட்டிபிகேஷன் பாக்ஸைத் திறக்க/மூட
-function toggleNotificationBox() {
-    let box = document.getElementById('noti-box');
-    box.style.display = box.style.display === 'block' ? 'none' : 'block';
-    document.getElementById('noti-badge').style.display = 'none';
-}
-
-function clearNotifications() {
-    document.getElementById('noti-list').innerHTML = "<p style='text-align: center; color: #888; padding: 10px;'>புதிய அறிவிப்புகள் ஏதுமில்லை!</p>";
-    document.getElementById('noti-badge').style.display = 'none';
-}
-
-function toggleServicesMenu(event) {
-    event.stopPropagation();
-    let dropdown = document.getElementById('servicesDropdown');
-    if (dropdown) dropdown.classList.toggle('show-dropdown');
-}
-
-function toggleUserDropdown(event) {
-    event.stopPropagation(); 
-    let servicesDropdown = document.getElementById('servicesDropdown');
-    if (servicesDropdown) servicesDropdown.classList.remove('show-dropdown');
-    
-    let dropdown = document.getElementById('user-dropdown');
-    if (dropdown) {
-        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
-    }
-}
-
-window.addEventListener('click', function(e) {
-    let servicesDropdown = document.getElementById('servicesDropdown');
-    let dropdownBtn = document.querySelector('.dropdown-btn');
-    if (servicesDropdown && !servicesDropdown.contains(e.target) && e.target !== dropdownBtn) {
-        servicesDropdown.classList.remove('show-dropdown');
-    }
-    
-    let userDropdown = document.getElementById('user-dropdown');
-    let wrapper = document.querySelector('.user-profile-wrapper');
-    if (userDropdown && userDropdown.style.display === 'block') {
-        if (wrapper && !wrapper.contains(e.target)) {
-            userDropdown.style.display = 'none';
-        }
-    }
-});
-
-function handleLogout(event) {
-    event.preventDefault();
-    if (window.firebase && firebase.auth) {
-        firebase.auth().signOut().then(() => {
-            window.location.href = "index.html";
-        }).catch((error) => {
-            console.error("Logout Error: ", error);
-            window.location.href = "index.html";
-        });
-    } else {
-        window.location.href = "index.html";
-    }
-}
-
-// Search Index
-const searchIndex = [
-    { title: "Data Input (தரவு உள்ளீடு)", url: "data-input.html", keywords: "data entry, student details, emis, marks, எமிஸ், மதிப்பெண்" },
-    { title: "Forms (படிவங்கள்)", url: "applications.html", keywords: "leave letter, casual leave, cl, ml, earned leave, loan form, income tax, விண்ணப்பங்கள், விடுப்பு, வருமான வரி" },
-    { title: "Registers (பதிவேடுகள்)", url: "registers.html", keywords: "attendance, admission, movement, stock, வருகை, பதிவேடு" },
-    { title: "Daily Messages (தினசரி தகவல்கள்)", url: "daily.html", keywords: "news, updates, thoughts, thirukkural, திருக்குறள், செய்திகள்" },
-    { title: "TLMs (கற்றல் கருவிகள்)", url: "tlm.html", keywords: "teaching learning materials, charts, models, துணைக்கருவிகள்" },
-    { title: "Daily Homework (வீட்டுப்பாடம்)", url: "homework.html", keywords: "assignment, notes, வீட்டுப்பாடம்" },
-    { title: "Exam (தேர்வுகள்)", url: "exam.html", keywords: "question paper, timetable, results, fa, sa, வினாத்தாள், தேர்வு" },
-    { title: "GO's (அரசாணைகள்)", url: "gos.html", keywords: "government orders, rules, salary, pay, அரசாணை, ஊதியம்" },
-    { title: "Lesson Plan (பாடக்குறிப்பு)", url: "lesson-plan.html", keywords: "notes of lesson, primary, middle, பாடக்குறிப்பு" },
-    { title: "Other Resources (பிற வளங்கள்)", url: "others.html", keywords: "software, tools, links, பயனுள்ள" },
-    { title: "About Us (எங்களை பற்றி)", url: "about.html", keywords: "details, profile" },
-    { title: "Contact (தொடர்புக்கு)", url: "contact.html", keywords: "email, phone, முகவரி, தொடர்புக்கு" },
-    { title: "Forum (கலந்துரையாடல்)", url: "forum.html", keywords: "discussion, doubt, சந்தேகம்" },
-    { title: "Help Center (உதவி)", url: "help-center.html", keywords: "support, faq, உதவி" }
-];
-
-function globalSearch() {
-    let input = document.getElementById('dashboard-search').value.toLowerCase().trim();
-    let suggestionsBox = document.getElementById('search-suggestions');
-    suggestionsBox.innerHTML = ""; 
-    
-    if (input.length === 0) {
-        suggestionsBox.style.display = "none";
-        return;
-    }
-
-    let matches = searchIndex.filter(item => 
-        item.title.toLowerCase().includes(input) || 
-        item.keywords.toLowerCase().includes(input)
-    );
-
-    if (matches.length > 0) {
-        matches.forEach(match => {
-            let div = document.createElement('div');
-            div.innerHTML = `
-                <a href="${match.url}" style="display: flex; align-items: center; gap: 10px; padding: 12px 15px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; font-size: 14px; transition: background 0.2s;">
-                    <i class="bi bi-search" style="color: #1a73e8;"></i> 
-                    <span>${match.title}</span>
-                </a>`;
-            let link = div.querySelector('a');
-            link.onmouseover = () => link.style.backgroundColor = "#f8f9fa";
-            link.onmouseout = () => link.style.backgroundColor = "transparent";
-            suggestionsBox.appendChild(div);
-        });
-        suggestionsBox.style.display = "block";
-    } else {
-        suggestionsBox.innerHTML = `<div style="padding: 15px; color: #dc3545; font-size: 14px; text-align: center;">
-            <i class="bi bi-emoji-frown"></i> முடிவுகள் காணப்படவில்லை
-        </div>`;
-        suggestionsBox.style.display = "block";
-    }
-}
-
-document.addEventListener('click', function(e) {
-    let searchContainer = document.querySelector('.search-container');
-    let suggestionsBox = document.getElementById('search-suggestions');
-    if (searchContainer && !searchContainer.contains(e.target)) {
-        if (suggestionsBox) suggestionsBox.style.display = "none";
-    }
-});
-
-function openFullScreenPost(post) {
-    document.getElementById('modal-post-author').innerHTML = `<i class="bi bi-person-circle"></i> ${post.userName || 'ஆசிரியர்'}`;
-    document.getElementById('modal-post-time').innerHTML = `<i class="bi bi-clock"></i> ${post.time || 'சமீபத்தில்'}`;
-    document.getElementById('modal-post-content').innerHTML = post.text || post.content || 'விவரங்கள் இல்லை.';
-    document.getElementById('postFullScreenModal').style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeFullScreenPost() {
-    document.getElementById('postFullScreenModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-}
-
-// --- Firebase Background Loader ---
-const firebaseConfig = {
-    apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
-    authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
-    projectId: "teacher-s-friend-3aca8",
-    storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
-    messagingSenderId: "294698361211",
-    appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
-    databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
-};
-
-function loadScriptSequential(src) {
-    return new Promise((resolve, reject) => {
-        const s = document.createElement('script');
-        s.src = src;
-        s.async = false;
-        s.onload = resolve;
-        s.onerror = reject;
-        document.body.appendChild(s);
-    });
-}
-
-// 1. New & Top கார்டுகளை பின்னணியில் ஒத்திசைக்கும் ஃபங்ஷன் (Limit 25 - அதிவேகம்!)
-function loadStaffRoomPosts() {
-    if (!database) return;
-    const postsRef = database.ref('posts').orderByKey().limitToLast(25);
-    
-    postsRef.on('value', (snapshot) => {
-        const postsData = snapshot.val();
-        if (!postsData) {
-            renderStoryCardsToDOM([]);
-            return;
+        async function saveToIndexedDB(key, val) {
+            try {
+                const db = await openCacheDB();
+                const tx = db.transaction(IDB_STORE, 'readwrite');
+                tx.objectStore(IDB_STORE).put(val, key);
+            } catch (e) {}
         }
 
-        const top6Cards = computeSortedClassroomCards(postsData);
-        saveClassroomCardsCache(top6Cards);
-        renderStoryCardsToDOM(top6Cards);
-    });
-  }
-  // 2. Today கார்டை பின்னணியில் ஒத்திசைக்கும் ஃபங்ஷன்
-function extractMatchingDailyItem(snapshotObj, targetLower) {
-    let matchedItem = null;
-    if (!snapshotObj || typeof snapshotObj !== 'object') return null;
-
-    Object.values(snapshotObj).forEach(dayOrMonthVal => {
-        if (!dayOrMonthVal || typeof dayOrMonthVal !== 'object') return;
-        if (dayOrMonthVal.url && dayOrMonthVal.title) {
-            if (dayOrMonthVal.title.trim().toLowerCase() === targetLower) {
-                matchedItem = dayOrMonthVal;
+        async function getFromIndexedDB(key) {
+            try {
+                const db = await openCacheDB();
+                return new Promise((resolve) => {
+                    const tx = db.transaction(IDB_STORE, 'readonly');
+                    const req = tx.objectStore(IDB_STORE).get(key);
+                    req.onsuccess = () => resolve(req.result || null);
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) {
+                return null;
             }
-        } else {
-            Object.values(dayOrMonthVal).forEach(subItem => {
-                if (!subItem || typeof subItem !== 'object') return;
-                if (subItem.url && subItem.title) {
-                    if (subItem.title.trim().toLowerCase() === targetLower) {
-                        matchedItem = subItem;
+        }
+
+        // --- இன்றைய தேதி தலைப்பை ("October 22" போன்ற வடிவத்தில்) உருவாக்கும் ஃபங்ஷன் ---
+        function getTodayTitleString() {
+            const today = new Date();
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            return {
+                monthName: monthNames[today.getMonth()],
+                day: today.getDate(),
+                todayTitle: `${monthNames[today.getMonth()]} ${today.getDate()}`
+            };
+        }
+
+        // --- Today கார்டை திரையில் உடனடியாக அப்டேட் செய்யும் ஃபங்ஷன் ---
+        function applyDailyMessageToDOM(url, title) {
+            const imgElement = document.getElementById('dashboard-daily-img');
+            const linkElement = document.getElementById('dashboard-daily-link');
+            if (!imgElement || !linkElement) return;
+
+            const finalUrl = url || "image_0.png";
+            if (imgElement.getAttribute('src') !== finalUrl) {
+                imgElement.src = finalUrl;
+            }
+            imgElement.alt = title || "இன்றைய செய்தி";
+            linkElement.href = url ? url : "#";
+        }
+
+        // --- Side-Scroll வீடியோ கார்டுகளை அதிவேகமாக ரெண்டர் செய்யும் ஃபங்ஷன் ---
+        let renderedVideoSignature = "";
+
+        function renderSideScrollVideoCards(videoList) {
+            const container = document.getElementById('sideScrollVideos');
+            if (!container) return;
+
+            if (!videoList || videoList.length === 0) {
+                if (container.children.length === 0) {
+                    container.innerHTML = `<div style="color:#555; font-size:13px; align-self:center; padding-left:10px;">வீடியோக்கள் ஏற்றப்படுகின்றன...</div>`;
+                }
+                return;
+            }
+
+            const sig = videoList.map(v => v.key || v.id || v.mediaUrl).join('|');
+            if (renderedVideoSignature === sig && container.children.length > 0) return;
+            renderedVideoSignature = sig;
+
+            let html = '';
+            videoList.forEach((video, index) => {
+                const author = video.userName || 'ஆசிரியர்';
+                const caption = video.content || video.text || '';
+                const videoSrcWithThumb = video.mediaUrl.includes('#') ? video.mediaUrl : `${video.mediaUrl}#t=0.1`;
+
+                html += `
+                    <div class="post-card" onclick="openFullScreenVideoReels(${index})">
+                        <video src="${videoSrcWithThumb}" class="side-preview-video" loop muted playsinline preload="metadata" style="width:100%; height:100%; object-fit:cover; position:absolute; top:0; left:0; z-index:1; pointer-events:none;"></video>
+                        <div style="position:absolute; top:0; left:0; width:100%; height:100%; background:linear-gradient(to top, rgba(0,0,0,0.85), rgba(0,0,0,0.05)); z-index:2;"></div>
+                        <span class="post-badge"><i class="bi bi-play-circle-fill"></i> Video</span>
+                        <div style="position:absolute; bottom:8px; left:8px; right:8px; z-index:10; color:white;">
+                            <div style="font-size:11px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                <i class="bi bi-person-circle"></i> ${author}
+                            </div>
+                            <div style="font-size:10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; opacity:0.9;">
+                                ${caption}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+
+            if (sideScrollObserver) sideScrollObserver.disconnect();
+            sideScrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting) {
+                        vid.play().catch(() => {});
+                    } else {
+                        vid.pause();
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            document.querySelectorAll('.side-preview-video').forEach(v => sideScrollObserver.observe(v));
+        }
+
+        // 🚀 0.01 விநாடியில் பக்கம் திறந்தவுடன் Cache-ல் இருந்து அனைத்தையும் காட்டும் IIFE!
+        (function instantClassroomBoot() {
+            // 1. பயனர் விவரங்கள், UDISE & Ticker-ஐ உடனடியாகக் காட்டுதல்
+            const cachedEmail = localStorage.getItem('teacherApp_userEmail');
+            if (cachedEmail) {
+                const emailDrop = document.getElementById('user-email-dropdown');
+                if (emailDrop) emailDrop.innerText = cachedEmail;
+                if (cachedEmail === "tnteachersfriend@gmail.com") {
+                    const adminBtn = document.getElementById('admin-btn-wrapper');
+                    if (adminBtn) adminBtn.style.display = "block";
+                }
+            }
+
+            const cachedUdise = localStorage.getItem('officeApp_loggedInUdise') || localStorage.getItem('teacherApp_udise');
+            if (cachedUdise) {
+                const uDrop = document.getElementById('dropdown-udise-display');
+                if (uDrop) uDrop.innerText = cachedUdise;
+            }
+
+            const cachedTicker = localStorage.getItem('teacherApp_ticker');
+            if (cachedTicker) {
+                const tickerEl = document.getElementById('web-ticker');
+                if (tickerEl) tickerEl.innerText = cachedTicker;
+            }
+
+            // 2. TODAY கார்டை உடனடியாக (0.01s) LocalStorage-ல் இருந்து காட்டுதல்
+            try {
+                const dailyCacheRaw = localStorage.getItem('teacherApp_dailyMsgCache');
+                if (dailyCacheRaw) {
+                    const dailyCache = JSON.parse(dailyCacheRaw);
+                    if (dailyCache && dailyCache.url) {
+                        applyDailyMessageToDOM(dailyCache.url, dailyCache.title);
+                    }
+                }
+            } catch (e) {}
+
+            // 3. Videos கார்டுகளை 0.01 விநாடியில் LocalStorage / IndexedDB-ல் இருந்து காட்டுதல்
+            let videosLoadedFromCache = false;
+            try {
+                const officeVidCache = localStorage.getItem('teacherApp_officeVideosCache');
+                if (officeVidCache) {
+                    const parsedVids = JSON.parse(officeVidCache);
+                    if (Array.isArray(parsedVids) && parsedVids.length > 0) {
+                        latestVideoPosts = parsedVids;
+                        renderSideScrollVideoCards(latestVideoPosts);
+                        videosLoadedFromCache = true;
+                    }
+                }
+
+                if (!videosLoadedFromCache) {
+                    const staffCacheRaw = localStorage.getItem('teacherApp_cachedPosts');
+                    if (staffCacheRaw) {
+                        const parsedStaff = JSON.parse(staffCacheRaw);
+                        const postsList = Array.isArray(parsedStaff) ? parsedStaff : (parsedStaff && parsedStaff.feedPosts ? parsedStaff.feedPosts : []);
+                        const vids = postsList.filter(p => p && p.mediaType === 'video' && p.mediaUrl);
+                        if (vids.length > 0) {
+                            vids.sort((a, b) => String(b.key || b.id || '').localeCompare(String(a.key || a.id || '')));
+                            latestVideoPosts = vids;
+                            renderSideScrollVideoCards(latestVideoPosts);
+                            videosLoadedFromCache = true;
+                        }
+                    }
+                }
+            } catch (e) {}
+
+            getFromIndexedDB('officeVideosFull').then(idbVids => {
+                if (Array.isArray(idbVids) && idbVids.length > 0 && latestVideoPosts.length === 0) {
+                    latestVideoPosts = idbVids;
+                    renderSideScrollVideoCards(latestVideoPosts);
+                }
+            });
+        })();
+    </script>
+
+    <!-- ========================================================================= -->
+    <!-- 🌐 STEP 2: UI HELPERS & NON-BLOCKING FIREBASE BACKGROUND SYNC -->
+    <!-- ========================================================================= -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyClc8ZHOMPQIvRCJpmsF5mFPXM-7o1mYek",
+            authDomain: "teacher-s-friend-3aca8.firebaseapp.com",
+            projectId: "teacher-s-friend-3aca8",
+            storageBucket: "teacher-s-friend-3aca8.firebasestorage.app",
+            messagingSenderId: "294698361211",
+            appId: "1:294698361211:web:1e2322906d536a4d3e1dde",
+            databaseURL: "https://teacher-s-friend-3aca8-default-rtdb.firebaseio.com"
+        };
+
+        function loadScriptSequential(src) {
+            return new Promise((resolve, reject) => {
+                const s = document.createElement('script');
+                s.src = src;
+                s.async = false;
+                s.onload = resolve;
+                s.onerror = reject;
+                document.body.appendChild(s);
+            });
+        }
+
+        function toggleUserDropdown(event) {
+            event.stopPropagation();
+            const dropdown = document.getElementById('user-dropdown');
+            if (dropdown) {
+                dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+            }
+        }
+
+        window.addEventListener('click', function(e) {
+            const userDropdown = document.getElementById('user-dropdown');
+            const wrapper = document.querySelector('.user-profile-wrapper');
+            if (userDropdown && userDropdown.style.display === 'block') {
+                if (wrapper && !wrapper.contains(e.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            }
+        });
+
+        function handleLogout(event) {
+            event.preventDefault();
+            if (window.firebase && firebase.auth) {
+                firebase.auth().signOut().then(() => {
+                    window.location.href = "index.html";
+                }).catch(() => {
+                    window.location.href = "index.html";
+                });
+            } else {
+                window.location.href = "index.html";
+            }
+        }
+
+        // --- Today கார்டை பின்னணியில் ஒத்திசைக்கும் ஆழமான தேடல் ஃபங்ஷன் ---
+        function extractMatchingDailyItem(snapshotObj, targetLower) {
+            let matchedItem = null;
+            if (!snapshotObj || typeof snapshotObj !== 'object') return null;
+
+            Object.values(snapshotObj).forEach(dayOrMonthVal => {
+                if (!dayOrMonthVal || typeof dayOrMonthVal !== 'object') return;
+                if (dayOrMonthVal.url && dayOrMonthVal.title) {
+                    if (dayOrMonthVal.title.trim().toLowerCase() === targetLower) {
+                        matchedItem = dayOrMonthVal;
                     }
                 } else {
-                    Object.values(subItem).forEach(deepItem => {
-                        if (deepItem && deepItem.url && deepItem.title && deepItem.title.trim().toLowerCase() === targetLower) {
-                            matchedItem = deepItem;
+                    Object.values(dayOrMonthVal).forEach(subItem => {
+                        if (!subItem || typeof subItem !== 'object') return;
+                        if (subItem.url && subItem.title) {
+                            if (subItem.title.trim().toLowerCase() === targetLower) {
+                                matchedItem = subItem;
+                            }
+                        } else {
+                            Object.values(subItem).forEach(deepItem => {
+                                if (deepItem && deepItem.url && deepItem.title && deepItem.title.trim().toLowerCase() === targetLower) {
+                                    matchedItem = deepItem;
+                                }
+                            });
                         }
                     });
                 }
             });
-        }
-    });
-    return matchedItem;
-}
-
-function loadDashboardDailyMessage() {
-    if (!database) return;
-    const { monthName, todayTitle } = getTodayTitleString();
-    const targetLower = todayTitle.toLowerCase();
-
-    // முதலில் நடப்பு மாதத்தை மட்டும் வேகமாகத் தேடுகிறோம்; கிடைக்கவில்லை என்றால் முழுப் பட்டியலில் தேடுகிறோம்
-    database.ref('uploads/DailyMessages/' + monthName).once('value').then(monthSnap => {
-        let foundItem = monthSnap.exists() ? extractMatchingDailyItem(monthSnap.val(), targetLower) : null;
-        if (foundItem) {
-            applyDailyMessageToDOM(foundItem.url, foundItem.title);
-            try {
-                localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: foundItem.url, title: foundItem.title }));
-            } catch (e) {}
-            return;
+            return matchedItem;
         }
 
-        // Fallback: முழு DailyMessages-ல் தேடுதல்
-        return database.ref('uploads/DailyMessages').once('value').then(allSnap => {
-            let fallbackItem = allSnap.exists() ? extractMatchingDailyItem(allSnap.val(), targetLower) : null;
-            if (fallbackItem) {
-                applyDailyMessageToDOM(fallbackItem.url, fallbackItem.title);
+        function loadDashboardDailyMessage() {
+            if (!database) return;
+            const { monthName, todayTitle } = getTodayTitleString();
+            const targetLower = todayTitle.toLowerCase();
+
+            database.ref('uploads/DailyMessages/' + monthName).once('value').then(monthSnap => {
+                let foundItem = monthSnap.exists() ? extractMatchingDailyItem(monthSnap.val(), targetLower) : null;
+                if (foundItem) {
+                    applyDailyMessageToDOM(foundItem.url, foundItem.title);
+                    try {
+                        localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: foundItem.url, title: foundItem.title }));
+                    } catch (e) {}
+                    return;
+                }
+
+                return database.ref('uploads/DailyMessages').once('value').then(allSnap => {
+                    let fallbackItem = allSnap.exists() ? extractMatchingDailyItem(allSnap.val(), targetLower) : null;
+                    if (fallbackItem) {
+                        applyDailyMessageToDOM(fallbackItem.url, fallbackItem.title);
+                        try {
+                            localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: fallbackItem.url, title: fallbackItem.title }));
+                        } catch (e) {}
+                    }
+                });
+            }).catch(err => console.error("Daily message sync error:", err));
+        }
+
+        // --- Latest Videos பின்னணி ஒத்திசைப்பு & Cache சேமிப்பு ---
+        function loadLatestVideosFromFirebase() {
+            if (!database) return;
+            database.ref('posts').orderByKey().limitToLast(25).on('value', (snapshot) => {
+                const videos = [];
+                snapshot.forEach(child => {
+                    const val = child.val();
+                    if (val && val.mediaType === 'video' && val.mediaUrl) {
+                        videos.push({
+                            key: child.key,
+                            userName: val.userName || 'ஆசிரியர்',
+                            content: val.content || val.text || '',
+                            mediaType: 'video',
+                            mediaUrl: val.mediaUrl
+                        });
+                    }
+                });
+
+                videos.sort((a, b) => String(b.key).localeCompare(String(a.key)));
+                latestVideoPosts = videos;
+                renderSideScrollVideoCards(latestVideoPosts);
+
+                saveToIndexedDB('officeVideosFull', videos);
                 try {
-                    localStorage.setItem('teacherApp_dailyMsgCache', JSON.stringify({ date: todayTitle, url: fallbackItem.url, title: fallbackItem.title }));
+                    localStorage.setItem('teacherApp_officeVideosCache', JSON.stringify(videos.slice(0, 10)));
                 } catch (e) {}
-            }
-        });
-    }).catch(err => {
-        console.error("Daily message sync error:", err);
-    });
-}
-
-// 3. அறிவிப்புகள், Ticker மற்றும் பயனர் விவரங்களை பின்னணியில் ஒத்திசைத்தல்
-function initOtherDashboardListeners() {
-    if (!database) return;
-
-    // Site Ticker
-    database.ref('site_updates').on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            let data = snapshot.val();
-            if (data.ticker && document.getElementById('web-ticker')) {
-                document.getElementById('web-ticker').innerText = data.ticker;
-                try { localStorage.setItem('teacherApp_ticker', data.ticker); } catch (e) {}
-            }
+            });
         }
-    });
 
-    // Global Notifications
-    database.ref('global_notifications').on('value', (snapshot) => {
-        let notiList = document.getElementById('noti-list');
-        let badge = document.getElementById('noti-badge');
-        if (snapshot.exists()) {
-            notiList.innerHTML = "";
-            let count = 0;
-            snapshot.forEach((childSnapshot) => {
-                let noti = childSnapshot.val();
-                let date = noti.date ? new Date(noti.date).toLocaleDateString('ta-IN') : "";
-                notiList.innerHTML += `
-                    <div class="noti-item">
-                        <strong>${noti.title}</strong>
-                        <p>${noti.message}</p>
-                        <span class="noti-time">${date}</span>
+        // --- வீடியோவை கிளிக் செய்தால் Full Screen-ல் திறந்து மேலே Scroll செய்ய அடுத்தடுத்த Latest வீடியோக்கள் வருதல் ---
+        function openFullScreenVideoReels(startIndex = 0) {
+            if (latestVideoPosts.length === 0) return;
+            const modal = document.getElementById('videoReelsModal');
+            const container = document.getElementById('videoReelsContainer');
+            container.innerHTML = '';
+
+            latestVideoPosts.forEach((post, idx) => {
+                const reelHTML = `
+                    <div class="reel-item" id="reel-item-${idx}">
+                        <video src="${post.mediaUrl}" class="reel-video" loop playsinline preload="metadata"></video>
+                        <div class="reel-info-overlay">
+                            <h4 style="font-size:16px; margin-bottom:4px;"><i class="bi bi-person-circle"></i> ${post.userName || 'ஆசிரியர்'}</h4>
+                            <p style="font-size:13px; opacity:0.9;">${post.content || ''}</p>
+                        </div>
                     </div>
                 `;
-                count++;
-            });
-            badge.innerText = count;
-            badge.style.display = 'block';
-        }
-    });
-
-    // Auth & UDISE
-    firebase.auth().onAuthStateChanged((user) => {
-        let emailTop = document.getElementById('user-email-top');
-        let emailDropdown = document.getElementById('user-email-dropdown');
-        let adminBtnWrapper = document.getElementById('admin-btn-wrapper');
-        let udiseDisplay = document.getElementById('udise-display');
-        let dropdownUdiseDisplay = document.getElementById('dropdown-udise-display');
-
-        if (user) {
-            if (emailTop) emailTop.innerText = user.email;
-            if (emailDropdown) emailDropdown.innerText = user.email;
-            try { localStorage.setItem('teacherApp_userEmail', user.email); } catch (e) {}
-
-            database.ref('users/' + user.uid).once('value').then((snapshot) => {
-                const uVal = (snapshot.exists() && snapshot.val().udise) ? snapshot.val().udise : "N/A";
-                if (udiseDisplay) udiseDisplay.innerText = uVal;
-                if (dropdownUdiseDisplay) dropdownUdiseDisplay.innerText = uVal;
-                try { localStorage.setItem('teacherApp_udise', uVal); } catch (e) {}
+                container.insertAdjacentHTML('beforeend', reelHTML);
             });
 
-            if (user.email === "tnteachersfriend@gmail.com") {
-                if (adminBtnWrapper) adminBtnWrapper.style.display = "block";
-            } else {
-                if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
-            }
-        } else {
-            if (emailTop) emailTop.innerText = "Not Logged In";
-            if (emailDropdown) emailDropdown.innerText = "Guest User";
-            if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            const targetReel = document.getElementById(`reel-item-${startIndex}`);
+            if (targetReel) targetReel.scrollIntoView();
+
+            if (reelsObserver) reelsObserver.disconnect();
+            reelsObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const vid = entry.target;
+                    if (entry.isIntersecting) {
+                        vid.muted = false;
+                        vid.play().catch(() => {});
+                    } else {
+                        vid.pause();
+                        vid.currentTime = 0;
+                    }
+                });
+            }, { threshold: 0.65 });
+
+            document.querySelectorAll('.reel-video').forEach(vid => reelsObserver.observe(vid));
         }
-    });
-}
 
-// திரையில் Today, New, Top கார்டுகள் உடனடியாக வரையப்பட்ட பிறகே Firebase மற்றும் AdSense-ஐ பின்னணியில் ஏற்றுகிறோம்
-window.requestAnimationFrame(() => {
-    setTimeout(async () => {
-        try {
-            await loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
-            await Promise.all([
-                loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"),
-                loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js")
-            ]);
-
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            database = firebase.database();
-
-            // 1. முதலில் Today, New & Top கார்டுகளை ஒத்திசைக்கிறோம்
-            loadStaffRoomPosts();
-            loadDashboardDailyMessage();
-
-            // 2. அடுத்த 200ms-ல் மற்ற அறிவிப்புகள் மற்றும் UDISE தகவல்களை ஒத்திசைக்கிறோம்
-            setTimeout(initOtherDashboardListeners, 200);
-
-            // 3. AdSense ஸ்கிரிப்டை கடைசியாக பின்னணியில் ஏற்றுகிறோம்
-            setTimeout(() => {
-                const adScript = document.createElement('script');
-                adScript.async = true;
-                adScript.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2743214359550502";
-                adScript.crossOrigin = "anonymous";
-                document.head.appendChild(adScript);
-            }, 1500);
-        } catch (e) {
-            console.error("Firebase background init error:", e);
+        function closeFullScreenVideoReels() {
+            const modal = document.getElementById('videoReelsModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            if (reelsObserver) reelsObserver.disconnect();
+            document.querySelectorAll('.reel-video').forEach(vid => vid.pause());
         }
-    }, 40);
-});
-</script>
+
+        // --- அறிவிப்பு Ticker மற்றும் பயனர் விவரங்களை பின்னணியில் ஒத்திசைத்தல் ---
+        function initOtherDashboardListeners() {
+            if (!database) return;
+
+            // Site Ticker
+            database.ref('site_updates').on('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.ticker && document.getElementById('web-ticker')) {
+                        document.getElementById('web-ticker').innerText = data.ticker;
+                        try { localStorage.setItem('teacherApp_ticker', data.ticker); } catch (e) {}
+                    }
+                }
+            });
+
+            // Auth & UDISE
+            firebase.auth().onAuthStateChanged((user) => {
+                const emailDropdown = document.getElementById('user-email-dropdown');
+                const adminBtnWrapper = document.getElementById('admin-btn-wrapper');
+                const dropdownUdiseDisplay = document.getElementById('dropdown-udise-display');
+
+                if (user) {
+                    if (emailDropdown) emailDropdown.innerText = user.email;
+                    try { localStorage.setItem('teacherApp_userEmail', user.email); } catch (e) {}
+
+                    database.ref('users/' + user.uid).once('value').then((snapshot) => {
+                        const uVal = (snapshot.exists() && snapshot.val().udise)
+                            ? snapshot.val().udise
+                            : (localStorage.getItem('officeApp_loggedInUdise') || localStorage.getItem('teacherApp_udise') || "N/A");
+                        if (dropdownUdiseDisplay) dropdownUdiseDisplay.innerText = uVal;
+                        try { localStorage.setItem('teacherApp_udise', uVal); } catch (e) {}
+                    });
+
+                    if (user.email === "tnteachersfriend@gmail.com") {
+                        if (adminBtnWrapper) adminBtnWrapper.style.display = "block";
+                    } else {
+                        if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                    }
+                } else {
+                    if (emailDropdown) emailDropdown.innerText = "Guest User";
+                    if (adminBtnWrapper) adminBtnWrapper.style.display = "none";
+                }
+            });
+        }
+
+        // --- பக்கம் திரையில் வரையப்பட்ட உடன் பின்னணியில் Firebase-ஐ ஏற்றுதல் ---
+        window.requestAnimationFrame(() => {
+            setTimeout(async () => {
+                try {
+                    await loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js");
+                    await Promise.all([
+                        loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"),
+                        loadScriptSequential("https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js")
+                    ]);
+
+                    if (!firebase.apps.length) {
+                        firebase.initializeApp(firebaseConfig);
+                    }
+                    database = firebase.database();
+
+                    // 1. முதலில் Today மற்றும் Latest Videos ஒத்திசைப்பு
+                    loadDashboardDailyMessage();
+                    loadLatestVideosFromFirebase();
+
+                    // 2. அடுத்து மற்ற அறிவிப்புகள் மற்றும் UDISE தகவல்களை ஒத்திசைத்தல்
+                    setTimeout(initOtherDashboardListeners, 200);
+                } catch (e) {
+                    console.error("Firebase background init error:", e);
+                }
+            }, 30);
+        });
+    </script>
 </body>
 </html>
